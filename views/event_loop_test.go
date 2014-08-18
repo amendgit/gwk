@@ -15,6 +15,12 @@ func TestTaskQueue(t *testing.T) {
 	if !q.Empty() {
 		t.Fatalf("task queue push/pop failed")
 	}
+
+	q = new_task_queue()
+	q.Push(&Task{})
+	if q.Empty() {
+		t.Fatalf("task queue empty failed")
+	}
 }
 
 func TestPriorityQueue(t *testing.T) {

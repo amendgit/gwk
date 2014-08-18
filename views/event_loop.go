@@ -35,14 +35,14 @@ type task_queue_t struct {
 }
 
 func new_task_queue() *task_queue_t {
-	task_queue := new(task_queue_t)
-	task_queue.head.next = &task_queue.head
-	task_queue.head.prev = &task_queue.head
-	return task_queue
+	t := new(task_queue_t)
+	t.head.next = &t.head
+	t.head.prev = &t.head
+	return t
 }
 
 func (t *task_queue_t) Empty() bool {
-	return t.head.prev == t.head.next
+	return t.head.prev == &t.head && t.head.next == &t.head
 }
 
 // Insert a new task node at the rear of the queue.
@@ -238,13 +238,11 @@ func (e *EventLoop) do_work() {
 	now := time.Now()
 
 	for !e.pending_task_queue.Empty() {
-		// Lock pending task queue.
+		// lock pending task queue.
 		task := e.pending_task_queue.Front()
 		e.pending_task_queue.Pop()
-		if task == nil {
-			break
-		}
-		// Unlock pending task queue.
+		// unlock pending task queue.
+
 		if !task.time.After(now) {
 			task.closure()
 		} else {

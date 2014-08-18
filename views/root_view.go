@@ -75,7 +75,6 @@ func (r *RootView) Canvas() *Canvas {
 }
 
 func (r *RootView) DispatchDraw(dirty_rect Rectangle) {
-	log.Printf("DispatchDraw %v", dirty_rect)
 	children := r.Children()
 	if r.children_count() == 0 {
 		return

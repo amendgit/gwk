@@ -18,8 +18,8 @@ func make_main_ui_map() views.UIMap {
 		"children": []views.UIMap{
 			views.UIMap{
 				"type":   "image_view",
-				"left":   20,
-				"top":    20,
+				"left":   10,
+				"top":    10,
 				"width":  200,
 				"height": 200,
 				"color":  0xffffff,
