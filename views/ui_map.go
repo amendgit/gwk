@@ -42,9 +42,9 @@ func (u UIMap) UIMaps(key string) ([]UIMap, bool) {
 	return nil, false
 }
 
-func (u UIMap) Viewer(key string) (Viewer, bool) {
+func (u UIMap) View(key string) (View, bool) {
 	val := u[key]
-	if rv, ok := val.(Viewer); ok {
+	if rv, ok := val.(View); ok {
 		return rv, true
 	}
 	return nil, false

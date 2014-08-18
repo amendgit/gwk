@@ -22,8 +22,7 @@ func NewTask(closure Closure, time time.Time) *Task {
 }
 
 // ============================================================================
-// Task queue and priority task queue.
-
+// Task Queue
 type task_node_t struct {
 	data *Task
 	prev *task_node_t
@@ -31,7 +30,8 @@ type task_node_t struct {
 }
 
 type task_queue_t struct {
-	head task_node_t
+	head  task_node_t
+	count int
 }
 
 func new_task_queue() *task_queue_t {
@@ -45,21 +45,29 @@ func (t *task_queue_t) Empty() bool {
 	return t.head.prev == t.head.next
 }
 
+// Insert a new task node at the rear of the queue.
 func (t *task_queue_t) Push(task *Task) {
 	task_node := new(task_node_t)
 	task_node.data = task
+
 	task_node.prev = t.head.prev
 	task_node.next = &t.head
+
 	t.head.prev.next = task_node
 	t.head.prev = task_node
+
+	t.count++
 }
 
 func (t *task_queue_t) Pop() {
 	if t.Empty() {
 		return
 	}
+
 	t.head.next = t.head.next.next
-	t.head.next = &t.head
+	t.head.next.prev = &t.head
+
+	t.count--
 }
 
 func (t *task_queue_t) Front() *Task {
@@ -69,8 +77,29 @@ func (t *task_queue_t) Front() *Task {
 	return t.head.next.data
 }
 
+func (t *task_queue_t) Count() int {
+	return t.count
+}
+
+func (t *task_queue_t) debug_check() bool {
+	var node *task_node_t
+	var count = 0
+
+	for node = t.head.prev; node != t.head.next; node = node.next {
+		count++
+	}
+
+	if count == t.count {
+		return true
+	}
+	return false
+}
+
+// ============================================================================
+// Priority Task Queue
 type priority_task_queue_t struct {
-	data []*Task
+	data  []*Task
+	count int
 }
 
 func new_priority_task_queue() *priority_task_queue_t {
@@ -102,35 +131,54 @@ func (t *priority_task_queue_t) Push(task *Task) {
 		i0 = i1
 		i1 = i0 / 2
 	}
+
+	t.count++
 }
 
 func (t *priority_task_queue_t) Pop() {
+	// swap the root and the last element.
 	n := len(t.data) - 1
 	t.data[1] = t.data[n]
-	t.data = t.data[0 : n-1]
 
-	i0 := 1
+	// remove the last element.
+	t.data = t.data[0:n] // [0, n)
 	n = n - 1
-	for {
-		i1 := i0 * 2
 
-		if i1 >= n {
+	// p: parent, l: left child, r: right child.
+	p := 1
+	for {
+		l := p * 2
+
+		if l >= n {
 			break
 		}
 
-		i := i1
-		i2 := i1 + 2
-		if i2 < n && t.data[i2].time.Before(t.data[i1].time) {
-			i = i2
+		i := l
+		r := l + 1
+		if r < n && t.data[r].time.Before(t.data[l].time) {
+			i = r
 		}
 
-		if t.data[i].time.Before(t.data[i0].time) {
-			t.data[i], t.data[i0] = t.data[i0], t.data[i]
-			i0 = i
+		if t.data[i].time.Before(t.data[p].time) {
+			t.data[p], t.data[l] = t.data[l], t.data[p]
+			p = i
 		} else {
 			break
 		}
 	}
+
+	t.count--
+}
+
+func (t *priority_task_queue_t) Count() int {
+	return t.count
+}
+
+func (t *priority_task_queue_t) debug_check() bool {
+	if len(t.data) == t.count {
+		return true
+	}
+	return false
 }
 
 // ============================================================================
@@ -140,6 +188,7 @@ type EventLoop struct {
 	should_quit        bool
 	pending_task_queue *task_queue_t
 	delayed_task_queue *priority_task_queue_t
+	// pending_task_queue_lock sync.Lock
 }
 
 func (e *EventLoop) init() {
@@ -148,6 +197,21 @@ func (e *EventLoop) init() {
 }
 
 func (e *EventLoop) Run() {
+	for {
+		if e.should_quit {
+			break
+		}
+
+		e.do_work()
+		if e.should_quit {
+			break
+		}
+
+		e.do_delayed_work()
+		if e.should_quit {
+			break
+		}
+	}
 }
 
 func (e *EventLoop) PostTask(closure Closure) {
@@ -159,9 +223,11 @@ func (e *EventLoop) PostDelayedTask(closure Closure, delay_misc int64) {
 }
 
 func (e *EventLoop) add_to_pending_task_queue(closure Closure, delay_misc int64) {
-	time := time.Now().Add(time.Duration(delay_misc * 1000))
+	time := time.Now().Add(time.Duration(delay_misc * 1000 * 1000))
 	task := NewTask(closure, time)
+	// Lock pending task queue.
 	e.pending_task_queue.Push(task)
+	// Unlock pending task queue.
 }
 
 func (e *EventLoop) ShouldQuit() {
@@ -172,8 +238,13 @@ func (e *EventLoop) do_work() {
 	now := time.Now()
 
 	for !e.pending_task_queue.Empty() {
+		// Lock pending task queue.
 		task := e.pending_task_queue.Front()
 		e.pending_task_queue.Pop()
+		if task == nil {
+			break
+		}
+		// Unlock pending task queue.
 		if !task.time.After(now) {
 			task.closure()
 		} else {
@@ -204,7 +275,7 @@ func (e *EventLoop) do_delayed_work() {
 
 var g_current_ui_event_loop *UIEventLoop
 
-func CurrentUIEventLoop() *UIEventLoop {
+func MainUIEventLoop() *UIEventLoop {
 	if g_current_ui_event_loop == nil {
 		g_current_ui_event_loop = NewUIEventLoop()
 	}

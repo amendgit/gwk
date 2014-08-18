@@ -11,10 +11,10 @@ import (
 )
 
 type RootView struct {
-	View
+	BaseView
 	host_window *HostWindow
 
-	mouse_move_handler Viewer
+	mouse_move_handler View
 }
 
 func NewRootView(bounds Rectangle) *RootView {
@@ -24,7 +24,7 @@ func NewRootView(bounds Rectangle) *RootView {
 	return v
 }
 
-func (r *RootView) AddChild(child Viewer) {
+func (r *RootView) AddChild(child View) {
 	log.Printf("RootView.AddChild %v + %v", r.ID(), child.ID())
 	r.children = append(r.children, child)
 	child.SetParent(r)
@@ -63,22 +63,26 @@ func (r *RootView) Canvas() *Canvas {
 	if r.canvas == nil {
 		r.canvas = NewCanvas(r.W(), r.H())
 	}
+
 	canvas_bounds := r.canvas.Bounds()
 	if canvas_bounds.Dx() < r.W() || canvas_bounds.Dy() < r.H() {
 		r.canvas = NewCanvas(r.W(), r.H())
 	} else {
 		return r.canvas.SubCanvas(Rect(0, 0, r.W(), r.H()))
 	}
+
 	return r.canvas
 }
 
 func (r *RootView) DispatchDraw(dirty_rect Rectangle) {
 	children := r.Children()
-	if children != nil && len(children) < 1 {
+	if r.children_count() == 0 {
 		return
 	}
-	var dispatch_draw func(event *DrawEvent)
-	dispatch_draw = func(event *DrawEvent) {
+
+	// The inner function for dispatch draw.
+	var dispatch_draw_event func(event *DrawEvent)
+	dispatch_draw_event = func(event *DrawEvent) {
 		view := event.Owner
 		bounds := view.Bounds()
 		dirty_rect := event.DirtyRect.Intersect(bounds.Sub(bounds.Min))
@@ -112,7 +116,7 @@ func (r *RootView) DispatchDraw(dirty_rect Rectangle) {
 			}
 
 			// Dispatch draw.
-			dispatch_draw(child_draw_event)
+			dispatch_draw_event(child_draw_event)
 		}
 	}
 
@@ -122,10 +126,10 @@ func (r *RootView) DispatchDraw(dirty_rect Rectangle) {
 		DirtyRect: dirty_rect,
 		Canvas:    r.Canvas(),
 	}
-	dispatch_draw(event)
+	dispatch_draw_event(event)
 }
 
-func DispatchLayout(v Viewer) {
+func DispatchLayout(v View) {
 	if v.Layouter() != nil {
 		v.Layouter().Layout(v)
 	}
@@ -138,7 +142,7 @@ func DispatchLayout(v Viewer) {
 func (r *RootView) DispatchLayout() {
 	new_rect := r.Bounds()
 
-	if r.Children() == nil {
+	if r.children_count() == 0 {
 		return
 	}
 
@@ -148,7 +152,7 @@ func (r *RootView) DispatchLayout() {
 	r.DispatchDraw(r.Bounds())
 }
 
-func get_event_handler_for_point(v Viewer, pt Point) Viewer {
+func get_event_handler_for_point(v View, pt Point) View {
 	pt.X, pt.Y = pt.X-v.X(), pt.Y-v.Y()
 
 	for _, child := range v.Children() {
@@ -179,6 +183,7 @@ func (r *RootView) DispatchMouseMove(pt Point) {
 		}
 
 		if r.mouse_move_handler != nil {
+			mouse_event.Owner = r.mouse_move_handler
 			r.mouse_move_handler.OnMouseEnter(mouse_event)
 		}
 	}
@@ -188,8 +193,20 @@ func (r *RootView) DispatchMouseMove(pt Point) {
 	}
 }
 
+func (r *RootView) ScheduleDrawRect(dirty_rect Rectangle) {
+	r.UpdateRect(dirty_rect)
+}
+
 func (r *RootView) UpdateRect(rect Rectangle) {
 	rect = rect.Intersect(r.Bounds())
 	r.DispatchDraw(rect)
 	r.host_window.InvalidateRect(rect)
+}
+
+func (r *RootView) children_count() int {
+	if r.children == nil {
+		return 0
+	}
+
+	return len(r.children)
 }

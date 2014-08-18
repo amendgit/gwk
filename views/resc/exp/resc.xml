@@ -3,4 +3,5 @@
 	<Image id="panel_header">panel_header.3.png</Image>
 	<Image id="panel_border">panel_border.png</Image>
 	<Color id="panel_backgroud">131313</Color>
+	<String id="panel_title">Title</String>
 </Resource>

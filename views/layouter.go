@@ -11,7 +11,7 @@ import (
 // ============================================================================
 
 type Layouter interface {
-	Layout(view Viewer)
+	Layout(view View)
 }
 
 // ============================================================================
@@ -27,7 +27,7 @@ func init_layout() {
 
 // ============================================================================
 
-type LayoutFunc func(view Viewer)
+type LayoutFunc func(view View)
 
 type FuncLayouter struct {
 	layout_func LayoutFunc
@@ -39,13 +39,13 @@ func NewFuncLayouter(layout_func LayoutFunc) *FuncLayouter {
 	return layouter
 }
 
-func (f *FuncLayouter) Layout(view Viewer) {
+func (f *FuncLayouter) Layout(view View) {
 	f.layout_func(view)
 }
 
 // ============================================================================
 
-func VerticalLayoutFunc(view Viewer) {
+func VerticalLayoutFunc(view View) {
 	bounds := view.Bounds()
 	children := view.Children()
 

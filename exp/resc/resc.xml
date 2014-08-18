@@ -2,5 +2,6 @@
 <Resource>
 	<Image id="panel_header">panel_header.3.png</Image>
 	<Image id="panel_border">panel_border.png</Image>
+	<Image id="button_normal">button_normal.png</Image>
 	<Color id="panel_backgroud">131313</Color>
 </Resource>

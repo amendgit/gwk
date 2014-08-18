@@ -9,7 +9,7 @@ import (
 )
 
 type ImageView struct {
-	View
+	BaseView
 	clr color.RGBA
 }
 
@@ -31,17 +31,14 @@ func (v *ImageView) MockUp(ui UIMap) {
 	}
 }
 
-func (v *ImageView) Layout(parent Viewer) {
+func (v *ImageView) Layout(parent View) {
 
-}
-
-func (v *ImageView) OnMouseEnter(event *MouseEvent) {
-	// v.clr.R = uint8(rand.Intn(255) + 1)
-	// v.clr.G = uint8(rand.Intn(255) + 1)
-	// v.clr.B = uint8(rand.Intn(255) + 1)
-	// v.clr.A = uint8(rand.Intn(255) + 1)
 }
 
 func (v *ImageView) OnDraw(event *DrawEvent) {
 	event.Canvas.DrawColor(v.clr.R, v.clr.G, v.clr.B)
+}
+
+func (v *ImageView) SetColorRGB(r, g, b byte) {
+	v.clr.R, v.clr.G, v.clr.B = r, g, b
 }

@@ -1,7 +1,7 @@
 package views
 
 type Toolbar struct {
-	View
+	BaseView
 }
 
 func NewToolbar() *Toolbar {

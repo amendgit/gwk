@@ -42,7 +42,7 @@ func ui_event_loop_wnd_proc(hwnd sysc.Handle, msg uint32, warg uintptr, larg uin
 }
 
 func (u *UIEventLoop) init_message_wnd() {
-	const kUIEventLoopClass = "www.ustc.edu.cn/gwk/eventloop"
+	const kUIEventLoopClass = "www.ustc.edu.cn/sse/gwk/eventloop"
 
 	var wc sysc.WNDCLASSEX
 	wc.Size = uint32(unsafe.Sizeof(wc))
@@ -55,7 +55,7 @@ func (u *UIEventLoop) init_message_wnd() {
 		sysc.CreateWindowEx(0, syscall.StringToUTF16Ptr(kUIEventLoopClass), nil,
 			0, 0, 0, 0, 0, 0, 0, 0, 0)
 	if u.message_wnd == 0 {
-		log.Printf("Create HWND failed.")
+		log.Printf("Create eventloop message HWND failed.")
 	}
 }
 
@@ -76,10 +76,14 @@ func (u *UIEventLoop) Run() {
 			break
 		}
 	}
+
+	// message_pump_win.cc 268
+	// u.WaitForMoreWork()
 }
 
 func (u *UIEventLoop) process_next_ui_event() {
 	var msg sysc.MSG
+	// for sysc.GetMessage(&msg, sysc.NULL, 0, 0) != 0 {
 	for sysc.PeekMessage(&msg, sysc.NULL, 0, 0, sysc.PM_REMOVE) {
 		sysc.TranslateMessage(&msg)
 		sysc.DispatchMessage(&msg)

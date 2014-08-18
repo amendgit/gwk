@@ -4,28 +4,33 @@ import (
 	"log"
 )
 
-type NewViewFunc func() Viewer
+type NewViewFunc func() View
 
-var g_mockup_map map[string]NewViewFunc = make(map[string]NewViewFunc)
+var g_mock_up_map map[string]NewViewFunc = make(map[string]NewViewFunc)
 
-func init_mockup() {
-	g_mockup_map["view"] = func() Viewer { return NewView() }
-	g_mockup_map["image_view"] = func() Viewer { return NewImageView() }
-	g_mockup_map["button"] = func() Viewer { return NewButton() }
-	g_mockup_map["panel"] = func() Viewer { return NewPanel() }
-	g_mockup_map["main_frame"] = func() Viewer { return NewMainFrame() }
-	g_mockup_map["toolbar"] = func() Viewer { return NewToolbar() }
+func RegisterNewFuncToMockUp(typ string, new_func func() View) {
+	g_mock_up_map[typ] = new_func
 }
 
-func MockUp(ui UIMap) Viewer {
+func init_mockup() {
+	// Init the gobal mockup mapping.
+	g_mock_up_map["base_view"] = func() View { return NewBaseView() }
+	g_mock_up_map["image_view"] = func() View { return NewImageView() }
+	g_mock_up_map["button"] = func() View { return NewButton() }
+	g_mock_up_map["panel"] = func() View { return NewPanel() }
+	g_mock_up_map["main_frame"] = func() View { return NewMainFrame() }
+	g_mock_up_map["toolbar"] = func() View { return NewToolbar() }
+}
+
+func MockUp(ui UIMap) View {
 	typ, ok := ui.String("type")
 	if !ok {
 		return nil
 	}
 
-	var v Viewer
+	var v View
 
-	new_view_func := g_mockup_map[typ]
+	new_view_func := g_mock_up_map[typ]
 	if new_view_func != nil {
 		v = new_view_func()
 	} else {
@@ -57,7 +62,7 @@ func MockUp(ui UIMap) Viewer {
 		v.SetTop(intval)
 	}
 
-	// Process the layout attribute.
+	// process the layout attribute.
 	if val, ok := ui["layout"]; ok {
 		if str_val, ok := val.(string); ok {
 			if str_val == "vertical" {
@@ -72,6 +77,8 @@ func MockUp(ui UIMap) Viewer {
 		}
 	}
 
+	process_view_delegate(v, ui)
+
 	v.SetUIMap(ui)
 
 	// If the view has some view specifc attributes.
@@ -84,7 +91,7 @@ func MockUp(ui UIMap) Viewer {
 			continue
 		}
 		if typ == "custom_view" {
-			child_view, ok := child.Viewer("custom_view")
+			child_view, ok := child.View("custom_view")
 			if ok {
 				v.AddChild(child_view)
 			}
@@ -97,4 +104,17 @@ func MockUp(ui UIMap) Viewer {
 	}
 
 	return v
+}
+
+func hierarchy_mockup() {
+
+}
+
+func process_view_delegate(v View, ui UIMap) {
+	delegate_ui_map, ok := ui.UIMap("delegate")
+	if !ok {
+		return
+	}
+	delegate := NewBaseViewDelegate().InitWithUIMap(delegate_ui_map)
+	v.SetDelegate(delegate)
 }

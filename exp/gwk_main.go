@@ -36,8 +36,9 @@ func makeMainUIMap() UIMap {
 			},
 		},
 		"main_panel": UIMap{
-			"type":  "image_view",
-			"color": 0x606060,
+			"type":       "image_view",
+			"color":      0x606060,
+			"image_resc": "image_show_cat",
 			// "children": []UIMap{
 			// 	{
 			// 		"type":   "image_view",
@@ -60,6 +61,12 @@ func makeMainUIMap() UIMap {
 				},
 				{
 					"type": "panel",
+				},
+				{
+					"type": "button",
+					// "action": func() {
+					// 	return
+					// },
 				},
 			},
 		},

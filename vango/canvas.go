@@ -61,6 +61,10 @@ func (c *Canvas) Bounds() Rectangle {
 	return c.bounds
 }
 
+func (c *Canvas) LocalBounds() Rectangle {
+	return c.bounds.Sub(c.bounds.Min)
+}
+
 func (c *Canvas) SetBounds(bounds Rectangle) {
 	c.bounds = bounds
 }
@@ -138,102 +142,68 @@ func (dst *Canvas) DrawLine(from Point, to Point) {
 	return
 }
 
-func (dst *Canvas) DrawCanvas(x int, y int, src *Canvas, srcRc *Rectangle) {
-	if srcRc == nil {
-		var tmpRc = src.Bounds()
-		srcRc = &tmpRc
+func (dst *Canvas) DrawCanvas(x int, y int, src *Canvas) {
+	// 0 means src, 1 means dst.
+	// b0, b1 := src.Bounds(), dst.Bounds()
+	l0, l1 := src.LocalBounds(), dst.LocalBounds()
+	x0, y0, x1, y1 := 0, 0, x, y
+	i0, i1 := src.PixOffset(x0, y0), dst.PixOffset(x1, y1)
+	s0, s1 := src.Stride(), dst.Stride()
+	p0, p1 := src.Pix(), dst.Pix()
+
+	// the shared draw rect.
+	r := l0.Intersect(l1)
+	if r.Empty() {
+		return
 	}
 
-	var srcX, srcY = srcRc.Min.X, srcRc.Min.Y
-	var dstX, dstY = x, y
+	w, h := r.Dx(), r.Dy()
 
-	var bltW, bltH = srcRc.Dx(), srcRc.Dy()
-	if bltW > dst.Bounds().Dx()-x {
-		bltW = dst.Bounds().Dx() - x
-	}
-	if bltH > dst.Bounds().Dy()-y {
-		bltH = dst.Bounds().Dy() - y
-	}
-
-	var srcI = src.PixOffset(srcX, srcY)
-	var dstI = dst.PixOffset(dstX, dstY)
-
-	var srcPix = src.Pix()
-	var dstPix = dst.Pix()
-
-	var srcStride = src.Stride() * 4
-	var dstStride = dst.Stride() * 4
-
-	var i, j = 0, 0
-	for j < bltH {
-		i = 0
-		for i < bltW*4 {
-			// DIB
-			dstPix[dstI+i+0] = srcPix[srcI+i+0]
-			dstPix[dstI+i+1] = srcPix[srcI+i+1]
-			dstPix[dstI+i+2] = srcPix[srcI+i+2]
-			dstPix[dstI+i+3] = srcPix[srcI+i+3]
-			i += 4
+	// from src(x0, y0) draw |r| area to dst(x1, y1)
+	for j := 0; j < h; j++ {
+		for i := 0; i < w*4; i = i + 4 {
+			p1[i1+i+0] = p0[i0+i+0]
+			p1[i1+i+1] = p0[i0+i+1]
+			p1[i1+i+2] = p0[i0+i+2]
+			p1[i1+i+3] = p0[i0+i+3]
 		}
-		srcI = srcI + srcStride
-		dstI = dstI + dstStride
-		j++
-	}
-
-	if src.Opaque() && !dst.Opaque() {
-		dst.SetOpaque(true)
+		i0 = i0 + s0*4
+		i1 = i1 + s1*4
 	}
 }
 
-func (dst *Canvas) AlphaBlendCanvas(x int, y int, src *Canvas, srcRc *Rectangle) {
-	if srcRc == nil {
-		var tmpRc = src.Bounds()
-		srcRc = &tmpRc
+func (dst *Canvas) AlphaBlend(x int, y int, src *Canvas) {
+	// 0 means src, 1 means dst.
+	l0, l1 := src.LocalBounds(), dst.LocalBounds()
+	x0, y0, x1, y1 := 0, 0, x, y
+	i0, i1 := src.PixOffset(x0, y0), dst.PixOffset(x1, y1)
+	s0, s1 := src.Stride(), dst.Stride()
+	p0, p1 := src.Pix(), dst.Pix()
+
+	// the shared draw rect.
+	r := l0.Intersect(l1)
+	if r.Empty() {
+		return
 	}
 
-	var srcX, srcY = srcRc.Min.X, srcRc.Min.Y
-	var dstX, dstY = x, y
+	w, h := r.Dx(), r.Dy()
 
-	var bltW, bltH = srcRc.Dx(), srcRc.Dy()
+	// from src(x0, y0) draw |r| area to dst(x1, y1)
+	for j := 0; j < h; j++ {
+		for i := 0; i < w*4; i = i + 4 {
+			// http://archive.gamedev.net/archive/reference/articles/article817.html
+			r0, g0, b0 := p0[i0+i+0], p0[i0+i+1], p0[i0+i+2]
+			r1, g1, b1 := p1[i1+i+0], p1[i1+i+1], p1[i1+i+2]
 
-	var srcI = src.PixOffset(srcX, srcY)
-	var dstI = dst.PixOffset(dstX, dstY)
+			a := int32(p0[i0+i+3])
 
-	var srcPix = src.Pix()
-	var dstPix = dst.Pix()
-
-	var srcStride = src.Stride() * 4
-	var dstStride = dst.Stride() * 4
-
-	var i, j = 0, 0
-
-	for j < bltH {
-		i = 0
-		for i < bltW*4 {
-			var sa = srcPix[srcI+i+3]
-			if sa == 255 {
-				dstPix[dstI+i+0] = srcPix[srcI+i+0]
-				dstPix[dstI+i+1] = srcPix[srcI+i+1]
-				dstPix[dstI+i+2] = srcPix[srcI+i+2]
-				dstPix[dstI+i+3] = srcPix[srcI+i+3]
-			} else if sa != 0 {
-				// http://archive.gamedev.net/archive/reference/articles/article817.html
-				var sr, sg, sb = &srcPix[srcI+i+0], &srcPix[srcI+i+1], &srcPix[srcI+i+2]
-				var dr, dg, db = &dstPix[dstI+i+0], &dstPix[dstI+i+1], &dstPix[dstI+i+2]
-
-				var alpha = int32(srcPix[srcI+i+3])
-
-				*dr = byte((alpha*(int32(*sr)-int32(*dr)))/256) + *dr
-				*dg = byte((alpha*(int32(*sg)-int32(*dg)))/256) + *dg
-				*db = byte((alpha*(int32(*sb)-int32(*db)))/256) + *db
-
-				dstPix[dstI+i+3] = 255
-			}
-			i += 4
+			p1[i1+i+0] = byte((a*(int32(r0)-int32(r1)))/256) + r1
+			p1[i1+i+1] = byte((a*(int32(g0)-int32(g1)))/256) + g1
+			p1[i1+i+2] = byte((a*(int32(b0)-int32(b1)))/256) + b1
+			// p1[i1+i+3] = p1[i1+i+3]
 		}
-		srcI = srcI + srcStride
-		dstI = dstI + dstStride
-		j++
+		i0 = i0 + s0*4
+		i1 = i1 + s1*4
 	}
 }
 
@@ -254,7 +224,7 @@ func (dst *Canvas) DrawImageNRGBA(x int, y int, src *NRGBA, srcRc *Rectangle) {
 	var dstPix = dst.Pix()
 
 	var srcStride = src.Stride
-	var dstStride = dst.Stride()
+	var dstStride = dst.Stride() * 4
 
 	var i, j = 0, 0
 

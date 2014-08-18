@@ -11,12 +11,12 @@ import (
 )
 
 type MainFrame struct {
-	View
+	BaseView
 
-	left_panel  Viewer
-	right_panel Viewer
-	main_panel  Viewer
-	toolbar     Viewer
+	left_panel  View
+	right_panel View
+	main_panel  View
+	toolbar     View
 }
 
 func NewMainFrame() *MainFrame {
@@ -51,7 +51,7 @@ func (v *MainFrame) MockUp(ui UIMap) {
 	}
 }
 
-func (m *MainFrame) Layout(parent Viewer) {
+func (m *MainFrame) Layout(parent View) {
 	// m.Canvas().DrawTexture(m.Canvas().Bounds(), m.canvas_bkg, m.canvas_bkg.Bounds())
 	var r Rectangle
 

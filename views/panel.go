@@ -12,7 +12,7 @@ import (
 )
 
 type Panel struct {
-	View
+	BaseView
 }
 
 const (

@@ -14,6 +14,12 @@ import (
 	"os"
 )
 
+const (
+	kRescCanvas = iota
+	kRescString
+	kRescColor
+)
+
 type Resc interface {
 }
 
@@ -35,9 +41,10 @@ type Canvas3Resc struct {
 // }
 
 var g_id_resc_map map[string]Resc = make(map[string]Resc)
+var g_default_resc_filename string = "./resc/resc.xml"
 
 func LoadRescFile(filename string) {
-	file_content, err := ioutil.ReadFile("./resc/resc.xml")
+	file_content, err := ioutil.ReadFile(g_default_resc_filename)
 	d := xml.NewDecoder(bytes.NewBuffer(file_content))
 	t, err := d.Token()
 
@@ -101,16 +108,19 @@ func LoadCanvasFile(fd *os.File) *Canvas {
 	if err != nil {
 		return nil
 	}
+
 	if nrgba, ok := png.(*image.NRGBA); ok {
 		var canvas = NewCanvas(nrgba.Rect.Dx(), nrgba.Rect.Dy())
 		canvas.DrawImageNRGBA(0, 0, nrgba, nil)
-		canvas.SetOpaque(true)
+		canvas.SetOpaque(false)
 		return canvas
 	}
+
 	if rgba, ok := png.(*image.RGBA); ok {
 		var canvas = NewCanvas(rgba.Rect.Dx(), rgba.Rect.Dy())
 		canvas.DrawImageRGBA(0, 0, rgba, nil)
 		return canvas
 	}
+
 	return nil
 }
