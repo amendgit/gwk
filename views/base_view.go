@@ -11,7 +11,7 @@ type BaseView struct {
 
 	canvas *Canvas
 
-	x, y int // Relative to Parent.
+	x, y int // relative to parent
 	w, h int
 
 	children []View
@@ -102,23 +102,29 @@ func (v *BaseView) ToDeviceRect(rect Rectangle) Rectangle {
 
 func update_rect(v View, rect Rectangle) {
 	if v.Parent() == nil {
-		v.ScheduleDrawRect(rect)
+		v.ScheduleDrawInRect(rect)
 		return
 	}
 	rect = rect.Add(Pt(v.X(), v.Y()))
 	update_rect(v.Parent(), rect)
 }
 
-func (v *BaseView) ScheduleDraw() {
-	if v.Parent() != nil {
-		update_rect(v.Parent(), v.Bounds())
+func schedule_draw_in_rect(v View, rect Rectangle) {
+	if v.Parent() == nil {
+		// v must be RootView.
+		v.ScheduleDrawInRect(rect)
+	} else {
+		rect = rect.Add(Pt(v.X(), v.Y()))
+		schedule_draw_in_rect(v.Parent(), rect)
 	}
 }
 
-func (v *BaseView) ScheduleDrawRect(rect Rectangle) {
-	if v.Parent() != nil {
-		update_rect(v.Parent(), rect)
-	}
+func (v *BaseView) ScheduleDraw() {
+	v.ScheduleDrawInRect(v.LocalBounds())
+}
+
+func (v *BaseView) ScheduleDrawInRect(rect Rectangle) {
+	schedule_draw_in_rect(v, rect)
 }
 
 func (v *BaseView) X() int {

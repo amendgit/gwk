@@ -33,7 +33,7 @@ type View interface {
 	OnMouseLeave(event *MouseEvent)
 
 	ScheduleDraw()
-	ScheduleDrawRect(dirty Rectangle)
+	ScheduleDrawInRect(dirty Rectangle)
 
 	X() int
 	Y() int

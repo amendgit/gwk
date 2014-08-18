@@ -10,13 +10,13 @@ import (
 )
 
 func (h *HostWindow) OnHostPaint(ctxt NativeContext, dirty_rect image.Rectangle) {
-	var canvas = NewNativeCanvas(dirty_rect)
+	canvas := NewNativeCanvas(dirty_rect)
 	defer canvas.Release()
 
-	var canvas_rect = dirty_rect.Sub(dirty_rect.Min)
+	canvas_rect := dirty_rect.Sub(dirty_rect.Min)
 
-	canvas.DrawCanvas(canvas_rect.Min.X, canvas_rect.Min.Y,
-		h.root_view.Canvas())
+	canvas.DrawCanvas(canvas_rect.Min.X, canvas_rect.Min.Y, h.root_view.Canvas(),
+		dirty_rect)
 	canvas.BlitToContext(ctxt, dirty_rect.Min.X, dirty_rect.Min.Y, &canvas_rect)
 }
 

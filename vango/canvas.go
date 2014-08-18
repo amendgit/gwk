@@ -142,11 +142,11 @@ func (dst *Canvas) DrawLine(from Point, to Point) {
 	return
 }
 
-func (dst *Canvas) DrawCanvas(x int, y int, src *Canvas) {
+func (dst *Canvas) DrawCanvas(x int, y int, src *Canvas, src_rect Rectangle) {
 	// 0 means src, 1 means dst.
 	// b0, b1 := src.Bounds(), dst.Bounds()
 	l0, l1 := src.LocalBounds(), dst.LocalBounds()
-	x0, y0, x1, y1 := 0, 0, x, y
+	x0, y0, x1, y1 := src_rect.Min.X, src_rect.Min.Y, x, y
 	i0, i1 := src.PixOffset(x0, y0), dst.PixOffset(x1, y1)
 	s0, s1 := src.Stride(), dst.Stride()
 	p0, p1 := src.Pix(), dst.Pix()

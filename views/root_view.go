@@ -75,12 +75,13 @@ func (r *RootView) Canvas() *Canvas {
 }
 
 func (r *RootView) DispatchDraw(dirty_rect Rectangle) {
+	log.Printf("DispatchDraw %v", dirty_rect)
 	children := r.Children()
 	if r.children_count() == 0 {
 		return
 	}
 
-	// The inner function for dispatch draw.
+	// the inner function for dispatch draw.
 	var dispatch_draw_event func(event *DrawEvent)
 	dispatch_draw_event = func(event *DrawEvent) {
 		view := event.Owner
@@ -98,24 +99,24 @@ func (r *RootView) DispatchDraw(dirty_rect Rectangle) {
 
 		view_canvas := event.Canvas
 		for _, child := range view.Children() {
-			// Caculate the child dirty rectangle.
+			// caculate the child dirty rectangle.
 			child_dirty_rect := dirty_rect.Intersect(child.Bounds())
 			if child_dirty_rect.Empty() {
 				continue
 			}
 			child_dirty_rect = child_dirty_rect.Sub(child_dirty_rect.Min)
 
-			// Clip the canvas to child bounds.
+			// clip the canvas to child bounds.
 			child_canvas := view_canvas.SubCanvas(child.Bounds())
 
-			// Make a new draw event.
+			// make a new draw event.
 			child_draw_event := &DrawEvent{
 				Owner:     child,
 				DirtyRect: child_dirty_rect,
 				Canvas:    child_canvas,
 			}
 
-			// Dispatch draw.
+			// dispatch draw.
 			dispatch_draw_event(child_draw_event)
 		}
 	}
@@ -193,8 +194,8 @@ func (r *RootView) DispatchMouseMove(pt Point) {
 	}
 }
 
-func (r *RootView) ScheduleDrawRect(dirty_rect Rectangle) {
-	r.UpdateRect(dirty_rect)
+func (r *RootView) ScheduleDrawInRect(rect Rectangle) {
+	r.UpdateRect(rect)
 }
 
 func (r *RootView) UpdateRect(rect Rectangle) {
