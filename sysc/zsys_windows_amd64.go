@@ -8,38 +8,41 @@ import "syscall"
 
 var (
 	moduser32 = syscall.NewLazyDLL("user32.dll")
-	modgdi32  = syscall.NewLazyDLL("gdi32.dll")
+	modgdi32 = syscall.NewLazyDLL("gdi32.dll")
 
-	procCreateWindowExW    = moduser32.NewProc("CreateWindowExW")
-	procRegisterClassExW   = moduser32.NewProc("RegisterClassExW")
-	procShowWindow         = moduser32.NewProc("ShowWindow")
-	procUpdateWindow       = moduser32.NewProc("UpdateWindow")
-	procLoadIconW          = moduser32.NewProc("LoadIconW")
-	procLoadCursorW        = moduser32.NewProc("LoadCursorW")
-	procGetMessageW        = moduser32.NewProc("GetMessageW")
-	procTranslateMessage   = moduser32.NewProc("TranslateMessage")
-	procDispatchMessageW   = moduser32.NewProc("DispatchMessageW")
-	procGetClientRect      = moduser32.NewProc("GetClientRect")
-	procGetWindowRect      = moduser32.NewProc("GetWindowRect")
-	procGetDC              = moduser32.NewProc("GetDC")
-	procBeginPaint         = moduser32.NewProc("BeginPaint")
-	procEndPaint           = moduser32.NewProc("EndPaint")
-	procDrawTextExW        = moduser32.NewProc("DrawTextExW")
-	procPostQuitMessage    = moduser32.NewProc("PostQuitMessage")
-	procDefWindowProcW     = moduser32.NewProc("DefWindowProcW")
-	procGetUpdateRect      = moduser32.NewProc("GetUpdateRect")
-	procRedrawWindow       = moduser32.NewProc("RedrawWindow")
-	procInvalidateRect     = moduser32.NewProc("InvalidateRect")
-	procBitBlt             = modgdi32.NewProc("BitBlt")
-	procSetDIBitsToDevice  = modgdi32.NewProc("SetDIBitsToDevice")
-	procDeleteDC           = modgdi32.NewProc("DeleteDC")
+	procCreateWindowExW = moduser32.NewProc("CreateWindowExW")
+	procRegisterClassExW = moduser32.NewProc("RegisterClassExW")
+	procShowWindow = moduser32.NewProc("ShowWindow")
+	procUpdateWindow = moduser32.NewProc("UpdateWindow")
+	procLoadIconW = moduser32.NewProc("LoadIconW")
+	procLoadCursorW = moduser32.NewProc("LoadCursorW")
+	procGetMessageW = moduser32.NewProc("GetMessageW")
+	procPeekMessageW = moduser32.NewProc("PeekMessageW")
+	procTranslateMessage = moduser32.NewProc("TranslateMessage")
+	procDispatchMessageW = moduser32.NewProc("DispatchMessageW")
+	procGetClientRect = moduser32.NewProc("GetClientRect")
+	procGetWindowRect = moduser32.NewProc("GetWindowRect")
+	procGetDC = moduser32.NewProc("GetDC")
+	procBeginPaint = moduser32.NewProc("BeginPaint")
+	procEndPaint = moduser32.NewProc("EndPaint")
+	procDrawTextExW = moduser32.NewProc("DrawTextExW")
+	procPostQuitMessage = moduser32.NewProc("PostQuitMessage")
+	procDefWindowProcW = moduser32.NewProc("DefWindowProcW")
+	procGetUpdateRect = moduser32.NewProc("GetUpdateRect")
+	procRedrawWindow = moduser32.NewProc("RedrawWindow")
+	procInvalidateRect = moduser32.NewProc("InvalidateRect")
+	procMsgWaitForMultipleObjectsEx = moduser32.NewProc("MsgWaitForMultipleObjectsEx")
+	procBitBlt = modgdi32.NewProc("BitBlt")
+	procSetDIBitsToDevice = modgdi32.NewProc("SetDIBitsToDevice")
+	procDeleteDC = modgdi32.NewProc("DeleteDC")
 	procCreateCompatibleDC = modgdi32.NewProc("CreateCompatibleDC")
-	procSelectObject       = modgdi32.NewProc("SelectObject")
-	procDeleteObject       = modgdi32.NewProc("DeleteObject")
-	procGdiAplhaBlend      = modgdi32.NewProc("GdiAplhaBlend")
-	procCreateDIBSection   = modgdi32.NewProc("CreateDIBSection")
-	procGetWindowLongPtrW  = moduser32.NewProc("GetWindowLongPtrW")
-	procSetWindowLongPtrW  = moduser32.NewProc("SetWindowLongPtrW")
+	procSelectObject = modgdi32.NewProc("SelectObject")
+	procDeleteObject = modgdi32.NewProc("DeleteObject")
+	procGdiAplhaBlend = modgdi32.NewProc("GdiAplhaBlend")
+	procCreateDIBSection = modgdi32.NewProc("CreateDIBSection")
+	procGetWindowLongPtrW = moduser32.NewProc("GetWindowLongPtrW")
+	procSetWindowLongPtrW = moduser32.NewProc("SetWindowLongPtrW")
+
 )
 
 func CreateWindowEx(exStyle uint32, className *uint16, windowName *uint16, style uint32, x int, y int, width int, height int, wndParent Handle, menu Handle, instance Handle, param uintptr) (hwnd Handle, err error) {
@@ -109,6 +112,12 @@ func LoadCursor(instance Handle, cursorName *uint16) (hcursor Handle, err error)
 func GetMessage(msg *MSG, hwnd Handle, msgFilterMin uint32, msgFilterMax uint32) (EOL int) {
 	r0, _, _ := syscall.Syscall6(procGetMessageW.Addr(), 4, uintptr(unsafe.Pointer(msg)), uintptr(hwnd), uintptr(msgFilterMin), uintptr(msgFilterMax), 0, 0)
 	EOL = int(r0)
+	return
+}
+
+func PeekMessage(msg *MSG, hwnd Handle, msgFilterMin uint32, msgFilterMax uint32, removeMsg uint32) (has_msg bool) {
+	r0, _, _ := syscall.Syscall6(procPeekMessageW.Addr(), 5, uintptr(unsafe.Pointer(msg)), uintptr(hwnd), uintptr(msgFilterMin), uintptr(msgFilterMax), uintptr(removeMsg), 0)
+	has_msg = bool(r0 != 0)
 	return
 }
 
@@ -213,6 +222,12 @@ func InvalidateRect(hwnd Handle, rect *RECT, isErased int) (ok int) {
 	return
 }
 
+func MsgWaitForMultipleObjectsEx(nCount uint32, lpHandles *Handle, bWaitAll int32, dwMilliseconds uint32, bAlertable int32) (event uint32) {
+	r0, _, _ := syscall.Syscall6(procMsgWaitForMultipleObjectsEx.Addr(), 5, uintptr(nCount), uintptr(unsafe.Pointer(lpHandles)), uintptr(bWaitAll), uintptr(dwMilliseconds), uintptr(bAlertable), 0)
+	event = uint32(r0)
+	return
+}
+
 func BitBlt(hDC Handle, xDext int32, yDext int32, width int32, height int32, hDCSrc Handle, xSrc int32, ySrc int32, rop uint32) (err error) {
 	r1, _, e1 := syscall.Syscall9(procBitBlt.Addr(), 9, uintptr(hDC), uintptr(xDext), uintptr(yDext), uintptr(width), uintptr(height), uintptr(hDCSrc), uintptr(xSrc), uintptr(ySrc), uintptr(rop))
 	if r1 == 0 {
@@ -304,3 +319,5 @@ func SetWindowLongPtr(hwnd Handle, index int64, longptr uintptr) (oldLong uintpt
 	oldLong = uintptr(r0)
 	return
 }
+
+

@@ -7,9 +7,11 @@ package views
 import (
 	. "gwk/vango"
 	"image"
+	"log"
 )
 
 func (h *HostWindow) OnHostPaint(ctxt NativeContext, dirty_rect image.Rectangle) {
+	log.Printf("OnHostPaint")
 	canvas := NewNativeCanvas(dirty_rect)
 	defer canvas.Release()
 

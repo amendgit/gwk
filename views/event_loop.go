@@ -188,38 +188,13 @@ type EventLoop struct {
 	should_quit        bool
 	pending_task_queue *task_queue_t
 	delayed_task_queue *priority_task_queue_t
+	pump               event_pump_t
 	// pending_task_queue_lock sync.Lock
 }
 
 func (e *EventLoop) init() {
 	e.pending_task_queue = new_task_queue()
 	e.delayed_task_queue = new_priority_task_queue()
-}
-
-func (e *EventLoop) Run() {
-	for {
-		if e.should_quit {
-			break
-		}
-
-		e.do_work()
-		if e.should_quit {
-			break
-		}
-
-		e.do_delayed_work()
-		if e.should_quit {
-			break
-		}
-	}
-}
-
-func (e *EventLoop) PostTask(closure Closure) {
-	e.add_to_pending_task_queue(closure, 0)
-}
-
-func (e *EventLoop) PostDelayedTask(closure Closure, delay_misc int64) {
-	e.add_to_pending_task_queue(closure, delay_misc)
 }
 
 func (e *EventLoop) add_to_pending_task_queue(closure Closure, delay_misc int64) {
@@ -230,11 +205,22 @@ func (e *EventLoop) add_to_pending_task_queue(closure Closure, delay_misc int64)
 	// Unlock pending task queue.
 }
 
+func (e *EventLoop) PostTask(closure Closure) {
+	e.add_to_pending_task_queue(closure, 0)
+}
+
+func (e *EventLoop) PostDelayedTask(closure Closure, delay_misc int64) {
+	e.add_to_pending_task_queue(closure, delay_misc)
+}
+
 func (e *EventLoop) ShouldQuit() {
 	e.should_quit = true
 }
 
-func (e *EventLoop) do_work() {
+//
+// EventPumpDelegate
+//
+func (e *EventLoop) DoWork() bool {
 	now := time.Now()
 
 	for !e.pending_task_queue.Empty() {
@@ -244,17 +230,21 @@ func (e *EventLoop) do_work() {
 		// unlock pending task queue.
 
 		if !task.time.After(now) {
+			// TODO(nest): in case of the nest work. message_loop.cc 617
 			task.closure()
+			return true
 		} else {
 			e.delayed_task_queue.Push(task)
 			if e.delayed_task_queue.Top() == task {
-				// Schedule delayed work.
+				e.pump.ScheduleDelayedWork(e.delayed_task_queue.Top().time)
 			}
 		}
 	}
+
+	return false
 }
 
-func (e *EventLoop) do_delayed_work() {
+func (e *EventLoop) DoDelayedWork() bool {
 	now := time.Now()
 
 	for !e.delayed_task_queue.Empty() {
@@ -266,6 +256,25 @@ func (e *EventLoop) do_delayed_work() {
 			break
 		}
 	}
+
+	return false
+}
+
+// ============================================================================
+
+type UIEventLoop struct {
+	EventLoop
+}
+
+func NewUIEventLoop() *UIEventLoop {
+	u := new(UIEventLoop)
+	u.EventLoop.init()
+	u.pump = new_ui_event_pump(u)
+	return u
+}
+
+func (u *UIEventLoop) Run() {
+	u.pump.Run()
 }
 
 // ============================================================================

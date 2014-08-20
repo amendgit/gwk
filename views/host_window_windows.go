@@ -208,6 +208,10 @@ func (h *HostWindow) UpdateWindow() {
 }
 
 func (h *HostWindow) InvalidateRect(r image.Rectangle) {
+	log.Printf("invaldate rect %v", r)
 	var rect = RECT{uint32(r.Min.X), uint32(r.Min.Y), uint32(r.Max.X), uint32(r.Max.Y)}
-	InvalidateRect(h.hwnd, &rect, FALSE)
+	ok := InvalidateRect(h.hwnd, &rect, FALSE)
+	if ok == 0 {
+		log.Printf("WARNNING: InvalidateRect failed")
+	}
 }

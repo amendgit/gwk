@@ -31,6 +31,8 @@ var (
 	procGetUpdateRect = moduser32.NewProc("GetUpdateRect")
 	procRedrawWindow = moduser32.NewProc("RedrawWindow")
 	procInvalidateRect = moduser32.NewProc("InvalidateRect")
+	procMsgWaitForMultipleObjectsEx = moduser32.NewProc("MsgWaitForMultipleObjectsEx")
+	procSetTimer = moduser32.NewProc("SetTimer")
 	procBitBlt = modgdi32.NewProc("BitBlt")
 	procSetDIBitsToDevice = modgdi32.NewProc("SetDIBitsToDevice")
 	procDeleteDC = modgdi32.NewProc("DeleteDC")
@@ -218,6 +220,18 @@ func RedrawWindow(hwnd Handle, rect *RECT, hrgn Handle, flags uint32) {
 func InvalidateRect(hwnd Handle, rect *RECT, isErased int) (ok int) {
 	r0, _, _ := syscall.Syscall(procInvalidateRect.Addr(), 3, uintptr(hwnd), uintptr(unsafe.Pointer(rect)), uintptr(isErased))
 	ok = int(r0)
+	return
+}
+
+func MsgWaitForMultipleObjectsEx(nCount uint32, lpHandles *Handle, bWaitAll int32, dwMilliseconds uint32, bAlertable int32) (event uint32) {
+	r0, _, _ := syscall.Syscall6(procMsgWaitForMultipleObjectsEx.Addr(), 5, uintptr(nCount), uintptr(unsafe.Pointer(lpHandles)), uintptr(bWaitAll), uintptr(dwMilliseconds), uintptr(bAlertable), 0)
+	event = uint32(r0)
+	return
+}
+
+func SetTimer(hWnd Handle, nIDEvent uintptr, uElapse uint, lpTimerFunc uintptr) (rIDEvent uintptr) {
+	r0, _, _ := syscall.Syscall6(procSetTimer.Addr(), 4, uintptr(hWnd), uintptr(nIDEvent), uintptr(uElapse), uintptr(lpTimerFunc), 0, 0)
+	rIDEvent = uintptr(r0)
 	return
 }
 

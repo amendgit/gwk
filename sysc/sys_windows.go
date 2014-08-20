@@ -16,6 +16,8 @@ func MAKEINTRESOURCE(n int32) *uint16 {
 	return (*uint16)(unsafe.Pointer(uintptr(n)))
 }
 
+// DWORD: uint32, HANDLE: Handle, BOOL: int32
+
 //sys	CreateWindowEx(exStyle uint32, className *uint16, windowName *uint16, style uint32, x int, y int, width int, height int, wndParent Handle, menu Handle, instance Handle, param uintptr) (hwnd Handle, err error) = user32.CreateWindowExW
 //sys	RegisterClassEx(wcx *WNDCLASSEX) (atom uint16, err error) = user32.RegisterClassExW
 //sys	ShowWindow(hwnd Handle, cmdShow int32) (visiable int) = user32.ShowWindow
@@ -37,6 +39,8 @@ func MAKEINTRESOURCE(n int32) *uint16 {
 //sys	GetUpdateRect(hwnd Handle, rect *RECT, erase int32) (isempty int32) = user32.GetUpdateRect
 //sys	RedrawWindow(hwnd Handle, rect *RECT, hrgn Handle, flags uint32) = user32.RedrawWindow
 //sys	InvalidateRect(hwnd Handle, rect *RECT, isErased int) (ok int) = user32.InvalidateRect
+//sys	MsgWaitForMultipleObjectsEx(nCount uint32, lpHandles *Handle, bWaitAll int32, dwMilliseconds uint32, bAlertable int32) (event uint32) = user32.MsgWaitForMultipleObjectsEx
+//sys	SetTimer(hWnd Handle, nIDEvent uintptr, uElapse uint, lpTimerFunc uintptr) (rIDEvent uintptr) = user32.SetTimer
 
 //sys	BitBlt(hDC Handle, xDext int32, yDext int32, width int32, height int32, hDCSrc Handle, xSrc int32, ySrc int32, rop uint32) (err error) = gdi32.BitBlt
 //sys	SetDIBitsToDevice(hDC Handle, xDext int32, yDest int32, width int32, height int32, xSrc int32, ySrc int32, startScan uint32, scanLines uint32, bits uintptr, bmi *BITMAPINFO, colorUse uint32) (lines int32) = gdi32.SetDIBitsToDevice
