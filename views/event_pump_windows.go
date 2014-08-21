@@ -5,17 +5,17 @@ package views
 //
 
 import (
-	"gwk/sysc"
+	. "gwk/sysc" // it's ok here.
 	"log"
 	"syscall"
 	"time"
 	"unsafe"
 )
 
-const kMsgHaveWork = sysc.WM_USER + 1
+const kMsgHaveWork = WM_USER + 1
 
 type ui_event_pump_t struct {
-	message_wnd       sysc.Handle
+	message_wnd       Handle
 	delayed_work_time time.Time
 	delegate          event_pump_delegate_t
 	should_quit       bool
@@ -106,13 +106,13 @@ func (u *ui_event_pump_t) ScheduleDelayedWork(delayed_work_time time.Time) {
 	//
 	u.delayed_work_time = delayed_work_time
 	delay_msec := u.get_current_delay()
-	if delay_msec < sysc.USER_TIMER_MINIMUM {
-		delay_msec = sysc.USER_TIMER_MINIMUM
+	if delay_msec < USER_TIMER_MINIMUM {
+		delay_msec = USER_TIMER_MINIMUM
 	}
 
 	// Create a WM_TIMER event that will wake us up to check for any pending
 	// timers (in case we are running within a nested, external sub-pump).
-	ret := sysc.SetTimer(u.message_wnd, uintptr(unsafe.Pointer(u)), uint(delay_msec), 0)
+	ret := SetTimer(u.message_wnd, uintptr(unsafe.Pointer(u)), uint(delay_msec), 0)
 
 	if ret != 0 {
 		return
@@ -131,28 +131,28 @@ func (u *ui_event_pump_t) handle_timer_msg() {
 
 }
 
-func ui_event_loop_wnd_proc(hwnd sysc.Handle, msg uint32, warg uintptr, larg uintptr) uintptr {
+func ui_event_loop_wnd_proc(hwnd Handle, msg uint32, warg uintptr, larg uintptr) uintptr {
 	switch msg {
 	case kMsgHaveWork:
 		(*ui_event_pump_t)(unsafe.Pointer(warg)).handle_work_msg()
-	case sysc.WM_TIMER:
+	case WM_TIMER:
 		(*ui_event_pump_t)(unsafe.Pointer(warg)).handle_timer_msg()
 	}
-	return sysc.DefWindowProc(hwnd, msg, warg, larg)
+	return DefWindowProc(hwnd, msg, warg, larg)
 }
 
 func (u *ui_event_pump_t) init_message_wnd() {
 	const kEventPumpClass = "www.ustc.edu.cn/sse/gwk/eventloop"
 
-	var wc sysc.WNDCLASSEX
+	var wc WNDCLASSEX
 	wc.Size = uint32(unsafe.Sizeof(wc))
 	wc.FnWndProc = syscall.NewCallback(ui_event_loop_wnd_proc)
-	wc.HInstance = sysc.NULL
+	wc.HInstance = NULL
 	wc.ClassName = syscall.StringToUTF16Ptr(kEventPumpClass)
-	sysc.RegisterClassEx(&wc)
+	RegisterClassEx(&wc)
 
 	u.message_wnd, _ =
-		sysc.CreateWindowEx(0, syscall.StringToUTF16Ptr(kEventPumpClass), nil,
+		CreateWindowEx(0, syscall.StringToUTF16Ptr(kEventPumpClass), nil,
 			0, 0, 0, 0, 0, 0, 0, 0, 0)
 	if u.message_wnd == 0 {
 		log.Printf("ERROR: create eventloop message_wnd failed.")
@@ -178,13 +178,13 @@ func (u *ui_event_pump_t) get_current_delay() int {
 func (u *ui_event_pump_t) wait_for_work() {
 	delay := u.get_current_delay()
 	if delay < 0 {
-		delay = int(^uint(0) >> 1)
+		delay = int(^uint(0) >> 1) // INT_MAX
 	}
 
-	result := sysc.MsgWaitForMultipleObjectsEx(0, nil, int32(delay),
-		sysc.QS_ALLINPUT, sysc.MWMO_INPUTAVAILABLE)
+	result := MsgWaitForMultipleObjectsEx(0, nil, int32(delay),
+		QS_ALLINPUT, MWMO_INPUTAVAILABLE)
 
-	if result == sysc.WAIT_OBJECT_0 {
+	if result == WAIT_OBJECT_0 {
 		// A WM_* message is available.
 		// If a parent child relationship exists between windows across threads
 		// then their thread inputs are implicitly attached.
@@ -196,11 +196,11 @@ func (u *ui_event_pump_t) wait_for_work() {
 		// causing us to enter a tight loop at times.
 		// The WaitMessage call below is a workaround to give the child window
 		// some time to process its input messages.
-		var msg sysc.MSG
-		queue_status := sysc.GetQueueStatus(sysc.QS_MOUSE)
-		if (sysc.HIWORD(queue_status)&sysc.QS_MOUSE) != 0 &&
-			!sysc.PeekMessage(&msg, sysc.NULL, sysc.WM_MOUSEFIRST, sysc.WM_MOUSELAST, sysc.PM_NOREMOVE) {
-			sysc.WaitMessage()
+		var msg MSG
+		queue_status := GetQueueStatus(QS_MOUSE)
+		if (HIWORD(queue_status)&QS_MOUSE) != 0 &&
+			!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_NOREMOVE) {
+			WaitMessage()
 		}
 		return
 	}
@@ -213,22 +213,22 @@ func (u *ui_event_pump_t) process_next_ui_event() bool {
 	// case to ensure that the message loop peeks again instead of calling
 	// MsgWaitForMultipleObjectsEx again.
 	var sent_messages_in_queue = false
-	queue_status := sysc.GetQueueStatus(sysc.QS_SENDMESSAGE)
-	if (sysc.HIWORD(queue_status) & sysc.QS_SENDMESSAGE) != 0 {
+	queue_status := GetQueueStatus(QS_SENDMESSAGE)
+	if (HIWORD(queue_status) & QS_SENDMESSAGE) != 0 {
 		sent_messages_in_queue = true
 	}
 
-	var msg sysc.MSG
-	if sysc.PeekMessage(&msg, sysc.NULL, 0, 0, sysc.PM_REMOVE) {
+	var msg MSG
+	if PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) {
 		return u.process_message(&msg)
 	}
 
 	return sent_messages_in_queue
 }
 
-func (u *ui_event_pump_t) process_message(msg *sysc.MSG) bool {
-	sysc.TranslateMessage(msg)
-	sysc.DispatchMessage(msg)
+func (u *ui_event_pump_t) process_message(msg *MSG) bool {
+	TranslateMessage(msg)
+	DispatchMessage(msg)
 	return true
 }
 
