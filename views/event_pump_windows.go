@@ -214,12 +214,16 @@ func (u *ui_event_pump_t) process_next_ui_event() bool {
 
 	var msg sysc.MSG
 	if sysc.PeekMessage(&msg, sysc.NULL, 0, 0, sysc.PM_REMOVE) {
-		// return ProcessMessageHelper(msg);
-		sysc.TranslateMessage(&msg)
-		sysc.DispatchMessage(&msg)
+		return u.process_message(&msg)
 	}
 
 	return sent_messages_in_queue
+}
+
+func (u *ui_event_pump_t) process_message(msg *sysc.MSG) bool {
+	sysc.TranslateMessage(msg)
+	sysc.DispatchMessage(msg)
+	return true
 }
 
 // bool MessagePumpForUI::ProcessMessageHelper(const MSG& msg) {

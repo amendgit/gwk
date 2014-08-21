@@ -10,14 +10,14 @@ import (
 type Closure func()
 
 type Task struct {
-	closure Closure
-	time    time.Time
+	closure          Closure
+	delayed_run_time time.Time
 }
 
 func NewTask(closure Closure, time time.Time) *Task {
 	task := new(Task)
 	task.closure = closure
-	task.time = time
+	task.delayed_run_time = time
 	return task
 }
 
@@ -126,7 +126,7 @@ func (t *priority_task_queue_t) Push(task *Task) {
 	i1 := int(i0 / 2)
 
 	// The node in the tree is begin at 1.
-	for i0 != 1 && t.data[i0].time.Before(t.data[i1].time) {
+	for i0 != 1 && t.higher_priority_than(i0, i1) {
 		t.data[i0], t.data[i1] = t.data[i1], t.data[i0]
 		i0 = i1
 		i1 = i0 / 2
@@ -153,13 +153,14 @@ func (t *priority_task_queue_t) Pop() {
 			break
 		}
 
-		i := l
-		r := l + 1
-		if r < n && t.data[r].time.Before(t.data[l].time) {
+		// compare the right with left.
+		i, r := l, l+1
+		if r < n && t.higher_priority_than(r, l) {
 			i = r
 		}
 
-		if t.data[i].time.Before(t.data[p].time) {
+		// compare the highter child with parent.
+		if t.higher_priority_than(i, p) {
 			t.data[p], t.data[l] = t.data[l], t.data[p]
 			p = i
 		} else {
@@ -172,6 +173,10 @@ func (t *priority_task_queue_t) Pop() {
 
 func (t *priority_task_queue_t) Count() int {
 	return t.count
+}
+
+func (t *priority_task_queue_t) higher_priority_than(i0, i1 int) bool {
+	return t.data[i0].delayed_run_time.Before(t.data[i1].delayed_run_time)
 }
 
 func (t *priority_task_queue_t) debug_check() bool {
@@ -230,7 +235,7 @@ func (e *EventLoop) DoWork() bool {
 		e.pending_task_queue.Pop()
 		// unlock pending task queue.
 
-		if !task.time.After(now) {
+		if !task.delayed_run_time.After(now) {
 			// TODO(nest): in case of the nest work. message_loop.cc 617
 			task.closure()
 			return true
@@ -238,7 +243,7 @@ func (e *EventLoop) DoWork() bool {
 			e.delayed_task_queue.Push(task)
 			// If we changed the topmost task, then it is time to reschedule.
 			if e.delayed_task_queue.Top() == task {
-				e.pump.ScheduleDelayedWork(e.delayed_task_queue.Top().time)
+				e.pump.ScheduleDelayedWork(e.delayed_task_queue.Top().delayed_run_time)
 			}
 		}
 	}
@@ -260,7 +265,7 @@ func (e *EventLoop) DoDelayedWork(next_delayed_work_time *time.Time) bool {
 	// that are ready to run before calling it again.  As a result, the more we
 	// fall behind (and have a lot of ready-to-run delayed tasks), the more
 	// efficient we'll be at handling the tasks.
-	next_run_time := e.delayed_task_queue.Top().time
+	next_run_time := e.delayed_task_queue.Top().delayed_run_time
 	if next_run_time.After(e.recent_time) {
 		// get a better view of Now();
 		e.recent_time = time.Now()
@@ -274,7 +279,7 @@ func (e *EventLoop) DoDelayedWork(next_delayed_work_time *time.Time) bool {
 	e.delayed_task_queue.Pop()
 
 	if !e.delayed_task_queue.Empty() {
-		*next_delayed_work_time = e.delayed_task_queue.Top().time
+		*next_delayed_work_time = e.delayed_task_queue.Top().delayed_run_time
 	}
 
 	// DeferOrRunPendingTask()
