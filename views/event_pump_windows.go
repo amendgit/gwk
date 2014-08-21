@@ -1,5 +1,9 @@
 package views
 
+//
+// @see message_pump_win.cc
+//
+
 import (
 	"gwk/sysc"
 	"log"
@@ -34,21 +38,39 @@ func new_ui_event_pump(delegate event_pump_delegate_t) *ui_event_pump_t {
 //
 func (u *ui_event_pump_t) Run() {
 	for {
-		u.process_next_ui_event()
+		more_work_is_plausible := u.process_next_ui_event()
 		if u.should_quit {
 			break
 		}
 
-		u.delegate.DoWork()
+		more_work := u.delegate.DoWork()
+		more_work_is_plausible = more_work_is_plausible || more_work
 		if u.should_quit {
 			break
 		}
 
-		u.delegate.DoDelayedWork()
+		var next_delayed_work_time time.Time
+		more_delayed_work := u.delegate.DoDelayedWork(&next_delayed_work_time)
+		more_work_is_plausible = more_work_is_plausible || more_delayed_work
+		// If we did not process any delayed work, then we can assume that our
+		// existing WM_TIMER if any will fire when delayed work should run.  We
+		// don't want to disturb that timer if it is already in flight.  However,
+		// if we did do all remaining delayed work, then lets kill the WM_TIMER.
+		// if (more_work_is_plausible && delayed_work_time_.is_null())
+		//   KillTimer(message_hwnd_, reinterpret_cast<UINT_PTR>(this));
 		if u.should_quit {
 			break
 		}
 
+		if more_work_is_plausible {
+			continue
+		}
+
+		// more_work_is_plausible = state_->delegate->DoIdleWork();
+		//     if (state_->should_quit)
+		// 	       break;
+
+		// Wait (sleep) until we have work to do again.
 		u.wait_for_work()
 	}
 }
@@ -180,11 +202,56 @@ func (u *ui_event_pump_t) wait_for_work() {
 
 }
 
-func (u *ui_event_pump_t) process_next_ui_event() {
+func (u *ui_event_pump_t) process_next_ui_event() bool {
+	// If there are sent messages in the queue then PeekMessage internally
+	// dispatches the message and returns false. We return true in this
+	// case to ensure that the message loop peeks again instead of calling
+	// MsgWaitForMultipleObjectsEx again.
+	var sent_messages_in_queue = false
+	// DWORD queue_status = GetQueueStatus(QS_SENDMESSAGE);
+	// if (HIWORD(queue_status) & QS_SENDMESSAGE)
+	//   sent_messages_in_queue = true;
+
 	var msg sysc.MSG
-	// for sysc.GetMessage(&msg, sysc.NULL, 0, 0) != 0 {
-	for sysc.PeekMessage(&msg, sysc.NULL, 0, 0, sysc.PM_REMOVE) {
+	if sysc.PeekMessage(&msg, sysc.NULL, 0, 0, sysc.PM_REMOVE) {
+		// return ProcessMessageHelper(msg);
 		sysc.TranslateMessage(&msg)
 		sysc.DispatchMessage(&msg)
 	}
+
+	return sent_messages_in_queue
 }
+
+// bool MessagePumpForUI::ProcessMessageHelper(const MSG& msg) {
+//   TRACE_EVENT1("base", "MessagePumpForUI::ProcessMessageHelper",
+//                "message", msg.message);
+//   if (WM_QUIT == msg.message) {
+//     // Repost the QUIT message so that it will be retrieved by the primary
+//     // GetMessage() loop.
+//     state_->should_quit = true;
+//     PostQuitMessage(static_cast<int>(msg.wParam));
+//     return false;
+//   }
+
+//   // While running our main message pump, we discard kMsgHaveWork messages.
+//   if (msg.message == kMsgHaveWork && msg.hwnd == message_hwnd_)
+//     return ProcessPumpReplacementMessage();
+
+//   if (CallMsgFilter(const_cast<MSG*>(&msg), kMessageFilterCode))
+//     return true;
+
+//   WillProcessMessage(msg);
+
+//   if (!message_filter_->ProcessMessage(msg)) {
+//     if (state_->dispatcher) {
+//       if (!state_->dispatcher->Dispatch(msg))
+//         state_->should_quit = true;
+//     } else {
+//       TranslateMessage(&msg);
+//       DispatchMessage(&msg);
+//     }
+//   }
+
+//   DidProcessMessage(msg);
+//   return true;
+// }

@@ -189,6 +189,7 @@ type EventLoop struct {
 	pending_task_queue *task_queue_t
 	delayed_task_queue *priority_task_queue_t
 	pump               event_pump_t
+	recent_time        time.Time
 	// pending_task_queue_lock sync.Lock
 }
 
@@ -235,27 +236,49 @@ func (e *EventLoop) DoWork() bool {
 			return true
 		} else {
 			e.delayed_task_queue.Push(task)
+			// If we changed the topmost task, then it is time to reschedule.
 			if e.delayed_task_queue.Top() == task {
 				e.pump.ScheduleDelayedWork(e.delayed_task_queue.Top().time)
 			}
 		}
 	}
 
+	// nothing happened.
 	return false
 }
 
-func (e *EventLoop) DoDelayedWork() bool {
-	now := time.Now()
+func (e *EventLoop) DoDelayedWork(next_delayed_work_time *time.Time) bool {
+	if e.delayed_task_queue.Empty() {
+		e.recent_time = time.Now()
+		*next_delayed_work_time = e.recent_time
+		return false
+	}
 
-	for !e.delayed_task_queue.Empty() {
-		task := e.delayed_task_queue.Top()
-		if !task.time.After(now) {
-			e.delayed_task_queue.Pop()
-			task.closure()
-		} else {
-			break
+	// When we "fall behind," there will be a lot of tasks in the delayed work
+	// queue that are ready to run.  To increase efficiency when we fall behind,
+	// we will only call Time::Now() intermittently, and then process all tasks
+	// that are ready to run before calling it again.  As a result, the more we
+	// fall behind (and have a lot of ready-to-run delayed tasks), the more
+	// efficient we'll be at handling the tasks.
+	next_run_time := e.delayed_task_queue.Top().time
+	if next_run_time.After(e.recent_time) {
+		// get a better view of Now();
+		e.recent_time = time.Now()
+		if next_run_time.After(e.recent_time) {
+			*next_delayed_work_time = e.recent_time
+			return false
 		}
 	}
+
+	task := e.delayed_task_queue.Top()
+	e.delayed_task_queue.Pop()
+
+	if !e.delayed_task_queue.Empty() {
+		*next_delayed_work_time = e.delayed_task_queue.Top().time
+	}
+
+	// DeferOrRunPendingTask()
+	task.closure()
 
 	return false
 }

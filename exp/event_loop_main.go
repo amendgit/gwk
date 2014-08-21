@@ -30,9 +30,9 @@ func make_main_ui_map() views.UIMap {
 							iv, _ := event.Owner.(*views.ImageView)
 							iv.SetColorRGB(byte(rand.Intn(255)), byte(rand.Intn(255)), byte(rand.Intn(255)))
 							iv.ScheduleDraw()
-							views.MainUIEventLoop().PostDelayedTask(funny_task, 500)
+							views.MainUIEventLoop().PostDelayedTask(funny_task, 1000)
 						}
-						views.MainUIEventLoop().PostDelayedTask(funny_task, 500)
+						views.MainUIEventLoop().PostDelayedTask(funny_task, 1000)
 					},
 				},
 			},

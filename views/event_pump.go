@@ -6,7 +6,7 @@ import (
 
 type event_pump_delegate_t interface {
 	DoWork() bool
-	DoDelayedWork() bool
+	DoDelayedWork(next_delayed_work_time *time.Time) bool
 }
 
 type event_pump_t interface {
