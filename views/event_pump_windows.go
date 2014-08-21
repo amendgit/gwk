@@ -34,7 +34,7 @@ func new_ui_event_pump(delegate event_pump_delegate_t) *ui_event_pump_t {
 }
 
 //
-// event_pump_t
+// event_pump_t methods
 //
 func (u *ui_event_pump_t) Run() {
 	for {
@@ -155,7 +155,7 @@ func (u *ui_event_pump_t) init_message_wnd() {
 		sysc.CreateWindowEx(0, syscall.StringToUTF16Ptr(kEventPumpClass), nil,
 			0, 0, 0, 0, 0, 0, 0, 0, 0)
 	if u.message_wnd == 0 {
-		log.Printf("Create eventloop message HWND failed.")
+		log.Printf("ERROR: create eventloop message_wnd failed.")
 	}
 }
 
@@ -196,8 +196,13 @@ func (u *ui_event_pump_t) wait_for_work() {
 		// causing us to enter a tight loop at times.
 		// The WaitMessage call below is a workaround to give the child window
 		// some time to process its input messages.
-		// var msg sysc.MSG
-		// queue_status := sysc.GetQueueStatus(sysc.QS_MOUSE)
+		var msg sysc.MSG
+		queue_status := sysc.GetQueueStatus(sysc.QS_MOUSE)
+		if (sysc.HIWORD(queue_status)&sysc.QS_MOUSE) != 0 &&
+			!sysc.PeekMessage(&msg, sysc.NULL, sysc.WM_MOUSEFIRST, sysc.WM_MOUSELAST, sysc.PM_NOREMOVE) {
+			sysc.WaitMessage()
+		}
+		return
 	}
 
 }
@@ -208,9 +213,10 @@ func (u *ui_event_pump_t) process_next_ui_event() bool {
 	// case to ensure that the message loop peeks again instead of calling
 	// MsgWaitForMultipleObjectsEx again.
 	var sent_messages_in_queue = false
-	// DWORD queue_status = GetQueueStatus(QS_SENDMESSAGE);
-	// if (HIWORD(queue_status) & QS_SENDMESSAGE)
-	//   sent_messages_in_queue = true;
+	queue_status := sysc.GetQueueStatus(sysc.QS_SENDMESSAGE)
+	if (sysc.HIWORD(queue_status) & sysc.QS_SENDMESSAGE) != 0 {
+		sent_messages_in_queue = true
+	}
 
 	var msg sysc.MSG
 	if sysc.PeekMessage(&msg, sysc.NULL, 0, 0, sysc.PM_REMOVE) {

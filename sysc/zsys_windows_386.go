@@ -33,6 +33,8 @@ var (
 	procInvalidateRect = moduser32.NewProc("InvalidateRect")
 	procMsgWaitForMultipleObjectsEx = moduser32.NewProc("MsgWaitForMultipleObjectsEx")
 	procSetTimer = moduser32.NewProc("SetTimer")
+	procGetQueueStatus = moduser32.NewProc("GetQueueStatus")
+	procWaitMessage = moduser32.NewProc("WaitMessage")
 	procBitBlt = modgdi32.NewProc("BitBlt")
 	procSetDIBitsToDevice = modgdi32.NewProc("SetDIBitsToDevice")
 	procDeleteDC = modgdi32.NewProc("DeleteDC")
@@ -232,6 +234,18 @@ func MsgWaitForMultipleObjectsEx(nCount uint32, lpHandles *Handle, bWaitAll int3
 func SetTimer(hWnd Handle, nIDEvent uintptr, uElapse uint, lpTimerFunc uintptr) (rIDEvent uintptr) {
 	r0, _, _ := syscall.Syscall6(procSetTimer.Addr(), 4, uintptr(hWnd), uintptr(nIDEvent), uintptr(uElapse), uintptr(lpTimerFunc), 0, 0)
 	rIDEvent = uintptr(r0)
+	return
+}
+
+func GetQueueStatus(flags uint) (hilow uint32) {
+	r0, _, _ := syscall.Syscall(procGetQueueStatus.Addr(), 1, uintptr(flags), 0, 0)
+	hilow = uint32(r0)
+	return
+}
+
+func WaitMessage() (succeed int32) {
+	r0, _, _ := syscall.Syscall(procWaitMessage.Addr(), 0, 0, 0, 0)
+	succeed = int32(r0)
 	return
 }
 

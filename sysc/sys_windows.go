@@ -41,6 +41,8 @@ func MAKEINTRESOURCE(n int32) *uint16 {
 //sys	InvalidateRect(hwnd Handle, rect *RECT, isErased int) (ok int) = user32.InvalidateRect
 //sys	MsgWaitForMultipleObjectsEx(nCount uint32, lpHandles *Handle, bWaitAll int32, dwMilliseconds uint32, bAlertable int32) (event uint32) = user32.MsgWaitForMultipleObjectsEx
 //sys	SetTimer(hWnd Handle, nIDEvent uintptr, uElapse uint, lpTimerFunc uintptr) (rIDEvent uintptr) = user32.SetTimer
+//sys	GetQueueStatus(flags uint) (hilow uint32) = user32.GetQueueStatus
+//sys	WaitMessage() (succeed int32) = user32.WaitMessage
 
 //sys	BitBlt(hDC Handle, xDext int32, yDext int32, width int32, height int32, hDCSrc Handle, xSrc int32, ySrc int32, rop uint32) (err error) = gdi32.BitBlt
 //sys	SetDIBitsToDevice(hDC Handle, xDext int32, yDest int32, width int32, height int32, xSrc int32, ySrc int32, startScan uint32, scanLines uint32, bits uintptr, bmi *BITMAPINFO, colorUse uint32) (lines int32) = gdi32.SetDIBitsToDevice
@@ -58,4 +60,14 @@ func GdiAlphaBlend(hdcDest Handle, xoriginDest int32, yoriginDest int32, wDest i
 	ftn = (ftn << 8) & uint32(bf.SourceConstantAlpha)
 	ftn = (ftn << 8) & uint32(bf.AlphaFormat)
 	return gdiAlphaBlend(hdcDest, xoriginDest, yoriginDest, wDest, hDest, hdcSrc, xoriginSrc, yoriginSrc, wSrc, hSrc, ftn)
+}
+
+func HIWORD(u32 uint32) uint16 {
+	var u16 uint16 = uint16(u32 >> 16)
+	return u16
+}
+
+func LOWORD(u32 uint32) uint16 {
+	var u16 uint16 = uint16(u32)
+	return u16
 }
