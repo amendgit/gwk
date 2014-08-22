@@ -26,6 +26,7 @@ func MAKEINTRESOURCE(n int32) *uint16 {
 //sys	LoadCursor(instance Handle, cursorName *uint16) (hcursor Handle, err error) = user32.LoadCursorW
 //sys	GetMessage(msg *MSG, hwnd Handle, msgFilterMin uint32, msgFilterMax uint32) (EOL int) = user32.GetMessageW
 //sys	PeekMessage(msg *MSG, hwnd Handle, msgFilterMin uint32, msgFilterMax uint32, removeMsg uint32) (has_msg bool) = user32.PeekMessageW
+//sys	PostMessage(hwnd Handle, Msg uint32, lParam uintptr, wParam uintptr) (succeed bool) = user32.PostMessageW
 //sys	TranslateMessage(msg *MSG) (isTranslated int) = user32.TranslateMessage
 //sys	DispatchMessage(msg *MSG) (ingore int) = user32.DispatchMessageW
 //sys	GetClientRect(hwnd Handle, rect *RECT) (err error) = user32.GetClientRect

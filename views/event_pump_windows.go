@@ -7,6 +7,7 @@ package views
 import (
 	. "gwk/sysc" // it's ok here.
 	"log"
+	"sync/atomic"
 	"syscall"
 	"time"
 	"unsafe"
@@ -19,6 +20,7 @@ type ui_event_pump_t struct {
 	delayed_work_time time.Time
 	delegate          event_pump_delegate_t
 	should_quit       bool
+	have_work_        int32
 }
 
 func new_ui_event_pump(delegate event_pump_delegate_t) *ui_event_pump_t {
@@ -76,11 +78,29 @@ func (u *ui_event_pump_t) Run() {
 }
 
 func (u *ui_event_pump_t) Quit() {
-
+	u.should_quit = true
 }
 
 func (u *ui_event_pump_t) ScheduleWork() {
+	if atomic.SwapInt32(&u.have_work_, 1) == 1 {
+		return // someone else continued the pumping.
+	}
 
+	// make sure the message pump does some work for us.
+	ret := PostMessage(u.message_wnd, kMsgHaveWork, uintptr(unsafe.Pointer(u)), 0)
+	if ret {
+		return // there was room in the Window Message queue.
+	}
+
+	// We have failed to insert a have-work message, so there is a chance that we
+	// will starve tasks/timers while sitting in a nested message loop.  Nested
+	// loops only look at Windows Message queues, and don't look at *our* task
+	// queues, etc., so we might not get a time slice in such. :-(
+	// We could abort here, but the fear is that this failure mode is plausibly
+	// common (queue is full, of about 2000 messages), so we'll do a near-graceful
+	// recovery.  Nested loops are pretty transient (we think), so this will
+	// probably be recoverable.
+	atomic.SwapInt32(&u.have_work_, 0) // clarify that we didn't really insert.
 }
 
 func (u *ui_event_pump_t) ScheduleDelayedWork(delayed_work_time time.Time) {
@@ -198,10 +218,12 @@ func (u *ui_event_pump_t) wait_for_work() {
 		// some time to process its input messages.
 		var msg MSG
 		queue_status := GetQueueStatus(QS_MOUSE)
+
 		if (HIWORD(queue_status)&QS_MOUSE) != 0 &&
 			!PeekMessage(&msg, NULL, WM_MOUSEFIRST, WM_MOUSELAST, PM_NOREMOVE) {
 			WaitMessage()
 		}
+
 		return
 	}
 
@@ -229,6 +251,12 @@ func (u *ui_event_pump_t) process_next_ui_event() bool {
 func (u *ui_event_pump_t) process_message(msg *MSG) bool {
 	TranslateMessage(msg)
 	DispatchMessage(msg)
+
+	old_have_work := atomic.SwapInt32(&u.have_work_, 0)
+	if old_have_work == 0 {
+		log.Printf("ERROR: we don't have work to do.")
+	}
+
 	return true
 }
 

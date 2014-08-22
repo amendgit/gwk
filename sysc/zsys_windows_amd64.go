@@ -18,6 +18,7 @@ var (
 	procLoadCursorW = moduser32.NewProc("LoadCursorW")
 	procGetMessageW = moduser32.NewProc("GetMessageW")
 	procPeekMessageW = moduser32.NewProc("PeekMessageW")
+	procPostMessageW = moduser32.NewProc("PostMessageW")
 	procTranslateMessage = moduser32.NewProc("TranslateMessage")
 	procDispatchMessageW = moduser32.NewProc("DispatchMessageW")
 	procGetClientRect = moduser32.NewProc("GetClientRect")
@@ -121,6 +122,12 @@ func GetMessage(msg *MSG, hwnd Handle, msgFilterMin uint32, msgFilterMax uint32)
 func PeekMessage(msg *MSG, hwnd Handle, msgFilterMin uint32, msgFilterMax uint32, removeMsg uint32) (has_msg bool) {
 	r0, _, _ := syscall.Syscall6(procPeekMessageW.Addr(), 5, uintptr(unsafe.Pointer(msg)), uintptr(hwnd), uintptr(msgFilterMin), uintptr(msgFilterMax), uintptr(removeMsg), 0)
 	has_msg = bool(r0 != 0)
+	return
+}
+
+func PostMessage(hwnd Handle, Msg uint32, lParam uintptr, wParam uintptr) (succeed bool) {
+	r0, _, _ := syscall.Syscall6(procPostMessageW.Addr(), 4, uintptr(hwnd), uintptr(Msg), uintptr(lParam), uintptr(wParam), 0, 0)
+	succeed = bool(r0 != 0)
 	return
 }
 
