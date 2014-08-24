@@ -13,6 +13,8 @@ import (
 	"unsafe"
 )
 
+// Message sent to get an additional time slice for pumping (processing) another
+// task (a series of such messages creates a continuous task pump).
 const kMsgHaveWork = WM_USER + 1
 
 type ui_event_pump_t struct {
@@ -144,7 +146,16 @@ func (u *ui_event_pump_t) ScheduleDelayedWork(delayed_work_time time.Time) {
 }
 
 func (u *ui_event_pump_t) handle_work_msg() {
+	// Let whatever would have run had we not been putting messages in the queue
+	// run now.  This is an attempt to make our dummy message not starve other
+	// messages that may be in the Windows message queue.
+	u.process_pump_replacement_msg()
 
+	// Now give the delegate a chance to do some work.  He'll let us know if he
+	// needs to do more work.
+	if u.delegate.DoWork() {
+		u.ScheduleWork()
+	}
 }
 
 func (u *ui_event_pump_t) handle_timer_msg() {
@@ -242,22 +253,46 @@ func (u *ui_event_pump_t) process_next_ui_event() bool {
 
 	var msg MSG
 	if PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) {
-		return u.process_message(&msg)
+		return u.process_msg(&msg)
 	}
 
 	return sent_messages_in_queue
 }
 
-func (u *ui_event_pump_t) process_message(msg *MSG) bool {
+func (u *ui_event_pump_t) process_msg(msg *MSG) bool {
+	// While running our main message pump, we discard kMsgHaveWork messages.
+	if msg.HWnd == u.message_wnd && msg.Message == kMsgHaveWork {
+		return u.process_pump_replacement_msg()
+	}
+
 	TranslateMessage(msg)
 	DispatchMessage(msg)
 
+	return true
+}
+
+func (u *ui_event_pump_t) process_pump_replacement_msg() bool {
+	var have_msg bool
+	var msg MSG
+	have_msg = PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)
+
+	// Since we discarded a kMsgHaveWork message, we must update the flag.
 	old_have_work := atomic.SwapInt32(&u.have_work_, 0)
 	if old_have_work == 0 {
 		log.Printf("ERROR: we don't have work to do.")
 	}
 
-	return true
+	// We don't need a special time slice if we didn't have_msg to process.
+	if !have_msg {
+		return false
+	}
+
+	// Guarantee we'll get another time slice in the case where we go into native
+	// windows code.   This ScheduleWork() may hurt performance a tiny bit when
+	// tasks appear very infrequently, but when the event queue is busy, the
+	// kMsgHaveWork events get (percentage wise) rarer and rarer.
+	u.ScheduleWork()
+	return u.process_msg(&msg)
 }
 
 // bool MessagePumpForUI::ProcessMessageHelper(const MSG& msg) {
