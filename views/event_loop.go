@@ -206,9 +206,10 @@ func (e *EventLoop) init() {
 func (e *EventLoop) add_to_pending_task_queue(closure Closure, delay_misc int64) {
 	time := time.Now().Add(time.Duration(delay_misc * 1000 * 1000))
 	task := NewTask(closure, time)
-	// Lock pending task queue.
+
+	was_empty := e.pending_task_queue.Empty()
 	e.pending_task_queue.Push(task)
-	// Unlock pending task queue.
+	e.ScheduleWork(was_empty)
 }
 
 func (e *EventLoop) PostTask(closure Closure) {
@@ -223,8 +224,14 @@ func (e *EventLoop) ShouldQuit() {
 	e.should_quit = true
 }
 
+func (e *EventLoop) ScheduleWork(was_empty bool) {
+	if was_empty {
+		e.pump.ScheduleWork()
+	}
+}
+
 //
-// EventPumpDelegate
+// event_pump_delegate_t
 //
 func (e *EventLoop) DoWork() bool {
 	now := time.Now()
