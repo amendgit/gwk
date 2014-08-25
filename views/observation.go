@@ -23,7 +23,14 @@ type subject_table_t map[subject_t]condition_table_t
 
 var g_subject_table subject_table_t
 
+// Add an observer to global observer table. example:
+//   AddObserver("Application", "WillQuit", slf, cleanup)
+//   AddObserver(button, "on_click", slf, say_hello)
 func AddObserver(subject subject_t, condition string, observer observer_t, msg_func msg_func_t) {
+	if g_subject_table == nil {
+		g_subject_table = make(subject_table_t)
+	}
+
 	// Get condition table.
 	condition_table := g_subject_table[subject]
 	if condition_table == nil {
