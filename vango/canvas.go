@@ -195,6 +195,7 @@ func (dst *Canvas) AlphaBlend(x int, y int, src *Canvas) {
 			r0, g0, b0 := p0[i0+i+0], p0[i0+i+1], p0[i0+i+2]
 			r1, g1, b1 := p1[i1+i+0], p1[i1+i+1], p1[i1+i+2]
 
+			// Alpha value
 			a := int32(p0[i0+i+3])
 
 			p1[i1+i+0] = byte((a*(int32(r0)-int32(r1)))/256) + r1
