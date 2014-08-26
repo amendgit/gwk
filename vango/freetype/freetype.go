@@ -127,7 +127,7 @@ func (c *Context) rasterize(glyph uint16, fx, fy Fix32) (*image.Alpha, image.Poi
 	return a, image.Point{xmin, ymin}, nil
 }
 
-func (c *Context) glyph_at(glyph uint16, pt RastPoint) (*image.Alpha, image.Point, error) {
+func (c *Context) GlyphAt(glyph uint16, pt RastPoint) (*image.Alpha, image.Point, error) {
 	ix, fx := int(pt.X>>8), pt.X&0xff
 	iy, fy := int(pt.Y>>8), pt.Y&0xff
 
@@ -161,7 +161,7 @@ func (c *Context) DrawString(str string, pt RastPoint) (RastPoint, error) {
 			pt.X += Fix32(c.font.Kerning(c.scale, prev, idx)) << 2
 		}
 
-		mask, offset, err := c.glyph_at(idx, pt)
+		mask, offset, err := c.GlyphAt(idx, pt)
 		if err != nil {
 			return RastPoint{}, err
 		}
