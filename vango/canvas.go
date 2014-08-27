@@ -151,6 +151,7 @@ func (dst *Canvas) DrawCanvas(x int, y int, src *Canvas, src_rect Rectangle) {
 	s0, s1 := src.Stride(), dst.Stride()
 	p0, p1 := src.Pix(), dst.Pix()
 
+	// TODO(BUG)
 	// the shared draw rect.
 	r := l0.Intersect(l1)
 	if r.Empty() {
@@ -180,6 +181,7 @@ func (dst *Canvas) AlphaBlend(x int, y int, src *Canvas) {
 	s0, s1 := src.Stride(), dst.Stride()
 	p0, p1 := src.Pix(), dst.Pix()
 
+	// TODO(BUG)
 	// the shared draw rect.
 	r := l0.Intersect(l1)
 	if r.Empty() {
