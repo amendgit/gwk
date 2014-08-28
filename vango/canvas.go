@@ -17,7 +17,6 @@ type Canvas struct {
 }
 
 func NewCanvas(width int, height int) *Canvas {
-	log.Printf("NewCanvas")
 	var c Canvas
 	c.bounds = Rect(0, 0, width, height)
 	c.pix = make([]byte, c.W()*c.H()*4)
@@ -404,4 +403,33 @@ func (dst *Canvas) StretchDraw(dst_rect Rectangle, src *Canvas) {
 			pix1[pix_offset+2] = to_color_channel(r)
 		}
 	}
+}
+
+func CanvasFromImage(img Image) *Canvas {
+	var (
+		pix    []byte
+		stride int
+		bounds Rectangle
+	)
+
+	switch src := img.(type) {
+	case *Alpha:
+		pix = src.Pix
+		stride = src.Stride
+		bounds = src.Rect
+	case *RGBA:
+		pix = src.Pix
+		stride = src.Stride
+		bounds = src.Rect
+	default:
+		return nil
+	}
+
+	canvas := &Canvas{
+		pix:    pix,
+		stride: stride / 4,
+		bounds: bounds,
+	}
+
+	return canvas
 }

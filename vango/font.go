@@ -25,6 +25,7 @@ type glyph_cache_t struct {
 	offset image.Point
 }
 
+// vango.Font is a wrapper of freetype.Font. It is more like freetype.Context
 type Font struct {
 	font  *freetype.Font
 	size  float64
