@@ -13,4 +13,6 @@ int c_main(int argc, char *argv[]) {
 	[NSApp run];
 
 	[pool release];
+
+	return 0;
 }

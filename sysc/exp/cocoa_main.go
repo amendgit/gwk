@@ -9,7 +9,7 @@ extern int c_main(int argc, char *argv[]);
 */
 import "C"
 
-func main() {
+func _main() {
 	// C.NSApplicationMain(0, nil)
 	C.c_main(0, nil)
 }
