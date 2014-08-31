@@ -1,16 +1,40 @@
 package vango
 
 import (
+	"bufio"
 	"errors"
 	"gwk/vango/freetype"
 	"image"
+	"image/png"
 	"log"
+	"os"
 )
 
 type Context struct {
 	font   *Font
 	canvas *Canvas
 	dpi    float64
+}
+
+func NewContext() *Context {
+	ctxt := new(Context)
+	ctxt.font = NewFont()
+	ctxt.dpi = 72
+	return ctxt
+}
+
+func (c *Context) SelectFont(font_name string) {
+	if font_name == "default" {
+		c.font.font = g_default_font
+	} else {
+		log.Printf("NOT IMPLEMENTATION: font name %v", font_name)
+	}
+}
+
+func (c *Context) SelectCanvas(canvas *Canvas) *Canvas {
+	old := c.canvas
+	c.canvas = canvas
+	return old
 }
 
 func (c *Context) DrawText(text string, rect image.Rectangle) (freetype.RastPoint, error) {
@@ -24,7 +48,7 @@ func (c *Context) DrawText(text string, rect image.Rectangle) (freetype.RastPoin
 	for _, rune := range text {
 		idx := c.font.Index(rune)
 		if has_prev {
-			pt.X += freetype.Fix32(c.font.Kerning(1, prev, idx)) << 2
+			pt.X += freetype.Fix32(c.font.Kerning(768, prev, idx)) << 2
 		}
 
 		mask, offset, err := c.font.GlyphAt(idx, pt)
@@ -32,9 +56,12 @@ func (c *Context) DrawText(text string, rect image.Rectangle) (freetype.RastPoin
 			return freetype.RastPoint{}, err
 		}
 
-		pt.X += freetype.Fix32(c.font.font.HMetric(1.0, idx).AdvanceWidth) << 2
+		pt.X += freetype.Fix32(c.font.font.HMetric(768, idx).AdvanceWidth) << 2
 		glyph_rect := mask.Bounds().Add(offset)
-		log.Printf("%v", glyph_rect)
+		fd, _ := os.Create("a.png")
+		defer fd.Close()
+		bio := bufio.NewWriter(fd)
+		png.Encode(bio, mask)
 		// dr := c.clip.Intersect(glyph_rect)
 		//if !dr.Empty() {
 		// mp := image.Point{0, dr.Min.Y - glyph_rect.Min.Y}
@@ -54,6 +81,7 @@ func (c *Context) DrawImage(x, y int, img image.Image, rect image.Rectangle) {
 }
 
 func (c *Context) DrawAlpha(x, y int, src *image.Alpha, rect image.Rectangle) {
+	rect = rect.Sub(rect.Min)
 	dst := c.canvas
 
 	i0, i1 := src.PixOffset(rect.Min.X, rect.Min.Y), dst.PixOffset(x, y) // pix offset
@@ -66,10 +94,15 @@ func (c *Context) DrawAlpha(x, y int, src *image.Alpha, rect image.Rectangle) {
 	r0 := rect.Sub(rect.Min)
 	r1 := dst.Bounds()
 	r1.Min = image.Pt(x, y)
+
 	r := r0.Intersect(r1)
 	if r.Empty() {
 		return
 	}
+
+	log.Printf("r %v r0 %v r1 %v rect %v", r, r0, r1, rect)
+
+	log.Printf("src %v pix %v", src.Bounds(), len(src.Pix))
 
 	for y := 0; y < r.Dy(); y++ {
 		for x := 0; x < r.Dx(); x += 4 {
@@ -80,8 +113,13 @@ func (c *Context) DrawAlpha(x, y int, src *image.Alpha, rect image.Rectangle) {
 			p1[i1+x+1] = p0[i0+x+1]
 			p1[i1+x+2] = p0[i0+x+2]
 			p1[i1+x+3] = p0[i0+x+3]
+			// p1[i1+x+0] = 0x00
+			// p1[i1+x+1] = 0x00
+			// p1[i1+x+2] = 0x00
+			// p1[i1+x+3] = 0x00
+
 		}
-		i0 = i0 + 4*s0
+		i0 = i0 + s0
 		i1 = i1 + 4*s1
 	}
 }

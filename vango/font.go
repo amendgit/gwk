@@ -4,7 +4,28 @@ import (
 	"errors"
 	"gwk/vango/freetype"
 	"image"
+	"io/ioutil"
+	"log"
+	"os"
 )
+
+var g_default_font *freetype.Font
+
+func init_font() {
+	wd, _ := os.Getwd()
+	log.Printf("WD %v", wd)
+	bytes, err := ioutil.ReadFile("./resc/luxisr.ttf")
+	if err != nil {
+		log.Printf("error: load font failed -> %v", err)
+		return
+	}
+
+	g_default_font, err = freetype.ParseFont(bytes)
+	if g_default_font == nil {
+		log.Printf("err: load font failed -> %v", err)
+		return
+	}
+}
 
 var g_description_font_map map[string]*Font
 
@@ -32,6 +53,21 @@ type Font struct {
 	cache [kGlyphNum * kXFractionsNum * kYFractionsNum]glyph_cache_t
 	glyph *freetype.Glyph
 	rast  *freetype.Rast
+	dpi   float64
+	scale int32
+}
+
+func NewFont() *Font {
+	f := &Font{
+		rast:  freetype.NewRast(0, 0),
+		glyph: freetype.NewGlyph(),
+		size:  12,
+		font:  g_default_font,
+		dpi:   72,
+	}
+
+	f.recalc()
+	return f
 }
 
 func (f *Font) GlyphAt(glyph uint16, pt freetype.RastPoint) (*image.Alpha, image.Point, error) {
@@ -46,7 +82,7 @@ func (f *Font) GlyphAt(glyph uint16, pt freetype.RastPoint) (*image.Alpha, image
 	if f.cache[t].valid && f.cache[t].glyph == glyph {
 		return f.cache[t].mask, f.cache[t].offset.Add(image.Point{ix, iy}), nil
 	}
-
+	log.Printf("glyph %v", glyph)
 	mask, offset, err := f.rasterize(glyph, fx, fy)
 	if err != nil {
 		return nil, image.ZP, err
@@ -65,8 +101,8 @@ func (f *Font) Kerning(scale int32, i0, i1 uint16) int32 {
 }
 
 func (f *Font) rasterize(glyph uint16, fx, fy freetype.Fix32) (*image.Alpha, image.Point, error) {
-	if f.glyph == nil {
-		err := f.glyph.Load(f.font, 1, glyph, nil)
+	if f.glyph != nil {
+		err := f.glyph.Load(f.font, f.scale, glyph, nil)
 		if err != nil {
 			return nil, image.ZP, err
 		}
@@ -76,6 +112,7 @@ func (f *Font) rasterize(glyph uint16, fx, fy freetype.Fix32) (*image.Alpha, ima
 	ymin := int(fy-freetype.Fix32(f.glyph.Rect.YMax<<2)) >> 8
 	xmax := int(fx+freetype.Fix32(f.glyph.Rect.XMax<<2)+0xff) >> 8
 	ymax := int(fy-freetype.Fix32(f.glyph.Rect.YMin<<2)+0xff) >> 8
+
 	if xmin > xmax || ymin > ymax {
 		return nil, image.ZP, errors.New("vango negative sized glyph")
 	}
@@ -142,10 +179,14 @@ func (f *Font) draw_contour(pt_array []freetype.FontPoint, dx, dy freetype.Fix32
 	}
 }
 
-func NewFont() *Font {
-	return &Font{
-		rast:  freetype.NewRast(0, 0),
-		glyph: freetype.NewGlyph(),
-		size:  12,
-	}
+func (f *Font) recalc() {
+	f.scale = int32(f.size * f.dpi * (64.0 / 72.0))
+
+	b := f.font.Bounds(f.scale)
+	xmin := +int(b.XMin) >> 6
+	ymin := -int(b.YMax) >> 6
+	xmax := +int(b.XMax+63) >> 6
+	ymax := -int(b.YMin-63) >> 6
+
+	f.rast.SetBounds(xmax-xmin, ymax-ymin)
 }

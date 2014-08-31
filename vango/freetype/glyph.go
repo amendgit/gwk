@@ -6,6 +6,7 @@ package freetype
 
 import (
 	"errors"
+	"log"
 	// "log"
 )
 
@@ -89,7 +90,7 @@ func (g *Glyph) Load(font *Font, scale int32, idx uint16, exec *exec_t) error {
 	g.exec = exec
 	g.pp1x = 0
 	g.is_metrics_set = false
-
+	log.Printf("ft scale %v", scale)
 	if exec != nil {
 		// log.Printf("F %v", g.AllPoints)
 		if err := exec.init(font, scale); err != nil {

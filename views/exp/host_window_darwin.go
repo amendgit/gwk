@@ -37,3 +37,7 @@ func main() {
 	h := NewHostWindow()
 	h.Run()
 }
+
+// func GoWindow_willUseFullScreen(slf *Window, content_rect *NSRect) {
+
+// }

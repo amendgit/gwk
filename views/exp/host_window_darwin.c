@@ -37,15 +37,15 @@
 
 @end
 
-void *new_gwk_window() {
+void *NewGWKWindow() {
 	return [[GWKWindow alloc] init];
 }
 
-void gwk_window_set_delegate(void* slf, void* delegate) {
+void GWKWindow_setDelegate(void* slf, void* delegate) {
 	[(id)slf setDelegate:(id)delegate];
 }
 
-void gwk_window_run(id slf) {
+void GWKWindow_run(id slf) {
 	[(id)slf run];
 }
 

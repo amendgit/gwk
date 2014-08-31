@@ -6,9 +6,13 @@
 package freetype
 
 import (
+	"bufio"
 	"errors"
 	"image"
 	"image/draw"
+	"image/png"
+	"log"
+	"os"
 )
 
 const (
@@ -100,7 +104,7 @@ func (c *Context) rasterize(glyph uint16, fx, fy Fix32) (*image.Alpha, image.Poi
 	if err := c.glyph.Load(c.font, c.scale, glyph, nil); err != nil {
 		return nil, image.ZP, err
 	}
-
+	log.Printf("%v", glyph)
 	xmin := int(fx+Fix32(c.glyph.Rect.XMin<<2)) >> 8
 	ymin := int(fy-Fix32(c.glyph.Rect.YMax<<2)) >> 8
 	xmax := int(fx+Fix32(c.glyph.Rect.XMax<<2)+0xff) >> 8
@@ -168,6 +172,10 @@ func (c *Context) DrawString(str string, pt RastPoint) (RastPoint, error) {
 
 		pt.X += Fix32(c.font.HMetric(c.scale, idx).AdvanceWidth) << 2
 		glyph_rect := mask.Bounds().Add(offset)
+		fd, _ := os.Create("a.png")
+		defer fd.Close()
+		bio := bufio.NewWriter(fd)
+		png.Encode(bio, mask)
 		dr := c.clip.Intersect(glyph_rect)
 		if !dr.Empty() {
 			mp := image.Point{0, dr.Min.Y - glyph_rect.Min.Y}

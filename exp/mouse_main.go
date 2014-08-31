@@ -6,8 +6,10 @@ package main
 
 import (
 	"gwk"
+	"gwk/vango"
 	"gwk/views"
 	"image"
+	"log"
 	"math/rand"
 	"time"
 )
@@ -31,6 +33,12 @@ func make_main_ui_map() views.UIMap {
 						}
 						iv.SetColorRGB(byte(rand.Intn(255)), byte(rand.Intn(255)), byte(rand.Intn(255)))
 						iv.ScheduleDraw()
+					},
+					"on_draw": func(event *views.DrawEvent) {
+						log.Printf("on_Draw")
+						ctxt := vango.NewContext()
+						ctxt.SelectCanvas(event.Canvas)
+						ctxt.DrawText("ABC", image.Rect(0, 0, 50, 50))
 					},
 				},
 			},

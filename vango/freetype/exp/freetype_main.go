@@ -17,12 +17,12 @@ import (
 	"log"
 	"os"
 
-	"gwk/freetype"
+	"gwk/vango/freetype"
 )
 
 var (
 	dpi      = flag.Float64("dpi", 72, "screen resolution in Dots Per Inch")
-	fontfile = flag.String("fontfile", "./data/consola.ttf", "filename of the ttf font")
+	fontfile = flag.String("fontfile", "./data/luxisr.ttf", "filename of the ttf font")
 	size     = flag.Float64("size", 12, "font size in points")
 	spacing  = flag.Float64("spacing", 1.5, "line spacing (e.g. 2 means double spaced)")
 	wonb     = flag.Bool("whiteonblack", false, "white text on a black background")
@@ -108,6 +108,7 @@ func main() {
 
 	// Draw the text.
 	pt := freetype.Point(10, 10+int(c.PointToFix32(*size)>>8))
+	text = []string{"ABC"}
 	for _, s := range text {
 		_, err = c.DrawString(s, pt)
 		if err != nil {

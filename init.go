@@ -5,9 +5,11 @@
 package gwk
 
 import (
+	"gwk/vango"
 	"gwk/views"
 )
 
 func Init() {
 	views.Init()
+	vango.InitVango()
 }

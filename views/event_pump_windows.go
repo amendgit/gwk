@@ -5,7 +5,7 @@ package views
 //
 
 import (
-	. "gwk/sysc" // it's ok here.
+	. "gwk/sysc" // it's fine.
 	"log"
 	"sync/atomic"
 	"syscall"

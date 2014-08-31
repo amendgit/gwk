@@ -206,7 +206,10 @@ func (v *BaseView) SetLayouter(layouter Layouter) {
 }
 
 func (v *BaseView) OnDraw(event *DrawEvent) {
-	log.Printf("BaseView.OnDraw()")
+	if v.delegate == nil {
+		return
+	}
+	v.delegate.OnDraw(event)
 }
 
 func (v *BaseView) OnMouseEnter(event *MouseEvent) {
