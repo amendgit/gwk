@@ -24,7 +24,7 @@ func make_main_ui_map() views.UIMap {
 				"top":    10,
 				"width":  200,
 				"height": 200,
-				"color":  0xffffff,
+				"color":  0x000000,
 				"delegate": views.UIMap{
 					"on_mouse_enter": func(event *views.MouseEvent) {
 						iv, ok := &views.ImageView{}, false
@@ -35,10 +35,9 @@ func make_main_ui_map() views.UIMap {
 						iv.ScheduleDraw()
 					},
 					"on_draw": func(event *views.DrawEvent) {
-						log.Printf("on_Draw")
 						ctxt := vango.NewContext()
 						ctxt.SelectCanvas(event.Canvas)
-						ctxt.DrawText("ABC", image.Rect(0, 0, 50, 50))
+						ctxt.DrawText("C", image.Rect(0, 0, 50, 50))
 					},
 				},
 			},

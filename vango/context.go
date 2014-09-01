@@ -1,13 +1,10 @@
 package vango
 
 import (
-	"bufio"
 	"errors"
 	"gwk/vango/freetype"
 	"image"
-	"image/png"
 	"log"
-	"os"
 )
 
 type Context struct {
@@ -58,10 +55,7 @@ func (c *Context) DrawText(text string, rect image.Rectangle) (freetype.RastPoin
 
 		pt.X += freetype.Fix32(c.font.font.HMetric(768, idx).AdvanceWidth) << 2
 		glyph_rect := mask.Bounds().Add(offset)
-		fd, _ := os.Create("a.png")
-		defer fd.Close()
-		bio := bufio.NewWriter(fd)
-		png.Encode(bio, mask)
+
 		// dr := c.clip.Intersect(glyph_rect)
 		//if !dr.Empty() {
 		// mp := image.Point{0, dr.Min.Y - glyph_rect.Min.Y}
@@ -92,6 +86,7 @@ func (c *Context) DrawAlpha(x, y int, src *image.Alpha, rect image.Rectangle) {
 
 	// draw rect
 	r0 := rect.Sub(rect.Min)
+	r0.Max.X, r0.Max.Y = r0.Max.X*4, r0.Max.Y
 	r1 := dst.Bounds()
 	r1.Min = image.Pt(x, y)
 
@@ -100,24 +95,28 @@ func (c *Context) DrawAlpha(x, y int, src *image.Alpha, rect image.Rectangle) {
 		return
 	}
 
-	log.Printf("r %v r0 %v r1 %v rect %v", r, r0, r1, rect)
-
-	log.Printf("src %v pix %v", src.Bounds(), len(src.Pix))
+	// const m = 1<<16 - 1
 
 	for y := 0; y < r.Dy(); y++ {
 		for x := 0; x < r.Dx(); x += 4 {
-			if p0[i0+x+3] == 0 {
+			ma := uint32(p0[i0+int(x/4)])
+			if ma == 0 {
 				continue
 			}
-			p1[i1+x+0] = p0[i0+x+0]
-			p1[i1+x+1] = p0[i0+x+1]
-			p1[i1+x+2] = p0[i0+x+2]
-			p1[i1+x+3] = p0[i0+x+3]
-			// p1[i1+x+0] = 0x00
-			// p1[i1+x+1] = 0x00
-			// p1[i1+x+2] = 0x00
-			// p1[i1+x+3] = 0x00
 
+			// ma |= ma << 8
+
+			// dr := uint32(p1[i1+x+0])
+			// dg := uint32(p1[i1+x+1])
+			// db := uint32(p1[i1+x+2])
+			// da := uint32(p1[i1+x+3])
+
+			// a := (m - (uint32(0x01) * ma / m)) * 0x101
+			// log.Printf("%v %v", ma, a)
+			p1[i1+x+0] = 0xff // uint8((dr*a + 0xff*ma) / m >> 8)
+			p1[i1+x+1] = 0xff //uint8((dg*a + 0xff*ma) / m >> 8)
+			p1[i1+x+2] = 0xff //uint8((db*a + 0xff*ma) / m >> 8)
+			p1[i1+x+3] = 0xff //uint8((da*a + 0xff*ma) / m >> 8)
 		}
 		i0 = i0 + s0
 		i1 = i1 + 4*s1

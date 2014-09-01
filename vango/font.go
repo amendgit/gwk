@@ -82,7 +82,7 @@ func (f *Font) GlyphAt(glyph uint16, pt freetype.RastPoint) (*image.Alpha, image
 	if f.cache[t].valid && f.cache[t].glyph == glyph {
 		return f.cache[t].mask, f.cache[t].offset.Add(image.Point{ix, iy}), nil
 	}
-	log.Printf("glyph %v", glyph)
+
 	mask, offset, err := f.rasterize(glyph, fx, fy)
 	if err != nil {
 		return nil, image.ZP, err

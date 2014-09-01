@@ -6,13 +6,10 @@
 package freetype
 
 import (
-	"bufio"
 	"errors"
 	"image"
 	"image/draw"
-	"image/png"
 	"log"
-	"os"
 )
 
 const (
@@ -172,10 +169,7 @@ func (c *Context) DrawString(str string, pt RastPoint) (RastPoint, error) {
 
 		pt.X += Fix32(c.font.HMetric(c.scale, idx).AdvanceWidth) << 2
 		glyph_rect := mask.Bounds().Add(offset)
-		fd, _ := os.Create("a.png")
-		defer fd.Close()
-		bio := bufio.NewWriter(fd)
-		png.Encode(bio, mask)
+
 		dr := c.clip.Intersect(glyph_rect)
 		if !dr.Empty() {
 			mp := image.Point{0, dr.Min.Y - glyph_rect.Min.Y}
