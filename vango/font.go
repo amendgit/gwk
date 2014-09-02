@@ -6,14 +6,11 @@ import (
 	"image"
 	"io/ioutil"
 	"log"
-	"os"
 )
 
 var g_default_font *freetype.Font
 
 func init_font() {
-	wd, _ := os.Getwd()
-	log.Printf("WD %v", wd)
 	bytes, err := ioutil.ReadFile("./resc/luxisr.ttf")
 	if err != nil {
 		log.Printf("error: load font failed -> %v", err)

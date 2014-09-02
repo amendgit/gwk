@@ -1,30 +1,33 @@
 package main
 
 import (
-	"log"
+	"fmt"
 )
 
-type Viewer interface {
+type View interface {
 	OnDraw()
 }
 
-type View struct {
+type BaseView struct {
 }
 
-func (v *View) OnDraw() {
-	log.Printf("View.OnDraw()")
+func (v *BaseView) OnDraw() {
+	fmt.Printf("BaseView.OnDraw()\n")
 }
 
 type ImageView struct {
-	View
+	BaseView
 }
 
 func (v *ImageView) OnDraw() {
-	log.Printf("ImageView.OnDraw()")
+	fmt.Printf("ImageView.OnDraw()\n")
 }
 
 func main() {
 	image_view := new(ImageView)
-	v := Viewer(image_view)
-	v.OnDraw()
+	view := View(image_view)
+	view.OnDraw()
+
+	view = &(image_view.BaseView)
+	view.OnDraw()
 }

@@ -29,11 +29,11 @@ type CanvasResc struct {
 	filename string
 }
 
-type Canvas3Resc struct {
-	id       string
-	canvas3  *Canvas3
-	filename string
-}
+// type Canvas3Resc struct {
+// 	id       string
+// 	canvas3  *Canvas3
+// 	filename string
+// }
 
 // type ColorResc struct {
 // 	id    string

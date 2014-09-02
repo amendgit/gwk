@@ -161,8 +161,9 @@ func (c *Context) DrawString(str string, pt RastPoint) (RastPoint, error) {
 		if has_prev {
 			pt.X += Fix32(c.font.Kerning(c.scale, prev, idx)) << 2
 		}
-
+		log.Printf("pt %v", pt)
 		mask, offset, err := c.GlyphAt(idx, pt)
+		log.Printf("offset %v", offset)
 		if err != nil {
 			return RastPoint{}, err
 		}

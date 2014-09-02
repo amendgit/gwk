@@ -47,8 +47,9 @@ func (c *Context) DrawText(text string, rect image.Rectangle) (freetype.RastPoin
 		if has_prev {
 			pt.X += freetype.Fix32(c.font.Kerning(768, prev, idx)) << 2
 		}
-
+		log.Printf("pt %v", pt)
 		mask, offset, err := c.font.GlyphAt(idx, pt)
+		log.Printf("offset %v", offset)
 		if err != nil {
 			return freetype.RastPoint{}, err
 		}
@@ -81,8 +82,6 @@ func (c *Context) DrawAlpha(x, y int, src *image.Alpha, rect image.Rectangle) {
 	i0, i1 := src.PixOffset(rect.Min.X, rect.Min.Y), dst.PixOffset(x, y) // pix offset
 	s0, s1 := src.Stride, dst.Stride()                                   // stride
 	p0, p1 := src.Pix, dst.Pix()                                         // pix
-	// l0, l1 := src.Rect.Sub(src.Rect.Min), dst.LocalBounds()           // local bounds
-	// b0, b1 := src.Bounds(), dst.Bounds()                              // bounds
 
 	// draw rect
 	r0 := rect.Sub(rect.Min)
@@ -95,35 +94,28 @@ func (c *Context) DrawAlpha(x, y int, src *image.Alpha, rect image.Rectangle) {
 		return
 	}
 
-	// const m = 1<<16 - 1
+	const m = 1<<16 - 1
 
 	for y := 0; y < r.Dy(); y++ {
 		for x := 0; x < r.Dx(); x += 4 {
-			ma := uint32(p0[i0+int(x/4)])
-			if ma == 0 {
+			a := int32(p0[i0+int(x/4)])
+			if a == 0 {
 				continue
 			}
 
-			// ma |= ma << 8
+			r0, g0, b0 := 0x00, 0x00, 0x00
+			r1, g1, b1 := p1[i1+x+0], p1[i1+x+1], p1[i1+x+2]
 
-			// dr := uint32(p1[i1+x+0])
-			// dg := uint32(p1[i1+x+1])
-			// db := uint32(p1[i1+x+2])
-			// da := uint32(p1[i1+x+3])
-
-			// a := (m - (uint32(0x01) * ma / m)) * 0x101
-			// log.Printf("%v %v", ma, a)
-			p1[i1+x+0] = 0xff // uint8((dr*a + 0xff*ma) / m >> 8)
-			p1[i1+x+1] = 0xff //uint8((dg*a + 0xff*ma) / m >> 8)
-			p1[i1+x+2] = 0xff //uint8((db*a + 0xff*ma) / m >> 8)
-			p1[i1+x+3] = 0xff //uint8((da*a + 0xff*ma) / m >> 8)
+			p1[i1+x+0] = byte((a*(int32(r0)-int32(r1)))/256) + r1
+			p1[i1+x+1] = byte((a*(int32(g0)-int32(g1)))/256) + g1
+			p1[i1+x+2] = byte((a*(int32(b0)-int32(b1)))/256) + b1
 		}
 		i0 = i0 + s0
 		i1 = i1 + 4*s1
 	}
 }
 
-func (c *Context) DrawImageNRGBA(x int, y int, src *image.NRGBA, rect image.Rectangle) {
+func (c *Context) DrawNRGBA(x int, y int, src *image.NRGBA, rect image.Rectangle) {
 	dst := c.canvas
 	x0, y0 := rect.Min.X, rect.Min.Y
 	x1, y1 := x, y

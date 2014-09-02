@@ -21,7 +21,7 @@ func makeMainUIMap() UIMap {
 			"height": "20",
 		},
 		"left_panel": UIMap{
-			"type":   "view",
+			"type":   "base_view",
 			"id":     "left_panels_container",
 			"width":  "fill_parent",
 			"height": "fill_parent",
@@ -50,7 +50,7 @@ func makeMainUIMap() UIMap {
 			// },
 		},
 		"right_panel": UIMap{
-			"type":   "view",
+			"type":   "base_view",
 			"id":     "left_panels_container",
 			"width":  "fill_parent",
 			"height": "fill_parent",
@@ -62,12 +62,12 @@ func makeMainUIMap() UIMap {
 				{
 					"type": "panel",
 				},
-				{
-					"type": "button",
-					// "action": func() {
-					// 	return
-					// },
-				},
+				// {
+				// 	"type": "button",
+				// 	// "action": func() {
+				// 	// 	return
+				// 	// },
+				// },
 			},
 		},
 	}
@@ -81,10 +81,8 @@ func main() {
 	gwk.Init()
 
 	var host_view = NewHostView(image.Rect(0, 0, 1159, 687))
-
 	host_view.RootView.AddChild(MockUp(makeMainUIMap()))
-
 	host_view.Show()
 
-	CurrentUIEventLoop().Run()
+	MainUIEventLoop().Run()
 }
