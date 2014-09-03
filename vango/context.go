@@ -39,7 +39,7 @@ func (c *Context) DrawText(text string, rect image.Rectangle) (freetype.RastPoin
 		return freetype.RastPoint{}, errors.New("vango DrawString called with nil font.")
 	}
 
-	pt := freetype.Point(rect.Min.X, rect.Min.Y)
+	pt := freetype.Point(rect.Min.X+1, rect.Min.Y+10)
 
 	prev, has_prev := uint16(0), false
 	for _, rune := range text {
@@ -47,9 +47,8 @@ func (c *Context) DrawText(text string, rect image.Rectangle) (freetype.RastPoin
 		if has_prev {
 			pt.X += freetype.Fix32(c.font.Kerning(768, prev, idx)) << 2
 		}
-		log.Printf("pt %v", pt)
+
 		mask, offset, err := c.font.GlyphAt(idx, pt)
-		log.Printf("offset %v", offset)
 		if err != nil {
 			return freetype.RastPoint{}, err
 		}
@@ -57,19 +56,15 @@ func (c *Context) DrawText(text string, rect image.Rectangle) (freetype.RastPoin
 		pt.X += freetype.Fix32(c.font.font.HMetric(768, idx).AdvanceWidth) << 2
 		glyph_rect := mask.Bounds().Add(offset)
 
-		// dr := c.clip.Intersect(glyph_rect)
-		//if !dr.Empty() {
-		// mp := image.Point{0, dr.Min.Y - glyph_rect.Min.Y}
-		// draw.DrawMask(c.dst, dr, c.src, image.ZP, mask, mp, draw.Over)
-		c.DrawImage(rect.Min.X, rect.Min.Y, mask, glyph_rect)
-		//}
+		c.DrawImage(glyph_rect.Min.X, glyph_rect.Min.Y, mask, mask.Bounds())
+
 		prev, has_prev = idx, true
 	}
 	return pt, nil
 }
 
-func (c *Context) DrawImage(x, y int, img image.Image, rect image.Rectangle) {
-	switch typ := img.(type) {
+func (c *Context) DrawImage(x, y int, src image.Image, rect image.Rectangle) {
+	switch typ := src.(type) {
 	case *image.Alpha:
 		c.DrawAlpha(x, y, typ, rect)
 	}
@@ -86,15 +81,13 @@ func (c *Context) DrawAlpha(x, y int, src *image.Alpha, rect image.Rectangle) {
 	// draw rect
 	r0 := rect.Sub(rect.Min)
 	r0.Max.X, r0.Max.Y = r0.Max.X*4, r0.Max.Y
-	r1 := dst.Bounds()
-	r1.Min = image.Pt(x, y)
+	r1 := dst.LocalBounds()
+	r1 = r1.Sub(image.Pt(x, y))
 
 	r := r0.Intersect(r1)
 	if r.Empty() {
 		return
 	}
-
-	const m = 1<<16 - 1
 
 	for y := 0; y < r.Dy(); y++ {
 		for x := 0; x < r.Dx(); x += 4 {

@@ -1,9 +1,5 @@
 package views
 
-import (
-	"log"
-)
-
 type BaseViewDelegate struct {
 	on_mouse_enter func(*MouseEvent)
 	on_mouse_leave func(*MouseEvent)
@@ -33,7 +29,6 @@ func (d *BaseViewDelegate) InitWithUIMap(delegate UIMap) *BaseViewDelegate {
 	if void_ptr != nil {
 		if on_draw, ok := void_ptr.(func(*DrawEvent)); ok {
 			d.on_draw = on_draw
-			log.Printf("1")
 		}
 	}
 
@@ -58,6 +53,5 @@ func (d *BaseViewDelegate) OnDraw(event *DrawEvent) {
 	if d.on_draw == nil {
 		return
 	}
-	log.Printf("2")
 	d.on_draw(event)
 }

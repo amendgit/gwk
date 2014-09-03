@@ -36,7 +36,7 @@ func make_main_ui_map() views.UIMap {
 					"on_draw": func(event *views.DrawEvent) {
 						ctxt := vango.NewContext()
 						ctxt.SelectCanvas(event.Canvas)
-						ctxt.DrawText("G", image.Rect(0, 0, 50, 50))
+						ctxt.DrawText("GWK", image.Rect(0, 0, 50, 50))
 					},
 				},
 			},
