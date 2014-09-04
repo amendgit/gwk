@@ -6,21 +6,20 @@ package vango
 
 import (
 	. "image"
-	"log"
 )
 
 type Canvas struct {
 	pix    []byte    // Pixels in RGBA order.
 	bounds Rectangle // Bounds is the sub rectangle of the pixels's bounds.
-	stride int       // The number of pixels in one line.
-	opaque bool      // Does the canvas opaque.
+	stride int       // The number of pixels in bytes for one line.
+	opaque bool      // Is the canvas opaque.
 }
 
 func NewCanvas(width int, height int) *Canvas {
 	var c Canvas
 	c.bounds = Rect(0, 0, width, height)
 	c.pix = make([]byte, c.W()*c.H()*4)
-	c.stride = c.W()
+	c.stride = c.W() * 4
 	return &c
 }
 
@@ -76,64 +75,65 @@ func (c *Canvas) SetOpaque(opaque bool) {
 	c.opaque = opaque
 }
 
-func (c *Canvas) SubCanvas(r Rectangle) *Canvas {
-	// The SubImage in the image pkg is need the r based on the absolute
-	// coordinate. We need r based on the relative coordinate. So covnert
-	// r to the parent's coordinate first.
-	r = r.Add(c.Bounds().Min)
-	r = r.Intersect(c.Bounds())
-	if r.Empty() {
+func (c *Canvas) SubCanvas(rect Rectangle) *Canvas {
+	// The SubImage in the image pkg is need the |rect| based on the absolute
+	// coordinate. We need |rect| based on the relative coordinate. So covnert
+	// |rect| to the parent's coordinate first.
+	rect = rect.Add(c.Bounds().Min)
+	rect = rect.Intersect(c.Bounds())
+	if rect.Empty() {
 		return &Canvas{}
 	}
-	// i := c.PixOffset(r.Min.X, r.Min.Y)
+
 	return &Canvas{
 		pix:    c.pix,
 		stride: c.stride,
-		bounds: r,
+		bounds: rect,
 	}
 }
 
 func (c *Canvas) PixOffset(x int, y int) int {
-	return (x+c.bounds.Min.X)*4 + (y+c.bounds.Min.Y)*c.Stride()*4
+	return (y+c.bounds.Min.Y)*c.Stride() + (x+c.bounds.Min.X)*4
 }
 
-func (dst *Canvas) DrawColor(r, g, b byte) {
-	var i = dst.PixOffset(0, 0)
-	var W = i + dst.W()*4
-	var p = dst.Pix()
-	var j = 0
+func (c *Canvas) DrawColor(r, g, b byte) {
+	i := c.PixOffset(0, 0)
+	dr := c.LocalBounds()
+	p := c.Pix()
 
-	for j < dst.H() {
-		for i < W {
-			p[i+0] = b
-			p[i+1] = g
-			p[i+2] = r
-			p[i+3] = 255
-			i += 4
+	for y := 0; y < dr.Dy(); y++ {
+		for x := 0; x < dr.Dx()*4; x += 4 {
+			p[i+x+0] = b
+			p[i+x+1] = g
+			p[i+x+2] = r
+			p[i+x+3] = 255
 		}
-		i = i + dst.Stride()*4 - dst.W()*4
-		W = W + dst.Stride()*4
-		j++
+		i += c.Stride()
 	}
 }
 
 func (c *Canvas) FillRect(rect Rectangle, r, g, b byte) {
-	canvas_rect := c.Bounds()
-	rect = rect.Add(canvas_rect.Min).Intersect(canvas_rect).Sub(canvas_rect.Min)
-	line_begin_index := c.PixOffset(rect.Min.X, rect.Min.Y)
-	line_end_index := line_begin_index + rect.Dx()*4
-	stride := c.Stride() * 4
-	pix := c.Pix()
+	l := c.LocalBounds()
+	dr := rect.Intersect(l) // draw rect
 
-	for j := 0; j < rect.Dy(); j++ {
-		for index := line_begin_index; index < line_end_index; index = index + 4 {
-			pix[index+0] = b
-			pix[index+1] = g
-			pix[index+2] = r
-			pix[index+3] = 0
+	if dr.Empty() {
+		return
+	}
+	s := c.Stride()
+	p := c.Pix()
+
+	i0 := c.PixOffset(dr.Min.X, dr.Min.Y) // offset of the pix that at the BEGIN of one line
+	i1 := i0 + dr.Dx()*4                  // offset of the pix that at the END of one line
+
+	for y := 0; y < dr.Dy(); y++ {
+		for x := i0; x < i1; x = x + 4 {
+			p[x+0] = b
+			p[x+1] = g
+			p[x+2] = r
+			p[x+3] = 0
 		}
-		line_begin_index = line_begin_index + stride
-		line_end_index = line_end_index + stride
+		i0 += s
+		i1 += s
 	}
 }
 
@@ -167,8 +167,8 @@ func (dst *Canvas) DrawCanvas(x int, y int, src *Canvas, src_rect Rectangle) {
 			p1[i1+i+2] = p0[i0+i+2]
 			p1[i1+i+3] = p0[i0+i+3]
 		}
-		i0 = i0 + s0*4
-		i1 = i1 + s1*4
+		i0 = i0 + s0
+		i1 = i1 + s1
 	}
 }
 
@@ -202,10 +202,9 @@ func (dst *Canvas) AlphaBlend(x int, y int, src *Canvas) {
 			p1[i1+i+0] = byte((a*(int32(r0)-int32(r1)))/256) + r1
 			p1[i1+i+1] = byte((a*(int32(g0)-int32(g1)))/256) + g1
 			p1[i1+i+2] = byte((a*(int32(b0)-int32(b1)))/256) + b1
-			// p1[i1+i+3] = p1[i1+i+3]
 		}
-		i0 = i0 + s0*4
-		i1 = i1 + s1*4
+		i0 = i0 + s0
+		i1 = i1 + s1
 	}
 }
 
@@ -226,7 +225,7 @@ func (dst *Canvas) DrawImageNRGBA(x int, y int, src *NRGBA, srcRc *Rectangle) {
 	var dstPix = dst.Pix()
 
 	var srcStride = src.Stride
-	var dstStride = dst.Stride() * 4
+	var dstStride = dst.Stride()
 
 	var i, j = 0, 0
 
@@ -262,7 +261,7 @@ func (dst *Canvas) DrawImageRGBA(x int, y int, src *RGBA, srcRc *Rectangle) {
 	var dstPix = dst.Pix()
 
 	var srcStride = src.Stride
-	var dstStride = dst.Stride() * 4
+	var dstStride = dst.Stride()
 
 	var i, j = 0, 0
 
@@ -291,8 +290,8 @@ func (dst *Canvas) DrawTexture(dstRc Rectangle, tex *Canvas, texRc Rectangle) {
 	var texI = tex.PixOffset(texX, texY)
 	var dstI = dst.PixOffset(dstX, dstY)
 
-	var texStride = tex.Stride() * 4
-	var dstStride = dst.Stride() * 4
+	var texStride = tex.Stride()
+	var dstStride = dst.Stride()
 
 	var texPix = tex.Pix()
 	var dstPix = dst.Pix()
@@ -342,8 +341,8 @@ func (dst *Canvas) StretchDraw(dst_rect Rectangle, src *Canvas) {
 	width0, height0 := rect0.Dx(), rect0.Dy()
 	width1, height1 := rect1.Dx(), rect1.Dy()
 
-	stride0 := src.Stride() * 4
-	log.Printf("jishi debug: src stride %v", stride0)
+	stride0 := src.Stride()
+
 	pix0 := src.Pix()
 	pix1 := dst.Pix()
 

@@ -56,7 +56,7 @@ func NewNativeCanvas(bounds image.Rectangle) *NativeCanvas {
 
 	c.SetPix(((*[1 << 30]byte)(unsafe.Pointer(p)))[:w*h*4])
 	c.SetBounds(image.Rect(0, 0, w, h))
-	c.SetStride(w)
+	c.SetStride(w * 4)
 
 	return &c
 }

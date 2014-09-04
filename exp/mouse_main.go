@@ -9,7 +9,6 @@ import (
 	"gwk/vango"
 	"gwk/views"
 	"image"
-	"log"
 	"math/rand"
 	"time"
 )
@@ -24,7 +23,7 @@ func make_main_ui_map() views.UIMap {
 				"top":    10,
 				"width":  200,
 				"height": 200,
-				"color":  0x000000,
+				"color":  0xff0000,
 				"delegate": views.UIMap{
 					"on_mouse_enter": func(event *views.MouseEvent) {
 						iv, ok := &views.ImageView{}, false

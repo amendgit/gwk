@@ -104,7 +104,7 @@ func (c *Context) DrawAlpha(x, y int, src *image.Alpha, rect image.Rectangle) {
 			p1[i1+x+2] = byte((a*(int32(b0)-int32(b1)))/256) + b1
 		}
 		i0 = i0 + s0
-		i1 = i1 + 4*s1
+		i1 = i1 + s1
 	}
 }
 
@@ -115,7 +115,7 @@ func (c *Context) DrawNRGBA(x int, y int, src *image.NRGBA, rect image.Rectangle
 
 	i0, i1 := src.PixOffset(x0, y0), dst.PixOffset(x1, y1) // index
 	p0, p1 := src.Pix, dst.Pix()                           // pix
-	s0, s1 := src.Stride, dst.Stride()*4                   // stride
+	s0, s1 := src.Stride, dst.Stride()                     // stride
 	// draw rect
 	r0 := rect
 	r1 := dst.LocalBounds()
@@ -156,7 +156,7 @@ func (c *Context) DrawRGBA(x int, y int, src *image.RGBA, srcRc *image.Rectangle
 	var dstPix = dst.Pix()
 
 	var srcStride = src.Stride
-	var dstStride = dst.Stride() * 4
+	var dstStride = dst.Stride()
 
 	var i, j = 0, 0
 
@@ -202,8 +202,8 @@ func (c *Context) DrawCanvas(x int, y int, src *Canvas, rect image.Rectangle) {
 			p1[i1+i+2] = p0[i0+i+2]
 			p1[i1+i+3] = p0[i0+i+3]
 		}
-		i0 = i0 + s0*4
-		i1 = i1 + s1*4
+		i0 = i0 + s0
+		i1 = i1 + s1
 	}
 }
 
@@ -240,7 +240,7 @@ func (c *Context) AlphaBlend(x int, y int, src *Canvas) {
 			p1[i1+i+2] = byte((a*(int32(b0)-int32(b1)))/256) + b1
 			// p1[i1+i+3] = p1[i1+i+3]
 		}
-		i0 = i0 + s0*4
-		i1 = i1 + s1*4
+		i0 = i0 + s0
+		i1 = i1 + s1
 	}
 }
