@@ -37,7 +37,7 @@ func (v *ImageView) Layout(parent View) {
 
 func (v *ImageView) OnDraw(event *DrawEvent) {
 	event.Canvas.DrawColor(v.clr.R, v.clr.G, v.clr.B)
-	// v.BaseView.OnDraw(event)
+	v.BaseView.OnDraw(event)
 }
 
 func (v *ImageView) SetColorRGB(r, g, b byte) {

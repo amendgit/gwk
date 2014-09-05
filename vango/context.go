@@ -80,28 +80,30 @@ func (c *Context) DrawAlpha(x, y int, src *image.Alpha, rect image.Rectangle) {
 
 	// draw rect
 	r0 := rect.Sub(rect.Min)
-	r0.Max.X, r0.Max.Y = r0.Max.X*4, r0.Max.Y
 	r1 := dst.LocalBounds()
-	r1 = r1.Sub(image.Pt(x, y))
+	r1.Min = image.Pt(x, y)
+	r1 = r1.Sub(r1.Min)
 
-	r := r0.Intersect(r1)
-	if r.Empty() {
+	dr := r0.Intersect(r1)
+	if dr.Empty() {
 		return
 	}
 
-	for y := 0; y < r.Dy(); y++ {
-		for x := 0; x < r.Dx(); x += 4 {
-			a := int32(p0[i0+int(x/4)])
+	for y := 0; y < dr.Dy(); y++ {
+		for x := 0; x < dr.Dx(); x++ {
+			o0, o1 := i0+int(x), i1+x*4 // pix offset in bytes
+
+			a := int32(p0[o0])
 			if a == 0 {
 				continue
 			}
 
 			r0, g0, b0 := 0x00, 0x00, 0x00
-			r1, g1, b1 := p1[i1+x+0], p1[i1+x+1], p1[i1+x+2]
+			r1, g1, b1 := p1[o1+0], p1[o1+1], p1[o1+2]
 
-			p1[i1+x+0] = byte((a*(int32(r0)-int32(r1)))/256) + r1
-			p1[i1+x+1] = byte((a*(int32(g0)-int32(g1)))/256) + g1
-			p1[i1+x+2] = byte((a*(int32(b0)-int32(b1)))/256) + b1
+			p1[o1+0] = byte((a*(int32(r0)-int32(r1)))/256) + r1
+			p1[o1+1] = byte((a*(int32(g0)-int32(g1)))/256) + g1
+			p1[o1+2] = byte((a*(int32(b0)-int32(b1)))/256) + b1
 		}
 		i0 = i0 + s0
 		i1 = i1 + s1
