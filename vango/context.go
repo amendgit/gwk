@@ -71,18 +71,17 @@ func (c *Context) DrawImage(x, y int, src image.Image, rect image.Rectangle) {
 }
 
 func (c *Context) DrawAlpha(x, y int, src *image.Alpha, rect image.Rectangle) {
-	rect = rect.Sub(rect.Min)
 	dst := c.canvas
 
 	i0, i1 := src.PixOffset(rect.Min.X, rect.Min.Y), dst.PixOffset(x, y) // pix offset
 	s0, s1 := src.Stride, dst.Stride()                                   // stride
 	p0, p1 := src.Pix, dst.Pix()                                         // pix
 
-	// draw rect
-	r0 := rect.Sub(rect.Min)
-	r1 := dst.LocalBounds()
-	r1.Min = image.Pt(x, y)
-	r1 = r1.Sub(r1.Min)
+	// calculate the draw rect
+	r0 := rect.Sub(rect.Min) // align in (0, 0)
+	r1 := dst.LocalBounds()  // bounds in self coordinate.
+	r1.Min = image.Pt(x, y)  // dst draw position start at (x, y)
+	r1 = r1.Sub(r1.Min)      // align in (0, 0)
 
 	dr := r0.Intersect(r1)
 	if dr.Empty() {
@@ -118,130 +117,134 @@ func (c *Context) DrawNRGBA(x int, y int, src *image.NRGBA, rect image.Rectangle
 	i0, i1 := src.PixOffset(x0, y0), dst.PixOffset(x1, y1) // index
 	p0, p1 := src.Pix, dst.Pix()                           // pix
 	s0, s1 := src.Stride, dst.Stride()                     // stride
+
 	// draw rect
 	r0 := rect
 	r1 := dst.LocalBounds()
 	r1.Min = image.Pt(x, y)
-	r := r0.Intersect(r1)
-	if r.Empty() {
+	r1 = r1.Sub(r1.Min)
+	dr := r0.Intersect(r1)
+	if dr.Empty() {
 		return
 	}
 
-	for y := 0; y < r.Dy(); y++ {
-		for x := 0; x < r.Dx(); x += 4 {
-			p1[i1+x+0] = p0[i0+x+0]
-			p1[i1+x+1] = p0[i0+x+1]
-			p1[i1+x+2] = p0[i0+x+2]
-			p1[i1+x+3] = p0[i0+x+3]
-			x += 4
+	for y := 0; y < dr.Dy(); y++ {
+		for x := 0; x < dr.Dx(); x++ {
+			o0, o1 := i0+4*x, i1+4*x
+			p1[o1+0] = p0[o0+0]
+			p1[o1+1] = p0[o0+1]
+			p1[o1+2] = p0[o0+2]
+			p1[o1+3] = p0[o0+3]
 		}
 		i0 = i0 + s0
 		i1 = i1 + s1
 	}
 }
 
-func (c *Context) DrawRGBA(x int, y int, src *image.RGBA, srcRc *image.Rectangle) {
+// TODO(refactory)
+func (c *Context) DrawRGBA(x, y int, src *image.RGBA, rect image.Rectangle) {
 	dst := c.canvas
-	if srcRc == nil {
-		srcRc = &(src.Rect)
+
+	x0, y0 := rect.Min.X, rect.Min.Y
+	x1, y1 := x, y
+
+	i0, i1 := src.PixOffset(x0, y0), dst.PixOffset(x1, y1)
+	p0, p1 := src.Pix, dst.Pix()
+	s0, s1 := src.Stride, dst.Stride()
+
+	// calculate draw rect.
+	r0 := rect
+	r1 := dst.LocalBounds()
+	r1.Min = image.Pt(x, y)
+	r1 = r1.Sub(r1.Min)
+	dr := r0.Intersect(r1)
+
+	if dr.Empty() {
+		return
 	}
 
-	var srcX, srcY = srcRc.Min.X, srcRc.Min.Y
-	var dstX, dstY = x, y
-
-	var bltW, bltH = srcRc.Dx(), srcRc.Dy()
-
-	var srcI = src.PixOffset(srcX, srcY)
-	var dstI = dst.PixOffset(dstX, dstY)
-
-	var srcPix = src.Pix
-	var dstPix = dst.Pix()
-
-	var srcStride = src.Stride
-	var dstStride = dst.Stride()
-
-	var i, j = 0, 0
-
-	for j < bltH {
-		i = 0
-		for i < bltW*4 {
-			dstPix[dstI+i+0] = srcPix[srcI+i+2]
-			dstPix[dstI+i+1] = srcPix[srcI+i+1]
-			dstPix[dstI+i+2] = srcPix[srcI+i+0]
-			dstPix[dstI+i+3] = srcPix[srcI+i+3]
-			i += 4
+	for y := 0; y < dr.Dy(); y++ {
+		for x := 0; x < dr.Dx(); x++ {
+			o0, o1 := i0+4*x, i1+4*x
+			p1[o1+0] = p0[o0+0]
+			p1[o1+1] = p0[o0+1]
+			p1[o1+2] = p0[o0+2]
+			p1[o1+3] = p0[o0+3]
 		}
-		srcI = srcI + srcStride
-		dstI = dstI + dstStride
-		j++
+		i0 = i0 + s0
+		i1 = i1 + s1
 	}
 }
 
-func (c *Context) DrawCanvas(x int, y int, src *Canvas, rect image.Rectangle) {
+func (c *Context) DrawCanvas(x, y int, src *Canvas, rect image.Rectangle) {
 	dst := c.canvas
 	// 0 means src, 1 means dst.
 	// b0, b1 := src.Bounds(), dst.Bounds()
-	l0, l1 := src.LocalBounds(), dst.LocalBounds()
+	// l0, l1 := src.LocalBounds(), dst.LocalBounds()
 	x0, y0, x1, y1 := rect.Min.X, rect.Min.Y, x, y
 	i0, i1 := src.PixOffset(x0, y0), dst.PixOffset(x1, y1)
 	s0, s1 := src.Stride(), dst.Stride()
 	p0, p1 := src.Pix(), dst.Pix()
 
-	// TODO(BUG)
 	// the shared draw rect.
-	r := l0.Intersect(l1)
-	if r.Empty() {
+	r0 := rect.Sub(rect.Min)
+	r1 := dst.LocalBounds()
+	r1.Min = image.Pt(x, y)
+
+	dr := r0.Intersect(r1)
+	if dr.Empty() {
 		return
 	}
 
-	w, h := r.Dx(), r.Dy()
-
 	// from src(x0, y0) draw |r| area to dst(x1, y1)
-	for j := 0; j < h; j++ {
-		for i := 0; i < w*4; i = i + 4 {
-			p1[i1+i+0] = p0[i0+i+0]
-			p1[i1+i+1] = p0[i0+i+1]
-			p1[i1+i+2] = p0[i0+i+2]
-			p1[i1+i+3] = p0[i0+i+3]
+	for y := 0; y < dr.Dy(); y++ {
+		for x := 0; x < dr.Dx(); x++ {
+			o0, o1 := i0+4*x, i1+4*x
+			p1[o1+0] = p0[o0+0]
+			p1[o1+1] = p0[o0+1]
+			p1[o1+2] = p0[o0+2]
+			p1[o1+3] = p0[o0+3]
 		}
 		i0 = i0 + s0
 		i1 = i1 + s1
 	}
 }
 
-func (c *Context) AlphaBlend(x int, y int, src *Canvas) {
+func (c *Context) AlphaBlend(x int, y int, src *Canvas, rect image.Rectangle) {
 	dst := c.canvas
 	// 0 means src, 1 means dst.
-	l0, l1 := src.LocalBounds(), dst.LocalBounds()
+	// l0, l1 := src.LocalBounds(), dst.LocalBounds()
 	x0, y0, x1, y1 := 0, 0, x, y
 	i0, i1 := src.PixOffset(x0, y0), dst.PixOffset(x1, y1)
 	s0, s1 := src.Stride(), dst.Stride()
 	p0, p1 := src.Pix(), dst.Pix()
 
-	// TODO(BUG)
 	// the shared draw rect.
-	r := l0.Intersect(l1)
-	if r.Empty() {
+	r0 := rect.Sub(rect.Min)
+	r1 := dst.LocalBounds()
+	r1.Min = image.Pt(x, y)
+	r1 = r1.Sub(r1.Min)
+	dr := r0.Intersect(r1)
+	if dr.Empty() {
 		return
 	}
 
-	w, h := r.Dx(), r.Dy()
-
 	// from src(x0, y0) draw |r| area to dst(x1, y1)
-	for j := 0; j < h; j++ {
-		for i := 0; i < w*4; i = i + 4 {
+	for y := 0; y < dr.Dy(); y++ {
+		for x := 0; x < dr.Dx(); x++ {
 			// http://archive.gamedev.net/archive/reference/articles/article817.html
-			r0, g0, b0 := p0[i0+i+0], p0[i0+i+1], p0[i0+i+2]
-			r1, g1, b1 := p1[i1+i+0], p1[i1+i+1], p1[i1+i+2]
+			o0, o1 := i0+4*x, i1+4*x
+			r0, g0, b0 := p0[o0+0], p0[o0+1], p0[o0+2]
+			r1, g1, b1 := p1[o1+0], p1[o1+1], p1[o1+2]
 
-			// Alpha value
-			a := int32(p0[i0+i+3])
+			// alpha value
+			a := int32(p0[o0+3])
 
-			p1[i1+i+0] = byte((a*(int32(r0)-int32(r1)))/256) + r1
-			p1[i1+i+1] = byte((a*(int32(g0)-int32(g1)))/256) + g1
-			p1[i1+i+2] = byte((a*(int32(b0)-int32(b1)))/256) + b1
-			// p1[i1+i+3] = p1[i1+i+3]
+			p1[o1+0] = byte((a*(int32(r0)-int32(r1)))/256) + r1
+			p1[o1+1] = byte((a*(int32(g0)-int32(g1)))/256) + g1
+			p1[o1+2] = byte((a*(int32(b0)-int32(b1)))/256) + b1
 		}
+
 		i0 = i0 + s0
 		i1 = i1 + s1
 	}
