@@ -45,7 +45,7 @@ func (c *Context) DrawText(text string, rect image.Rectangle) (freetype.RastPoin
 	for _, rune := range text {
 		idx := c.font.Index(rune)
 		if has_prev {
-			pt.X += freetype.Fix32(c.font.Kerning(768, prev, idx)) << 2
+			pt.X += freetype.Fix32(c.font.Kerning(prev, idx)) << 2
 		}
 
 		mask, offset, err := c.font.GlyphAt(idx, pt)
@@ -53,7 +53,7 @@ func (c *Context) DrawText(text string, rect image.Rectangle) (freetype.RastPoin
 			return freetype.RastPoint{}, err
 		}
 
-		pt.X += freetype.Fix32(c.font.font.HMetric(768, idx).AdvanceWidth) << 2
+		pt.X += freetype.Fix32(c.font.HMetric(idx).AdvanceWidth) << 2
 		glyph_rect := mask.Bounds().Add(offset)
 
 		c.DrawImage(glyph_rect.Min.X, glyph_rect.Min.Y, mask, mask.Bounds())

@@ -26,17 +26,17 @@ func make_main_ui_map() views.UIMap {
 				"color":  0xffffff,
 				"delegate": views.UIMap{
 					"on_mouse_enter": func(event *views.MouseEvent) {
-						iv, ok := &views.ImageView{}, false
-						if iv, ok = event.Owner.(*views.ImageView); !ok {
+						_, ok := &views.ImageView{}, false
+						if _, ok = event.Owner.(*views.ImageView); !ok {
 							return
 						}
-						iv.SetColorRGB(byte(rand.Intn(255)), byte(rand.Intn(255)), byte(rand.Intn(255)))
-						iv.ScheduleDraw()
+						// iv.SetColorRGB(byte(rand.Intn(255)), byte(rand.Intn(255)), byte(rand.Intn(255)))
+						// iv.ScheduleDraw()
 					},
 					"on_draw": func(event *views.DrawEvent) {
 						ctxt := vango.NewContext()
 						ctxt.SelectCanvas(event.Canvas)
-						ctxt.DrawText("GWK", image.Rect(0, 0, 50, 50))
+						ctxt.DrawText("GWK", image.Rect(30, 30, 200, 200))
 					},
 				},
 			},

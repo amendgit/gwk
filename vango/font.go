@@ -93,8 +93,12 @@ func (f *Font) Index(ch rune) uint16 {
 	return f.font.Index(ch)
 }
 
-func (f *Font) Kerning(scale int32, i0, i1 uint16) int32 {
-	return f.font.Kerning(scale, i0, i1)
+func (f *Font) Kerning(i0, i1 uint16) int32 {
+	return f.font.Kerning(f.scale, i0, i1)
+}
+
+func (f *Font) HMetric(i uint16) freetype.HMetric {
+	return f.font.HMetric(f.scale, i)
 }
 
 func (f *Font) rasterize(glyph uint16, fx, fy freetype.Fix32) (*image.Alpha, image.Point, error) {
