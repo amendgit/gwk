@@ -4,8 +4,8 @@ import (
 	"gwk/views/resc"
 )
 
-func Init() {
-	resc.Init()
+func InitViews() {
+	resc.InitResc()
 	init_mockup()
 	init_layout()
 }

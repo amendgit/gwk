@@ -10,6 +10,6 @@ import (
 )
 
 func Init() {
-	views.Init()
+	views.InitViews()
 	vango.InitVango()
 }

@@ -4,6 +4,7 @@
 
 package resc
 
-func Init() {
+func InitResc() {
+	// default resource specific file.
 	LoadRescFile("resc.xml")
 }
