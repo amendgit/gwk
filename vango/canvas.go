@@ -426,7 +426,7 @@ func CanvasFromImage(img Image) *Canvas {
 
 	canvas := &Canvas{
 		pix:    pix,
-		stride: stride / 4,
+		stride: stride,
 		bounds: bounds,
 	}
 
