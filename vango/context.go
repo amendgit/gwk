@@ -249,3 +249,7 @@ func (c *Context) AlphaBlend(x int, y int, src *Canvas, rect image.Rectangle) {
 		i1 = i1 + s1
 	}
 }
+
+func (c *Context) DrawStretch(dst_rect image.Rectangle, src *Canvas, src_rect image.Rectangle) {
+
+}

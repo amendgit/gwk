@@ -412,11 +412,7 @@ func CanvasFromImage(img Image) *Canvas {
 	)
 
 	switch src := img.(type) {
-	case *Alpha:
-		pix = src.Pix
-		stride = src.Stride
-		bounds = src.Rect
-	case *RGBA:
+	case *Alpha, *RGBA:
 		pix = src.Pix
 		stride = src.Stride
 		bounds = src.Rect
