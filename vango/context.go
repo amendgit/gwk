@@ -63,6 +63,23 @@ func (c *Context) DrawText(text string, rect image.Rectangle) (freetype.RastPoin
 	return pt, nil
 }
 
+func (c *Context) DrawColor(r, g, b byte) {
+	dst := c.canvas
+	i := dst.PixOffset(0, 0)
+	dr := dst.LocalBounds()
+	p := dst.Pix()
+
+	for y := 0; y < dr.Dy(); y++ {
+		for x := 0; x < dr.Dx()*4; x += 4 {
+			p[i+x+0] = b
+			p[i+x+1] = g
+			p[i+x+2] = r
+			p[i+x+3] = 255
+		}
+		i += dst.Stride()
+	}
+}
+
 func (c *Context) DrawImage(x, y int, src image.Image, rect image.Rectangle) {
 	switch typ := src.(type) {
 	case *image.Alpha:
@@ -252,4 +269,50 @@ func (c *Context) AlphaBlend(x int, y int, src *Canvas, rect image.Rectangle) {
 
 func (c *Context) DrawStretch(dst_rect image.Rectangle, src *Canvas, src_rect image.Rectangle) {
 
+}
+
+func (c *Context) StrokeRect(rect image.Rectangle) {
+	dst := c.canvas
+	i := dst.PixOffset(rect.Min.X, rect.Min.Y)
+	s := dst.Stride()
+	p := dst.Pix()
+
+	// step 1
+	for x := 0; x < rect.Dx(); x++ {
+		o := i + x*4
+		p[o+0] = 0x00
+		p[o+1] = 0xff
+		p[o+2] = 0x00
+		p[o+3] = 0x00
+	}
+
+	// step 2
+	i = dst.PixOffset(rect.Min.X, rect.Max.Y)
+	for x := 0; x < rect.Dx(); x++ {
+		o := i + x*4
+		p[o+0] = 0x00
+		p[o+1] = 0xff
+		p[o+2] = 0x00
+		p[o+3] = 0x00
+	}
+
+	// step 3
+	i = dst.PixOffset(rect.Min.X, rect.Min.Y)
+	for y := 0; y < rect.Dy(); y++ {
+		o := i + y*s
+		p[o+0] = 0x00
+		p[o+1] = 0xff
+		p[o+2] = 0x00
+		p[o+3] = 0x00
+	}
+
+	// step 4
+	i = dst.PixOffset(rect.Max.X, rect.Min.Y)
+	for y := 0; y < rect.Dy(); y++ {
+		o := i + y*s
+		p[o+0] = 0x00
+		p[o+1] = 0xff
+		p[o+2] = 0x00
+		p[o+3] = 0x00
+	}
 }

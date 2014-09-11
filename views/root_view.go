@@ -94,7 +94,10 @@ func (r *RootView) DispatchDraw(dirty_rect Rectangle) {
 			return
 		}
 
+		// GraphicContext().Save()
+		GraphicContext().SelectCanvas(event.Canvas)
 		view.OnDraw(event)
+		// GraphicContext().Restore()
 
 		view_canvas := event.Canvas
 		for _, child := range view.Children() {

@@ -10,6 +10,8 @@ import (
 )
 
 func Init() {
-	views.InitViews()
 	vango.InitVango()
+	// The |InitViews| must after the |InitVango|. Cause the font should init
+	// first.
+	views.InitViews()
 }

@@ -12,14 +12,15 @@ func RegisterNewFuncToMockUp(typ string, new_func func() View) {
 	g_mock_up_map[typ] = new_func
 }
 
+// Init the gobal mockup mapping.
 func init_mockup() {
-	// Init the gobal mockup mapping.
 	g_mock_up_map["base_view"] = func() View { return NewBaseView() }
 	g_mock_up_map["image_view"] = func() View { return NewImageView() }
 	g_mock_up_map["button"] = func() View { return NewButton() }
 	g_mock_up_map["panel"] = func() View { return NewPanel() }
 	g_mock_up_map["main_frame"] = func() View { return NewMainFrame() }
 	g_mock_up_map["toolbar"] = func() View { return NewToolbar() }
+	g_mock_up_map["test_view"] = func() View { return NewTestView() }
 }
 
 func MockUp(ui UIMap) View {
