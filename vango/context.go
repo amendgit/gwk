@@ -8,19 +8,25 @@ import (
 )
 
 type Context struct {
-	font   *Font
-	canvas *Canvas
-	dpi    float64
+	font         *Font
+	canvas       *Canvas
+	dpi          float64
+	stroke_color uint32
 }
 
 func NewContext() *Context {
 	ctxt := new(Context)
 	ctxt.font = NewFont()
 	ctxt.dpi = 72
+	ctxt.stroke_color = 0x000000
 	return ctxt
 }
 
-func (c *Context) SelectFont(font_name string) {
+func (c *Context) SetStrokeColor(r, g, b byte) {
+	c.stroke_color = uint32(b)<<8 | uint32(g)<<16 | uint32(r)<<24
+}
+
+func (c *Context) SetFont(font_name string) {
 	if font_name == "default" {
 		c.font.font = g_default_font
 	} else {
@@ -28,7 +34,7 @@ func (c *Context) SelectFont(font_name string) {
 	}
 }
 
-func (c *Context) SelectCanvas(canvas *Canvas) *Canvas {
+func (c *Context) SetCanvas(canvas *Canvas) *Canvas {
 	old := c.canvas
 	c.canvas = canvas
 	return old
@@ -277,42 +283,45 @@ func (c *Context) StrokeRect(rect image.Rectangle) {
 	s := dst.Stride()
 	p := dst.Pix()
 
+	clr := c.stroke_color
+	b, g, r := byte(clr>>8&0xff), byte(clr>>16&0xff), byte(clr>>24&0xff)
+	// r, g, b = 0x00, 0xff, 0xff
 	// step 1
 	for x := 0; x < rect.Dx(); x++ {
 		o := i + x*4
-		p[o+0] = 0x00
-		p[o+1] = 0xff
-		p[o+2] = 0x00
-		p[o+3] = 0x00
+		p[o+0] = r
+		p[o+1] = g
+		p[o+2] = b
+		p[o+3] = 0xff
 	}
 
 	// step 2
 	i = dst.PixOffset(rect.Min.X, rect.Max.Y)
 	for x := 0; x < rect.Dx(); x++ {
 		o := i + x*4
-		p[o+0] = 0x00
-		p[o+1] = 0xff
-		p[o+2] = 0x00
-		p[o+3] = 0x00
+		p[o+0] = r
+		p[o+1] = g
+		p[o+2] = b
+		p[o+3] = 0xff
 	}
 
 	// step 3
 	i = dst.PixOffset(rect.Min.X, rect.Min.Y)
 	for y := 0; y < rect.Dy(); y++ {
 		o := i + y*s
-		p[o+0] = 0x00
-		p[o+1] = 0xff
-		p[o+2] = 0x00
-		p[o+3] = 0x00
+		p[o+0] = r
+		p[o+1] = g
+		p[o+2] = b
+		p[o+3] = 0xff
 	}
 
 	// step 4
 	i = dst.PixOffset(rect.Max.X, rect.Min.Y)
 	for y := 0; y < rect.Dy(); y++ {
 		o := i + y*s
-		p[o+0] = 0x00
-		p[o+1] = 0xff
-		p[o+2] = 0x00
-		p[o+3] = 0x00
+		p[o+0] = r
+		p[o+1] = g
+		p[o+2] = b
+		p[o+3] = 0xff
 	}
 }
