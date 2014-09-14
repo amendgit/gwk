@@ -7,19 +7,20 @@ package views
 import (
 	. "gwk/vango"
 	"image"
-	"log"
 )
 
-func (h *HostWindow) OnHostPaint(ctxt NativeContext, dirty_rect image.Rectangle) {
-	log.Printf("OnHostPaint")
-	canvas := NewNativeCanvas(dirty_rect)
-	defer canvas.Release()
+func (h *HostWindow) OnHostPaint(native_context NativeContext, dirty_rect image.Rectangle) {
+	native_canvas := NewNativeCanvas(dirty_rect)
+	defer native_canvas.Release()
 
-	canvas_rect := dirty_rect.Sub(dirty_rect.Min)
+	draw_rect := dirty_rect.Sub(dirty_rect.Min)
+	draw_context := GlobalDrawContext()
+	draw_context.SetCanvas(native_canvas.Canvas)
+	draw_context.DrawCanvas(draw_rect.Min.X, draw_rect.Min.Y,
+		h.root_view.Canvas(), dirty_rect)
 
-	canvas.DrawCanvas(canvas_rect.Min.X, canvas_rect.Min.Y, h.root_view.Canvas(),
-		dirty_rect)
-	canvas.BlitToContext(ctxt, dirty_rect.Min.X, dirty_rect.Min.Y, &canvas_rect)
+	native_canvas.BlitToNativeContext(native_context, dirty_rect.Min.X,
+		dirty_rect.Min.Y, &draw_rect)
 }
 
 func (h *HostWindow) SetRootView(root_view *RootView) {

@@ -19,8 +19,10 @@ func NewTestView() View {
 
 func (v *TestView) OnDraw(event *DrawEvent) {
 	/// draw text and bounds
-	ctxt := GraphicContext()
-	ctxt.DrawColor(0xff, 0xff, 0xff)
+	ctxt := GlobalDrawContext()
+	ctxt.SetFillColor(0xff, 0xff, 0xff)
+	ctxt.FillRect(event.DirtyRect)
+	ctxt.SetFontColor(0x00, 0x00, 0xff)
 	text := fmt.Sprintf("id: %v xywh: %v %v %v %v", v.ID(), v.X(), v.Y(), v.W(), v.H())
 	ctxt.DrawText(text, v.LocalBounds())
 	ctxt.SetStrokeColor(0x00, 0x00, 0xff)

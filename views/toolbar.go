@@ -10,5 +10,6 @@ func NewToolbar() *Toolbar {
 }
 
 func (t *Toolbar) OnDraw(event *DrawEvent) {
-	event.Canvas.DrawColor(19, 19, 19)
+	ctxt := GlobalDrawContext()
+	ctxt.DrawColor(19, 19, 19)
 }

@@ -28,34 +28,36 @@ func NewPanel() *Panel {
 
 func (p *Panel) DrawPanelHeader(event *DrawEvent) {
 	header_rect := p.get_header_bounds()
-	event.Canvas.FillRect(header_rect, 19, 19, 19)
+	ctxt := GlobalDrawContext()
+	ctxt.SetFillColor(19, 19, 19)
+	ctxt.FillRect(header_rect)
 }
 
 func (p *Panel) DrawPanelBorder(event *DrawEvent) {
 	var r Rectangle
+	ctxt := GlobalDrawContext()
+	ctxt.SetFillColor(19, 19, 19)
 	r = p.get_left_border_bounds()
-	event.Canvas.FillRect(r, 19, 19, 19)
+	ctxt.FillRect(r)
 
 	r = p.get_right_border_bounds()
-	event.Canvas.FillRect(r, 19, 19, 19)
+	ctxt.FillRect(r)
 
 	r = p.get_bottom_border_bounds()
-	event.Canvas.FillRect(r, 19, 19, 19)
+	ctxt.FillRect(r)
 }
 
 func (p *Panel) DrawPanelContentBackground(event *DrawEvent) {
 	r := p.get_content_bounds()
-	event.Canvas.FillRect(r, 96, 96, 96)
+	ctxt := GlobalDrawContext()
+	ctxt.SetFillColor(96, 96, 96)
+	ctxt.FillRect(r)
 }
 
 func (p *Panel) OnDraw(event *DrawEvent) {
 	p.DrawPanelHeader(event)
 	p.DrawPanelBorder(event)
 	p.DrawPanelContentBackground(event)
-	// event.Canvas.DrawColor(19, 19, 19)
-	// event.Canvas.DrawCanvas(0, 0, p.header, nil)
-	// header_rect := Rect(0, 0, p.Width(), 30)
-	// event.Canvas.StretchDraw(header_rect, p.header)
 }
 
 // ============================================================================

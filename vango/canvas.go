@@ -96,51 +96,6 @@ func (c *Canvas) PixOffset(x int, y int) int {
 	return (y+c.bounds.Min.Y)*c.Stride() + (x+c.bounds.Min.X)*4
 }
 
-func (c *Canvas) DrawColor(r, g, b byte) {
-	i := c.PixOffset(0, 0)
-	dr := c.LocalBounds()
-	p := c.Pix()
-
-	for y := 0; y < dr.Dy(); y++ {
-		for x := 0; x < dr.Dx()*4; x += 4 {
-			p[i+x+0] = b
-			p[i+x+1] = g
-			p[i+x+2] = r
-			p[i+x+3] = 255
-		}
-		i += c.Stride()
-	}
-}
-
-func (c *Canvas) FillRect(rect Rectangle, r, g, b byte) {
-	l := c.LocalBounds()
-	dr := rect.Intersect(l) // draw rect
-
-	if dr.Empty() {
-		return
-	}
-	s := c.Stride()
-	p := c.Pix()
-
-	i0 := c.PixOffset(dr.Min.X, dr.Min.Y) // offset of the pix that at the BEGIN of one line
-	i1 := i0 + dr.Dx()*4                  // offset of the pix that at the END of one line
-
-	for y := 0; y < dr.Dy(); y++ {
-		for x := i0; x < i1; x = x + 4 {
-			p[x+0] = b
-			p[x+1] = g
-			p[x+2] = r
-			p[x+3] = 0
-		}
-		i0 += s
-		i1 += s
-	}
-}
-
-func (dst *Canvas) DrawLine(from Point, to Point) {
-	return
-}
-
 func (dst *Canvas) DrawCanvas(x int, y int, src *Canvas, src_rect Rectangle) {
 	// 0 means src, 1 means dst.
 	// b0, b1 := src.Bounds(), dst.Bounds()
@@ -169,114 +124,6 @@ func (dst *Canvas) DrawCanvas(x int, y int, src *Canvas, src_rect Rectangle) {
 		}
 		i0 = i0 + s0
 		i1 = i1 + s1
-	}
-}
-
-func (dst *Canvas) AlphaBlend(x int, y int, src *Canvas) {
-	// 0 means src, 1 means dst.
-	l0, l1 := src.LocalBounds(), dst.LocalBounds()
-	x0, y0, x1, y1 := 0, 0, x, y
-	i0, i1 := src.PixOffset(x0, y0), dst.PixOffset(x1, y1)
-	s0, s1 := src.Stride(), dst.Stride()
-	p0, p1 := src.Pix(), dst.Pix()
-
-	// TODO(BUG)
-	// the shared draw rect.
-	r := l0.Intersect(l1)
-	if r.Empty() {
-		return
-	}
-
-	w, h := r.Dx(), r.Dy()
-
-	// from src(x0, y0) draw |r| area to dst(x1, y1)
-	for j := 0; j < h; j++ {
-		for i := 0; i < w*4; i = i + 4 {
-			// http://archive.gamedev.net/archive/reference/articles/article817.html
-			r0, g0, b0 := p0[i0+i+0], p0[i0+i+1], p0[i0+i+2]
-			r1, g1, b1 := p1[i1+i+0], p1[i1+i+1], p1[i1+i+2]
-
-			// Alpha value
-			a := int32(p0[i0+i+3])
-
-			p1[i1+i+0] = byte((a*(int32(r0)-int32(r1)))/256) + r1
-			p1[i1+i+1] = byte((a*(int32(g0)-int32(g1)))/256) + g1
-			p1[i1+i+2] = byte((a*(int32(b0)-int32(b1)))/256) + b1
-		}
-		i0 = i0 + s0
-		i1 = i1 + s1
-	}
-}
-
-func (dst *Canvas) DrawImageNRGBA(x int, y int, src *NRGBA, srcRc *Rectangle) {
-	if srcRc == nil {
-		srcRc = &(src.Rect)
-	}
-
-	var srcX, srcY = srcRc.Min.X, srcRc.Min.Y
-	var dstX, dstY = x, y
-
-	var bltW, bltH = srcRc.Dx(), srcRc.Dy()
-
-	var srcI = src.PixOffset(srcX, srcY)
-	var dstI = dst.PixOffset(dstX, dstY)
-
-	var srcPix = src.Pix
-	var dstPix = dst.Pix()
-
-	var srcStride = src.Stride
-	var dstStride = dst.Stride()
-
-	var i, j = 0, 0
-
-	for j < bltH {
-		i = 0
-		for i < bltW*4 {
-			dstPix[dstI+i+0] = srcPix[srcI+i+0]
-			dstPix[dstI+i+1] = srcPix[srcI+i+1]
-			dstPix[dstI+i+2] = srcPix[srcI+i+2]
-			dstPix[dstI+i+3] = srcPix[srcI+i+3]
-			i += 4
-		}
-		srcI = srcI + srcStride
-		dstI = dstI + dstStride
-		j++
-	}
-}
-
-func (dst *Canvas) DrawImageRGBA(x int, y int, src *RGBA, srcRc *Rectangle) {
-	if srcRc == nil {
-		srcRc = &(src.Rect)
-	}
-
-	var srcX, srcY = srcRc.Min.X, srcRc.Min.Y
-	var dstX, dstY = x, y
-
-	var bltW, bltH = srcRc.Dx(), srcRc.Dy()
-
-	var srcI = src.PixOffset(srcX, srcY)
-	var dstI = dst.PixOffset(dstX, dstY)
-
-	var srcPix = src.Pix
-	var dstPix = dst.Pix()
-
-	var srcStride = src.Stride
-	var dstStride = dst.Stride()
-
-	var i, j = 0, 0
-
-	for j < bltH {
-		i = 0
-		for i < bltW*4 {
-			dstPix[dstI+i+0] = srcPix[srcI+i+2]
-			dstPix[dstI+i+1] = srcPix[srcI+i+1]
-			dstPix[dstI+i+2] = srcPix[srcI+i+0]
-			dstPix[dstI+i+3] = srcPix[srcI+i+3]
-			i += 4
-		}
-		srcI = srcI + srcStride
-		dstI = dstI + dstStride
-		j++
 	}
 }
 
@@ -409,14 +256,20 @@ func CanvasFromImage(img Image) *Canvas {
 		pix    []byte
 		stride int
 		bounds Rectangle
+		opaque bool
 	)
 
 	switch src := img.(type) {
-	case *Alpha:
+	case *RGBA:
 		pix = src.Pix
 		stride = src.Stride
 		bounds = src.Rect
-		// case *RGBA:
+		opaque = true
+	case *NRGBA:
+		pix = src.Pix
+		stride = src.Stride
+		bounds = src.Rect
+		opaque = false
 	default:
 		return nil
 	}
@@ -425,6 +278,7 @@ func CanvasFromImage(img Image) *Canvas {
 		pix:    pix,
 		stride: stride,
 		bounds: bounds,
+		opaque: opaque,
 	}
 
 	return canvas

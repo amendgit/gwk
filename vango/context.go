@@ -12,6 +12,8 @@ type Context struct {
 	canvas       *Canvas
 	dpi          float64
 	stroke_color uint32
+	fill_color   uint32
+	font_color   uint32
 }
 
 func NewContext() *Context {
@@ -24,6 +26,14 @@ func NewContext() *Context {
 
 func (c *Context) SetStrokeColor(r, g, b byte) {
 	c.stroke_color = uint32(b)<<8 | uint32(g)<<16 | uint32(r)<<24
+}
+
+func (c *Context) SetFillColor(r, g, b byte) {
+	c.fill_color = uint32(b)<<8 | uint32(g)<<16 | uint32(r)<<24
+}
+
+func (c *Context) SetFontColor(r, g, b byte) {
+	c.font_color = uint32(b)<<8 | uint32(g)<<16 | uint32(r)<<24
 }
 
 func (c *Context) SetFont(font_name string) {
@@ -62,11 +72,54 @@ func (c *Context) DrawText(text string, rect image.Rectangle) (freetype.RastPoin
 		pt.X += freetype.Fix32(c.font.HMetric(idx).AdvanceWidth) << 2
 		glyph_rect := mask.Bounds().Add(offset)
 
-		c.DrawImage(glyph_rect.Min.X, glyph_rect.Min.Y, mask, mask.Bounds())
+		c.draw_text_mask(glyph_rect.Min.X, glyph_rect.Min.Y, mask)
 
 		prev, has_prev = idx, true
 	}
 	return pt, nil
+}
+
+func (c *Context) draw_text_mask(x, y int, mask *image.Alpha) {
+	src := mask
+	dst := c.canvas
+	rect := mask.Bounds()
+
+	i0, i1 := src.PixOffset(rect.Min.X, rect.Min.Y), dst.PixOffset(x, y) // pix offset
+	s0, s1 := src.Stride, dst.Stride()                                   // stride
+	p0, p1 := src.Pix, dst.Pix()                                         // pix
+
+	// calculate the draw rect
+	r0 := rect.Sub(rect.Min) // align in (0, 0)
+	r1 := dst.LocalBounds()  // bounds in self coordinate.
+	r1.Min = image.Pt(x, y)  // dst draw position start at (x, y)
+	r1 = r1.Sub(r1.Min)      // align in (0, 0)
+
+	dr := r0.Intersect(r1)
+	if dr.Empty() {
+		return
+	}
+
+	clr := c.font_color
+	b, g, r := byte(clr>>8&0xff), byte(clr>>16&0xff), byte(clr>>24&0xff)
+
+	for y := 0; y < dr.Dy(); y++ {
+		for x := 0; x < dr.Dx(); x++ {
+			o0, o1 := i0+int(x), i1+x*4 // pix offset in bytes
+
+			a := int32(p0[o0])
+			if a == 0 {
+				continue
+			}
+
+			r1, g1, b1 := p1[o1+0], p1[o1+1], p1[o1+2]
+
+			p1[o1+0] = byte((a*(int32(r)-int32(r1)))/256) + r1
+			p1[o1+1] = byte((a*(int32(g)-int32(g1)))/256) + g1
+			p1[o1+2] = byte((a*(int32(b)-int32(b1)))/256) + b1
+		}
+		i0 = i0 + s0
+		i1 = i1 + s1
+	}
 }
 
 func (c *Context) DrawColor(r, g, b byte) {
@@ -275,6 +328,34 @@ func (c *Context) AlphaBlend(x int, y int, src *Canvas, rect image.Rectangle) {
 
 func (c *Context) DrawStretch(dst_rect image.Rectangle, src *Canvas, src_rect image.Rectangle) {
 
+}
+
+func (c *Context) FillRect(rect image.Rectangle) {
+	dst := c.canvas
+	l := dst.LocalBounds()
+	dr := rect.Intersect(l) // draw rect
+
+	if dr.Empty() {
+		return
+	}
+	s := dst.Stride()
+	p := dst.Pix()
+
+	i0 := dst.PixOffset(dr.Min.X, dr.Min.Y) // offset of the pix that at the BEGIN of one line
+	i1 := i0 + dr.Dx()*4                    // offset of the pix that at the END of one line
+
+	clr := c.fill_color
+	b, g, r := byte(clr>>8&0xff), byte(clr>>16&0xff), byte(clr>>24&0xff)
+	for y := 0; y < dr.Dy(); y++ {
+		for x := i0; x < i1; x = x + 4 {
+			p[x+0] = b
+			p[x+1] = g
+			p[x+2] = r
+			p[x+3] = 0
+		}
+		i0 += s
+		i1 += s
+	}
 }
 
 func (c *Context) StrokeRect(rect image.Rectangle) {

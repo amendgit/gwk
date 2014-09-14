@@ -25,5 +25,6 @@ func NewButton() *Button {
 func (b *Button) OnDraw(event *DrawEvent) {
 	// event.Canvas.DrawCanvas(0, 0, b.image_normal)
 	// event.Canvas.DrawColor(0, 0, 250)
-	event.Canvas.AlphaBlend(0, 0, b.image_normal)
+	ctxt := GlobalDrawContext()
+	ctxt.AlphaBlend(0, 0, b.image_normal, b.image_normal.LocalBounds())
 }

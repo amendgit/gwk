@@ -91,7 +91,7 @@ func (c *NativeCanvas) EndPaint() {
 	return
 }
 
-func (c *NativeCanvas) BlitToContext(nc NativeContext, x int, y int, srcRc *image.Rectangle) {
+func (c *NativeCanvas) BlitToNativeContext(nc NativeContext, x int, y int, srcRc *image.Rectangle) {
 	// log.Printf("NativeCanvas.BlitToContext(...)")
 	var srcDC = c.BeginPaint()
 

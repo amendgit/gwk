@@ -36,7 +36,8 @@ func (v *ImageView) Layout(parent View) {
 }
 
 func (v *ImageView) OnDraw(event *DrawEvent) {
-	event.Canvas.DrawColor(v.clr.R, v.clr.G, v.clr.B)
+	ctxt := GlobalDrawContext()
+	ctxt.DrawColor(v.clr.R, v.clr.G, v.clr.B)
 	v.BaseView.OnDraw(event)
 }
 
