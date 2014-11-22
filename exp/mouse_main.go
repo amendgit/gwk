@@ -6,7 +6,7 @@ package main
 
 import (
 	"gwk"
-	"gwk/vango"
+	// "gwk/vango"
 	"gwk/views"
 	"image"
 	"math/rand"
@@ -34,8 +34,7 @@ func make_main_ui_map() views.UIMap {
 						iv.ScheduleDraw()
 					},
 					"on_draw": func(event *views.DrawEvent) {
-						ctxt := vango.NewContext()
-						ctxt.SelectCanvas(event.Canvas)
+						ctxt := views.GlobalDrawContext()
 						ctxt.DrawText("C", image.Rect(0, 0, 50, 50))
 					},
 				},

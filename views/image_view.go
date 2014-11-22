@@ -21,8 +21,10 @@ func NewImageView() *ImageView {
 	return v
 }
 
-func (v *ImageView) MockUp(ui UIMap) {
-	if clr, ok := ui.Int("color"); ok {
+func (v *ImageView) MockUp(tbl UIMap) {
+	v.BaseView.MockUp(tbl)
+
+	if clr, ok := tbl.Int("color"); ok {
 		val := uint(clr)
 		v.clr.R = byte((val & 0xff0000) >> 16)
 		v.clr.G = byte((val & 0x00ff00) >> 8)

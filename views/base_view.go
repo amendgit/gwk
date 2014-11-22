@@ -6,6 +6,9 @@ import (
 	"log"
 )
 
+// ============================================================================
+// BaseView
+
 type BaseView struct {
 	id string
 
@@ -232,6 +235,13 @@ func (v *BaseView) UIMap() UIMap {
 }
 
 func (v *BaseView) MockUp(ui UIMap) {
+	p := ui["delegate"]
+	if p != nil {
+		if tbl, ok := p.(UIMap); ok {
+			v.delegate = new_base_view_delegate().InitWithUIMap(tbl)
+		}
+	}
+
 	return
 }
 
@@ -241,4 +251,75 @@ func (v *BaseView) SetDelegate(delegate ViewDelegate) {
 
 func (v *BaseView) Delegate() ViewDelegate {
 	return v.delegate
+}
+
+// ============================================================================
+// BaseViewDelegate
+
+type BaseViewDelegate interface {
+	OnDraw(e *MouseEvent) bool
+	OnMouseEnter(e *MouseEvent) bool
+	OnMouseLeave(e *DrawEvent) bool
+}
+
+// ============================================================================
+// base_view_delegate_t: for mock up support.
+
+// Implement BaseViewDelegate
+type base_view_delegate_t struct {
+	on_mouse_enter func(*MouseEvent)
+	on_mouse_leave func(*MouseEvent)
+	on_draw        func(*DrawEvent)
+}
+
+func new_base_view_delegate() *base_view_delegate_t {
+	return new(base_view_delegate_t)
+}
+
+func (d *base_view_delegate_t) InitWithUIMap(delegate UIMap) *base_view_delegate_t {
+	var p interface{}
+
+	p = delegate["on_mouse_enter"]
+	if p != nil {
+		if on_mouse_enter, ok := p.(func(*MouseEvent)); ok {
+			d.on_mouse_enter = on_mouse_enter
+		}
+	}
+
+	p = delegate["on_mouse_leave"]
+	if p != nil {
+		if on_mouse_leave, ok := p.(func(*MouseEvent)); ok {
+			d.on_mouse_leave = on_mouse_leave
+		}
+	}
+
+	p = delegate["on_draw"]
+	if p != nil {
+		if on_draw, ok := p.(func(*DrawEvent)); ok {
+			d.on_draw = on_draw
+		}
+	}
+
+	return d
+}
+
+func (d *base_view_delegate_t) OnMouseEnter(event *MouseEvent) {
+	if d.on_mouse_enter == nil {
+		return
+	}
+	d.on_mouse_enter(event)
+}
+
+func (d *base_view_delegate_t) OnMouseLeave(event *MouseEvent) {
+	if d.on_mouse_leave == nil {
+		return
+	}
+	d.on_mouse_leave(event)
+}
+
+func (d *base_view_delegate_t) OnDraw(event *DrawEvent) {
+	if d.on_draw == nil {
+		return
+	}
+	d.on_draw(event)
 }

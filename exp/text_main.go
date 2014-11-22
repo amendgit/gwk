@@ -34,7 +34,7 @@ func make_main_ui_map() views.UIMap {
 						// iv.ScheduleDraw()
 					},
 					"on_draw": func(event *views.DrawEvent) {
-						ctxt := views.GraphicContext()
+						ctxt := views.GlobalDrawContext()
 						// ctxt.SelectCanvas(event.Canvas)
 						ctxt.DrawText("GWK", image.Rect(30, 30, 200, 200))
 					},
