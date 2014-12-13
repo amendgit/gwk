@@ -36,6 +36,7 @@ var (
 	procSetTimer = moduser32.NewProc("SetTimer")
 	procGetQueueStatus = moduser32.NewProc("GetQueueStatus")
 	procWaitMessage = moduser32.NewProc("WaitMessage")
+	procIsWindow = moduser32.NewProc("IsWindow")
 	procBitBlt = modgdi32.NewProc("BitBlt")
 	procSetDIBitsToDevice = modgdi32.NewProc("SetDIBitsToDevice")
 	procDeleteDC = modgdi32.NewProc("DeleteDC")
@@ -253,6 +254,12 @@ func GetQueueStatus(flags uint) (hilow uint32) {
 func WaitMessage() (succeed int32) {
 	r0, _, _ := syscall.Syscall(procWaitMessage.Addr(), 0, 0, 0, 0)
 	succeed = int32(r0)
+	return
+}
+
+func IsWindow(hwnd Handle) (is_window bool) {
+	r0, _, _ := syscall.Syscall(procIsWindow.Addr(), 1, uintptr(hwnd), 0, 0)
+	is_window = bool(r0 != 0)
 	return
 }
 

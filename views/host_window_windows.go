@@ -121,7 +121,13 @@ func (h *HostWindow) on_wnd_proc(msg uint32, warg uintptr, larg uintptr) uintptr
 			int(r.Bottom))
 
 		var ps PAINTSTRUCT
+		if !IsWindow(h.hwnd) {
+			log.Printf("window is not valid.")
+		}
 		var dc = BeginPaint(h.hwnd, &ps)
+		if dc == NULL {
+			log.Printf("dc is nil")
+		}
 		h.OnHostPaint(NativeContext(dc), dirtyRect)
 		EndPaint(h.hwnd, &ps)
 

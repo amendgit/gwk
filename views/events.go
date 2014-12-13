@@ -9,6 +9,10 @@ import (
 	. "image"
 )
 
+type Event interface {
+	Owner() View
+}
+
 type DrawEvent struct {
 	Owner     View
 	Canvas    *Canvas

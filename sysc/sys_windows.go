@@ -44,6 +44,7 @@ func MAKEINTRESOURCE(n int32) *uint16 {
 //sys	SetTimer(hWnd Handle, nIDEvent uintptr, uElapse uint, lpTimerFunc uintptr) (rIDEvent uintptr) = user32.SetTimer
 //sys	GetQueueStatus(flags uint) (hilow uint32) = user32.GetQueueStatus
 //sys	WaitMessage() (succeed int32) = user32.WaitMessage
+//sys	IsWindow(hwnd Handle) (is_window bool) = user32.IsWindow
 
 //sys	BitBlt(hDC Handle, xDext int32, yDext int32, width int32, height int32, hDCSrc Handle, xSrc int32, ySrc int32, rop uint32) (err error) = gdi32.BitBlt
 //sys	SetDIBitsToDevice(hDC Handle, xDext int32, yDest int32, width int32, height int32, xSrc int32, ySrc int32, startScan uint32, scanLines uint32, bits uintptr, bmi *BITMAPINFO, colorUse uint32) (lines int32) = gdi32.SetDIBitsToDevice

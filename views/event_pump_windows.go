@@ -42,20 +42,22 @@ func new_ui_event_pump(delegate event_pump_delegate_t) *ui_event_pump_t {
 //
 func (u *ui_event_pump_t) Run() {
 	for {
-		more_work_is_plausible := u.process_next_ui_event()
+		more_work_is_plausible, more := false, false
+		more = u.process_next_ui_event()
+		more_work_is_plausible = more_work_is_plausible || more
 		if u.should_quit {
 			break
 		}
 
-		more_work := u.delegate.DoWork()
-		more_work_is_plausible = more_work_is_plausible || more_work
+		more = u.delegate.DoWork()
+		more_work_is_plausible = more_work_is_plausible || more
 		if u.should_quit {
 			break
 		}
 
 		var next_delayed_work_time time.Time
-		more_delayed_work := u.delegate.DoDelayedWork(&next_delayed_work_time)
-		more_work_is_plausible = more_work_is_plausible || more_delayed_work
+		more = u.delegate.DoDelayedWork(&next_delayed_work_time)
+		more_work_is_plausible = more_work_is_plausible || more
 		// If we did not process any delayed work, then we can assume that our
 		// existing WM_TIMER if any will fire when delayed work should run.  We
 		// don't want to disturb that timer if it is already in flight.  However,
@@ -247,26 +249,36 @@ func (u *ui_event_pump_t) process_next_ui_event() bool {
 	// MsgWaitForMultipleObjectsEx again.
 	var sent_messages_in_queue = false
 	queue_status := GetQueueStatus(QS_SENDMESSAGE)
+	log.Printf("a")
 	if (HIWORD(queue_status) & QS_SENDMESSAGE) != 0 {
+		log.Printf("b")
 		sent_messages_in_queue = true
 	}
 
 	var msg MSG
 	if PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) {
+		log.Printf("c")
+		log.Printf("%v", msg)
 		return u.process_msg(&msg)
 	}
-
+	log.Printf("d")
 	return sent_messages_in_queue
 }
 
 func (u *ui_event_pump_t) process_msg(msg *MSG) bool {
 	// While running our main message pump, we discard kMsgHaveWork messages.
+	log.Printf("e")
 	if msg.HWnd == u.message_wnd && msg.Message == kMsgHaveWork {
+		log.Printf("f")
 		return u.process_pump_replacement_msg()
 	}
 
+	log.Printf("g")
+
 	TranslateMessage(msg)
 	DispatchMessage(msg)
+
+	log.Printf("h")
 
 	return true
 }
@@ -279,7 +291,7 @@ func (u *ui_event_pump_t) process_pump_replacement_msg() bool {
 	// Since we discarded a kMsgHaveWork message, we must update the flag.
 	old_have_work := atomic.SwapInt32(&u.have_work_, 0)
 	if old_have_work == 0 {
-		log.Printf("ERROR: we don't have work to do.")
+		log.Printf("error: we don't have work to do.")
 	}
 
 	// We don't need a special time slice if we didn't have_msg to process.
