@@ -13,6 +13,7 @@ import (
 
 type Panel struct {
 	BaseView
+	title string
 }
 
 const (
@@ -31,6 +32,11 @@ func (p *Panel) DrawPanelHeader(event *DrawEvent) {
 	ctxt := GlobalDrawContext()
 	ctxt.SetFillColor(19, 19, 19)
 	ctxt.FillRect(header_rect)
+
+	header_rect.Min.X = header_rect.Min.X + kPanelBorderSize
+	ctxt.SetFontColor(240, 240, 240)
+	ctxt.SetFontSize(14)
+	ctxt.DrawText(p.title, header_rect)
 }
 
 func (p *Panel) DrawPanelBorder(event *DrawEvent) {
@@ -58,6 +64,13 @@ func (p *Panel) OnDraw(event *DrawEvent) {
 	p.DrawPanelHeader(event)
 	p.DrawPanelBorder(event)
 	p.DrawPanelContentBackground(event)
+}
+
+func (p *Panel) MockUp(ui UIMap) {
+	var ptr = ui["title"]
+	if ptr != nil {
+		p.title, _ = ptr.(string)
+	}
 }
 
 // ============================================================================

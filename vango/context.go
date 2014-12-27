@@ -36,6 +36,10 @@ func (c *Context) SetFontColor(r, g, b byte) {
 	c.font_color = uint32(b)<<8 | uint32(g)<<16 | uint32(r)<<24
 }
 
+func (c *Context) SetFontSize(size float64) {
+	c.font.SetFontSize(size)
+}
+
 func (c *Context) SetFont(font_name string) {
 	if font_name == "default" {
 		c.font.font = g_default_font
