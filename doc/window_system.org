@@ -1,0 +1,24 @@
+#+startup: indent
+#+options: num:nil
+# -*- mode: org; -*-
+#+latex_header: \documentclass[UTF8]{ctexart}
+#+latex_header: \usepackage{xeCJK}
+#+latex_header: \setCJKmainfont[BoldFont=STZhongsong, ItalicFont=STKaiti]{STSong}
+#+latex_header: \setCJKsansfont[BoldFont=STHeiti]{STXihei}
+#+latex_header: \setCJKmonofont{STFangsong}
+#+html_head: <link rel="stylesheet" type="text/css" href="styles/worg.css"/>
+#+html_head: <link rel="stylesheet" type="text/css" href="styles/clean.css"/>
+#+bind: org-export-publishing-directory "./exports"
+
+* 多平台Gwk窗口系统的类图结构
+#+begin_src plantuml :file gwk_window_system.png  :cmdline -charset UTF-8
+class OSWindowSystem {
+void DrawRegion()
+void LayoutRegion()
+void WriteBitmapToOS()
+void OnEvent(OSEvent event)
+}
+#+end_src
+
+#+results:
+[[file:share_coupon_flow.png]]
