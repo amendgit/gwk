@@ -123,19 +123,17 @@ const (
 	ColorProfileTypeLast = ColorProfileTypeSRGB
 )
 
+// Describe an image's dimensions and pixel type.
+// Used for both src images and render-targets (surfaces).
 type ImageInfo struct {
-	width  int
-	height int
+	Width  int
+	Height int
 
-	colorType        uint
-	alphaType        uint
-	colorProfileType uint
+	ColorType   uint
+	AlphaType   uint
+	ProfileType uint
 }
 
-func (imageInfo *ImageInfo) Width() int {
-	return imageInfo.width
-}
-
-func (imageInfo *ImageInfo) Height() int {
-	return imageInfo.height
+func (imageInfo *ImageInfo) BytesPerPixel() uint {
+	return ColorTypeBytesPerPixel(imageInfo.ColorType)
 }
