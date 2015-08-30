@@ -5,7 +5,7 @@
 package gwk
 
 import (
-	"gwk/vango"
+	"gwk/"
 	"gwk/views"
 )
 
