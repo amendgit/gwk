@@ -21,7 +21,7 @@ func TestColorType(t *testing.T) {
 
 	for _, tt := range ctTests {
 		ct = tt.ct
-		numBytes = ggk.ColorTypeBytesPerPixel(ct)
+		numBytes = ct.BytesPerPixel()
 		if numBytes != tt.numBytes {
 			t.Errorf("ColorTypeBytesPerPixel(%d) -> %d expect %d", ct, numBytes, tt.numBytes)
 		}

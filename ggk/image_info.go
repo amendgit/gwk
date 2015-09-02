@@ -27,8 +27,8 @@ const (
 	AlphaTypeLastEnum = AlphaTypeUnpremul
 )
 
-func AlphaTypeIsOpaque(alphaType AlphaType) bool {
-	return alphaType == AlphaTypeOpaque
+func (at AlphaType) IsOpaque() bool {
+	return at == AlphaTypeOpaque
 }
 
 func AlphaTypeIsValid(value AlphaType) bool {
@@ -55,7 +55,7 @@ const (
 	ColorTypeLastEnum = ColorTypeGray8
 )
 
-func ColorTypeBytesPerPixel(colorType ColorType) int {
+func (ct ColorType) BytesPerPixel() int {
 	// TODO: const?
 	var bytesPerPixel = []int{
 		0, // Unknown
@@ -68,25 +68,25 @@ func ColorTypeBytesPerPixel(colorType ColorType) int {
 		1, // Gray8
 	}
 
-	if colorType >= ColorType(len(bytesPerPixel)) {
+	if ct >= ColorType(len(bytesPerPixel)) {
 		return 0
 	}
 
-	return bytesPerPixel[colorType]
+	return bytesPerPixel[ct]
 }
 
-func ColorTypeMinRowBytes(colorType ColorType, width int) int {
-	return width * ColorTypeBytesPerPixel(colorType)
+func (ct ColorType) MinRowBytes(width int) int {
+	return width * ct.BytesPerPixel()
 }
 
 func ColorTypeIsVaild(value ColorType) bool {
 	return value <= ColorTypeLastEnum
 }
 
-func ColorTypeComputeOffset(colorType ColorType, x, y int, rowBytes int) int {
+func (ct ColorType) ComputeOffset(x, y int, rowBytes int) int {
 	var shift uint = 0
 
-	switch ColorTypeBytesPerPixel(colorType) {
+	switch ct.BytesPerPixel() {
 	case 4:
 		shift = 2
 	case 2:
@@ -102,7 +102,7 @@ func ColorTypeComputeOffset(colorType ColorType, x, y int, rowBytes int) int {
 
 // Return true if alphaType is supported by colorType. If there is a canonical
 // alphaType for this colorType, return it in canonical.
-func ColorTypeValidateAlphaType(colorType ColorType, alphaType AlphaType) AlphaType {
+func (ct ColorType) ValidateAlphaType(alphaType AlphaType) AlphaType {
 	return 0
 }
 
@@ -129,46 +129,33 @@ type ColorProfileType int
 const (
 	ColorProfileTypeLinear ColorProfileType = iota
 	ColorProfileTypeSRGB
-
 	ColorProfileTypeLastEnum = ColorProfileTypeSRGB
 )
 
 // Describe an image's dimensions and pixel type.
 // Used for both src images and render-targets (surfaces).
 type ImageInfo struct {
-	Width  int
-	Height int
+	width  int
+	height int
 
-	ColorType   ColorType
-	AlphaType   AlphaType
-	ProfileType ColorProfileType
+	colorType   ColorType
+	alphaType   AlphaType
+	profileType ColorProfileType
 }
 
 func (imageInfo *ImageInfo) BytesPerPixel() int {
-	return ColorTypeBytesPerPixel(imageInfo.ColorType)
+	return imageInfo.colorType.BytesPerPixel()
 }
 
 func New(width, height int, colorType ColorType, alphaType AlphaType,
 	profileType ColorProfileType) *ImageInfo {
 	var imageInfo = &ImageInfo{
-		Width:       width,
-		Height:      height,
-		ColorType:   colorType,
-		AlphaType:   alphaType,
-		ProfileType: profileType,
+		width:       width,
+		height:      height,
+		colorType:   colorType,
+		alphaType:   alphaType,
+		profileType: profileType,
 	}
 
 	return imageInfo
-}
-
-func NewN32() {
-
-}
-
-func NewN32Premul() {
-
-}
-
-func NewA8() {
-
 }
