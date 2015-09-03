@@ -11,6 +11,8 @@ var ctTests = []struct {
 }{
 	{ggk.ColorTypeUnknown, 0},
 	{ggk.ColorTypeAlpha8, 1},
+	{ggk.ColorType(1000), 0},
+	{ggk.ColorType(-1), 0},
 }
 
 func TestColorType(t *testing.T) {

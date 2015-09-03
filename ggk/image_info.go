@@ -68,7 +68,7 @@ func (ct ColorType) BytesPerPixel() int {
 		1, // Gray8
 	}
 
-	if ct >= ColorType(len(bytesPerPixel)) {
+	if ct < 0 || ct >= ColorType(len(bytesPerPixel)) {
 		return 0
 	}
 
@@ -83,7 +83,7 @@ func ColorTypeIsVaild(value ColorType) bool {
 	return value <= ColorTypeLastEnum
 }
 
-func (ct ColorType) ComputeOffset(x, y int, rowBytes int) int {
+func (ct ColorType) ComputeOffset(x, y int, rowBytes uint) uint {
 	var shift uint = 0
 
 	switch ct.BytesPerPixel() {
@@ -97,7 +97,7 @@ func (ct ColorType) ComputeOffset(x, y int, rowBytes int) int {
 		return 0
 	}
 
-	return y*rowBytes + x<<shift
+	return uint(y)*rowBytes + uint(x)<<shift
 }
 
 // Return true if alphaType is supported by colorType. If there is a canonical
@@ -143,10 +143,6 @@ type ImageInfo struct {
 	profileType ColorProfileType
 }
 
-func (imageInfo *ImageInfo) BytesPerPixel() int {
-	return imageInfo.colorType.BytesPerPixel()
-}
-
 func New(width, height int, colorType ColorType, alphaType AlphaType,
 	profileType ColorProfileType) *ImageInfo {
 	var imageInfo = &ImageInfo{
@@ -158,4 +154,24 @@ func New(width, height int, colorType ColorType, alphaType AlphaType,
 	}
 
 	return imageInfo
+}
+
+func (imageInfo *ImageInfo) Width() int {
+	return imageInfo.width
+}
+
+func (imageInfo *ImageInfo) Height() int {
+	return imageInfo.height
+}
+
+func (imageInfo *ImageInfo) BytesPerPixel() int {
+	return imageInfo.colorType.BytesPerPixel()
+}
+
+func (imageInfo *ImageInfo) ComputeOffset(x, y int, rowBytes uint) (uint, error) {
+	if uint(x) >= uint(imageInfo.width) || uint(y) >= uint(imageInfo.height) {
+		return 0, error.New("Invalid Argument")
+	}
+
+	return imageInfo.colorType.ComputeOffset(x, y, rowBytes), nil
 }
