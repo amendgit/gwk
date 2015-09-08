@@ -25,7 +25,7 @@ func TestColorType(t *testing.T) {
 		ct = tt.ct
 		numBytes = ct.BytesPerPixel()
 		if numBytes != tt.numBytes {
-			t.Errorf("ColorTypeBytesPerPixel(%d) -> %d expect %d", ct, numBytes, tt.numBytes)
+			t.Errorf("ColorType.BytesPerPixel(%d) -> %d expect %d", ct, numBytes, tt.numBytes)
 		}
 	}
 }

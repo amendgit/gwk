@@ -110,6 +110,10 @@ func (ct ColorType) ValidateAlphaType(alphaType AlphaType) AlphaType {
 	return 0
 }
 
+func ColorTypeN32() ColorType {
+	return ColorType_RGBA8888
+}
+
 // YUV color space
 // Describes the color space a YUV pixel
 type YUVColorSpace int
@@ -164,7 +168,11 @@ func NewImageInfo(width, height int, colorType ColorType, alphaType AlphaType, p
 }
 
 func NewImageInfoN32(width, height int, alphaType AlphaType, profileType ColorProfileType) *ImageInfo {
-	return NewImageInfo(width, height, ColorType_RGBA8888, alphaType, profileType)
+	return NewImageInfo(width, height, ColorTypeN32(), alphaType, profileType)
+}
+
+func NewImageInfoN32Premul(width, height int, profileType ColorProfileType) *ImageInfo {
+	return NewImageInfo(width, height, ColorTypeN32(), AlphaType_Premul, profileType)
 }
 
 func NewImageInfoA8(width, height int) *ImageInfo {
