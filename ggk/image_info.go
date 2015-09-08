@@ -1,7 +1,7 @@
 package ggk
 
 import (
-	"errors"
+	"fmt"
 )
 
 // Alpha types
@@ -35,8 +35,8 @@ func (at AlphaType) IsOpaque() bool {
 	return at == AlphaTypeOpaque
 }
 
-func AlphaTypeIsValid(value AlphaType) bool {
-	return value >= 0 && value <= AlphaTypeLastEnum
+func (at AlphaType) IsValid() bool {
+	return at >= 0 && at <= AlphaTypeLastEnum
 }
 
 // Color types
@@ -83,8 +83,8 @@ func (ct ColorType) MinRowBytes(width int) int {
 	return width * ct.BytesPerPixel()
 }
 
-func ColorTypeIsVaild(value ColorType) bool {
-	return value <= ColorTypeLastEnum
+func (ct ColorType) IsVaild() bool {
+	return ct >= 0 && ct <= ColorTypeLastEnum
 }
 
 func (ct ColorType) ComputeOffset(x, y int, rowBytes uint) uint {
@@ -136,6 +136,10 @@ const (
 	ColorProfileTypeLastEnum = ColorProfileTypeSRGB
 )
 
+func (pt ColorProfileType) IsValid() bool {
+	return pt >= 0 && pt <= ColorProfileTypeLastEnum
+}
+
 // Describe an image's dimensions and pixel type.
 // Used for both src images and render-targets (surfaces).
 type ImageInfo struct {
@@ -147,8 +151,7 @@ type ImageInfo struct {
 	profileType ColorProfileType
 }
 
-func New(width, height int, colorType ColorType, alphaType AlphaType,
-	profileType ColorProfileType) *ImageInfo {
+func NewImageInfo(width, height int, colorType ColorType, alphaType AlphaType, profileType ColorProfileType) *ImageInfo {
 	var imageInfo = &ImageInfo{
 		width:       width,
 		height:      height,
@@ -160,6 +163,18 @@ func New(width, height int, colorType ColorType, alphaType AlphaType,
 	return imageInfo
 }
 
+func NewImageInfoN32(width, height int, alphaType AlphaType, profileType ColorProfileType) *ImageInfo {
+	return NewImageInfo(width, height, ColorTypeRGBA8888, alphaType, profileType)
+}
+
+func NewImageInfoA8(width, height int) *ImageInfo {
+	return NewImageInfo(width, height, ColorTypeAlpha8, AlphaTypePremul, ColorProfileTypeLinear)
+}
+
+func NewImageInfoUnknown(width, height int) *ImageInfo {
+	return NewImageInfo(width, height, ColorTypeUnknown, AlphaTypeUnknown, ColorProfileTypeLinear)
+}
+
 func (imageInfo *ImageInfo) Width() int {
 	return imageInfo.width
 }
@@ -168,14 +183,83 @@ func (imageInfo *ImageInfo) Height() int {
 	return imageInfo.height
 }
 
-func (imageInfo *ImageInfo) BytesPerPixel() int {
-	return imageInfo.colorType.BytesPerPixel()
+func (imageInfo *ImageInfo) ColorType() ColorType {
+	return imageInfo.colorType
+}
+
+func (imageInfo *ImageInfo) AlphaType() AlphaType {
+	return imageInfo.alphaType
+}
+
+func (imageInfo *ImageInfo) ProfileType() ColorProfileType {
+	return imageInfo.profileType
+}
+
+func (imageInfo *ImageInfo) IsEmpty() bool {
+	return imageInfo.width <= 0 || imageInfo.height <= 0
+}
+
+func (imageInfo *ImageInfo) IsOpaque() bool {
+	return imageInfo.alphaType.IsOpaque()
+}
+
+func (imageInfo *ImageInfo) IsLinear() bool {
+	return imageInfo.profileType == ColorProfileTypeLinear
+}
+
+func (imageInfo *ImageInfo) IsSRGB() bool {
+	return imageInfo.profileType == ColorProfileTypeSRGB
 }
 
 func (imageInfo *ImageInfo) ComputeOffset(x, y int, rowBytes uint) (uint, error) {
 	if uint(x) >= uint(imageInfo.width) || uint(y) >= uint(imageInfo.height) {
-		return 0, errors.New("Invalid Argument")
+		return 0, fmt.Errorf("OOR: ggk.ImageInfo(0x%x).ComputeOffset(%d, %d, %d)", imageInfo, x, y, rowBytes)
 	}
 
 	return imageInfo.colorType.ComputeOffset(x, y, rowBytes), nil
+}
+
+func (imageInfo *ImageInfo) Equal(other *ImageInfo) bool {
+	var equal = false
+
+	equal = (imageInfo.colorType == other.colorType)
+	equal = equal && (imageInfo.alphaType == other.alphaType)
+	equal = equal && (imageInfo.profileType == other.profileType)
+	equal = equal && (imageInfo.width == other.width)
+	equal = equal && (imageInfo.height == other.height)
+
+	return equal
+}
+
+func (imageInfo *ImageInfo) BytesPerPixel() int {
+	return imageInfo.colorType.BytesPerPixel()
+}
+
+func (imageInfo *ImageInfo) MinRowBytes64() uint64 {
+	var minRowBytes64 uint64 = uint64(imageInfo.width) * uint64(imageInfo.BytesPerPixel())
+	return minRowBytes64
+}
+
+func (imageInfo *ImageInfo) MinRowBytes() uint {
+	return uint(imageInfo.MinRowBytes64())
+}
+
+func (imageInfo *ImageInfo) ValidRowBytes(rowBytes uint) bool {
+	return uint64(rowBytes) >= imageInfo.MinRowBytes64()
+}
+
+func (imageInfo *ImageInfo) SafeSize64(rowBytes uint) uint64 {
+	if imageInfo.height == 0 {
+		return 0
+	}
+
+	return uint64(imageInfo.height-1)*uint64(rowBytes) + uint64(imageInfo.width*imageInfo.BytesPerPixel())
+}
+
+func (imageInfo *ImageInfo) SafeSize(rowBytes uint) uint {
+	var size uint64 = imageInfo.SafeSize64(rowBytes)
+	if size != uint64(uint(size)) {
+		return 0
+	}
+	return uint(size)
 }
