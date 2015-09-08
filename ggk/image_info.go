@@ -1,5 +1,9 @@
 package ggk
 
+import (
+	"errors"
+)
+
 // Alpha types
 // Describe how to interpret the alpha compoent of a pixel.
 type AlphaType int
@@ -68,7 +72,7 @@ func (ct ColorType) BytesPerPixel() int {
 		1, // Gray8
 	}
 
-	if ct < 0 || ct >= ColorType(len(bytesPerPixel)) {
+	if ct < 0 || int(ct) >= len(bytesPerPixel) {
 		return 0
 	}
 
@@ -170,7 +174,7 @@ func (imageInfo *ImageInfo) BytesPerPixel() int {
 
 func (imageInfo *ImageInfo) ComputeOffset(x, y int, rowBytes uint) (uint, error) {
 	if uint(x) >= uint(imageInfo.width) || uint(y) >= uint(imageInfo.height) {
-		return 0, error.New("Invalid Argument")
+		return 0, errors.New("Invalid Argument")
 	}
 
 	return imageInfo.colorType.ComputeOffset(x, y, rowBytes), nil
