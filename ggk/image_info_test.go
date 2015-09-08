@@ -9,8 +9,8 @@ var ctTests = []struct {
 	ct       ggk.ColorType
 	numBytes int
 }{
-	{ggk.ColorTypeUnknown, 0},
-	{ggk.ColorTypeAlpha8, 1},
+	{ggk.ColorType_Unknown, 0},
+	{ggk.ColorType_Alpha8, 1},
 	{ggk.ColorType(1000), 0},
 	{ggk.ColorType(-1), 0},
 }

@@ -11,23 +11,23 @@ type Color uint32
 
 // common colors
 const (
-	ColorAlphaTransparent = 0x00 // transparent Alpha value
-	ColorAlphaOpaque      = 0xff // opaque Alpha value
+	Color_AlphaTransparent = 0x00 // transparent Alpha value
+	Color_AlphaOpaque      = 0xff // opaque Alpha value
 
-	ColorTransparent = 0x00000000 // transparent Color value
+	Color_Transparent = 0x00000000 // transparent Color value
 
-	ColorBlack  = 0xff000000 // black Color value
-	ColorDkgray = 0xff444444 // dark gray Color value
-	ColorGray   = 0xff888888 // gray Color value
-	ColorLtgray = 0xffcccccc // light gray Color value
-	ColorWhite  = 0xffffffff // white Color value
+	Color_Black  = 0xff000000 // black Color value
+	Color_Dkgray = 0xff444444 // dark gray Color value
+	Color_Gray   = 0xff888888 // gray Color value
+	Color_Ltgray = 0xffcccccc // light gray Color value
+	Color_White  = 0xffffffff // white Color value
 
-	ColorRed     = 0xffff0000 // red Color value
-	ColorGreen   = 0xff00ff00 // green Color value
-	ColorBlue    = 0xff0000ff // blue Color value
-	ColorYellow  = 0xffffff00 // yellow Color value
-	ColorCyan    = 0xff00ffff // cyan Color value
-	ColorMagenta = 0xffff00ff // magenta Color value
+	Color_Red     = 0xffff0000 // red Color value
+	Color_Green   = 0xff00ff00 // green Color value
+	Color_Blue    = 0xff0000ff // blue Color value
+	Color_Yellow  = 0xffffff00 // yellow Color value
+	Color_Cyan    = 0xff00ffff // cyan Color value
+	Color_Magenta = 0xffff00ff // magenta Color value
 )
 
 // Return a Color from 8-bit component values.
