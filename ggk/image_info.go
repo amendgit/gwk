@@ -155,7 +155,8 @@ type ImageInfo struct {
 	profileType ColorProfileType
 }
 
-func NewImageInfo(width, height int, colorType ColorType, alphaType AlphaType, profileType ColorProfileType) *ImageInfo {
+func NewImageInfo(width, height int, colorType ColorType, alphaType AlphaType,
+	profileType ColorProfileType) *ImageInfo {
 	var imageInfo = &ImageInfo{
 		width:       width,
 		height:      height,
@@ -167,20 +168,24 @@ func NewImageInfo(width, height int, colorType ColorType, alphaType AlphaType, p
 	return imageInfo
 }
 
-func NewImageInfoN32(width, height int, alphaType AlphaType, profileType ColorProfileType) *ImageInfo {
+func NewImageInfoN32(width, height int, alphaType AlphaType, profileType 
+	ColorProfileType) *ImageInfo {
 	return NewImageInfo(width, height, ColorTypeN32(), alphaType, profileType)
 }
 
 func NewImageInfoN32Premul(width, height int, profileType ColorProfileType) *ImageInfo {
-	return NewImageInfo(width, height, ColorTypeN32(), AlphaType_Premul, profileType)
+	return NewImageInfo(width, height, ColorTypeN32(), AlphaType_Premul, 
+		profileType)
 }
 
 func NewImageInfoA8(width, height int) *ImageInfo {
-	return NewImageInfo(width, height, ColorType_Alpha8, AlphaType_Premul, ColorProfileType_Linear)
+	return NewImageInfo(width, height, ColorType_Alpha8, AlphaType_Premul,
+		ColorProfileType_Linear)
 }
 
 func NewImageInfoUnknown(width, height int) *ImageInfo {
-	return NewImageInfo(width, height, ColorType_Unknown, AlphaType_Unknown, ColorProfileType_Linear)
+	return NewImageInfo(width, height, ColorType_Unknown, AlphaType_Unknown, 
+		ColorProfileType_Linear)
 }
 
 func (imageInfo *ImageInfo) Width() int {
@@ -221,7 +226,8 @@ func (imageInfo *ImageInfo) IsSRGB() bool {
 
 func (imageInfo *ImageInfo) ComputeOffset(x, y int, rowBytes uint) (uint, error) {
 	if uint(x) >= uint(imageInfo.width) || uint(y) >= uint(imageInfo.height) {
-		return 0, fmt.Errorf("OOR: ggk.ImageInfo(0x%x).ComputeOffset(%d, %d, %d)", imageInfo, x, y, rowBytes)
+		return 0, fmt.Errorf("OOR: ggk.ImageInfo(0x%x).ComputeOffset(%d, %d, %d)", 
+			imageInfo, x, y, rowBytes)
 	}
 
 	return imageInfo.colorType.ComputeOffset(x, y, rowBytes), nil
@@ -244,7 +250,8 @@ func (imageInfo *ImageInfo) BytesPerPixel() int {
 }
 
 func (imageInfo *ImageInfo) MinRowBytes64() uint64 {
-	var minRowBytes64 uint64 = uint64(imageInfo.width) * uint64(imageInfo.BytesPerPixel())
+	var minRowBytes64 uint64 = 
+		uint64(imageInfo.width) * uint64(imageInfo.BytesPerPixel())
 	return minRowBytes64
 }
 
@@ -261,7 +268,8 @@ func (imageInfo *ImageInfo) SafeSize64(rowBytes uint) uint64 {
 		return 0
 	}
 
-	return uint64(imageInfo.height-1)*uint64(rowBytes) + uint64(imageInfo.width*imageInfo.BytesPerPixel())
+	return uint64(imageInfo.height-1)*uint64(rowBytes) +
+		uint64(imageInfo.width*imageInfo.BytesPerPixel())
 }
 
 func (imageInfo *ImageInfo) SafeSize(rowBytes uint) uint {
