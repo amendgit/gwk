@@ -60,8 +60,7 @@ const (
 )
 
 func (ct ColorType) BytesPerPixel() int {
-	// TODO: const?
-	var bytesPerPixel = []int{
+	var bytesPerPixel = [...]int{
 		0, // Unknown
 		1, // Alpha8
 		2, // RGB565
@@ -88,20 +87,12 @@ func (ct ColorType) IsVaild() bool {
 }
 
 func (ct ColorType) ComputeOffset(x, y int, rowBytes uint) uint {
-	var shift uint = 0
-
-	switch ct.BytesPerPixel() {
-	case 4:
-		shift = 2
-	case 2:
-		shift = 1
-	case 1:
-		shift = 0
-	default:
+	if x < 0 || y < 0 || (!ct.IsVaild()) || (ct == ColorType_Unknown) ||
+		(rowBytes%uint(ct.BytesPerPixel()) != 0) {
 		return 0
 	}
 
-	return uint(y)*rowBytes + uint(x)<<shift
+	return uint(y)*rowBytes + uint(x*ct.BytesPerPixel())
 }
 
 // Return true if alphaType is supported by colorType. If there is a canonical
