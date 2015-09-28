@@ -4,6 +4,8 @@
 *.so
 *.exe
 *.lib
+*.sublime-workspace
+*.sublime-project
 
 # Folders
 _obj

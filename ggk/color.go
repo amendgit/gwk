@@ -11,8 +11,8 @@ type Color uint32
 
 // common colors
 const (
-	Color_AlphaTransparent = 0x00 // transparent Alpha value
-	Color_AlphaOpaque      = 0xff // opaque Alpha value
+	Color_AlphaTransparent Color = 0x00 // transparent Alpha value
+	Color_AlphaOpaque            = 0xff // opaque Alpha value
 
 	Color_Transparent = 0x00000000 // transparent Color value
 
