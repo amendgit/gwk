@@ -9,11 +9,11 @@ var atTests = []struct {
 	at      ggk.AlphaType
 	isValid bool
 }{
-	{ggk.AlphaType_Unknown, true},
-	{ggk.AlphaType_Opaque, true},
-	{ggk.AlphaType_Premul, true},
-	{ggk.AlphaType_Unpremul, true},
-	{ggk.AlphaType_LastEnum, true},
+	{ggk.AlphaTypeUnknown, true},
+	{ggk.AlphaTypeOpaque, true},
+	{ggk.AlphaTypePremul, true},
+	{ggk.AlphaTypeUnpremul, true},
+	{ggk.AlphaTypeLastEnum, true},
 	{ggk.AlphaType(-1), false},
 	{ggk.AlphaType(777), false},
 }
@@ -31,14 +31,14 @@ var ctBytesPerPixelTests = []struct {
 	ct       ggk.ColorType
 	numBytes int
 }{
-	{ggk.ColorType_Unknown, 0},
-	{ggk.ColorType_Alpha8, 1},
-	{ggk.ColorType_RGB565, 2},
-	{ggk.ColorType_ARGB4444, 2},
-	{ggk.ColorType_RGBA8888, 4},
-	{ggk.ColorType_BGRA8888, 4},
-	{ggk.ColorType_Index8, 1},
-	{ggk.ColorType_Gray8, 1},
+	{ggk.ColorTypeUnknown, 0},
+	{ggk.ColorTypeAlpha8, 1},
+	{ggk.ColorTypeRGB565, 2},
+	{ggk.ColorTypeARGB4444, 2},
+	{ggk.ColorTypeRGBA8888, 4},
+	{ggk.ColorTypeBGRA8888, 4},
+	{ggk.ColorTypeIndex8, 1},
+	{ggk.ColorTypeGray8, 1},
 	{ggk.ColorType(1000), 0},
 	{ggk.ColorType(-1), 0},
 }
@@ -49,16 +49,16 @@ var ctComputeOffsetTests = []struct {
 	rowBytes uint
 	offset   uint
 }{
-	{ggk.ColorType_RGBA8888, 0, 0, 0, 0},
-	{ggk.ColorType_RGBA8888, 0, 1, 4, 4},
-	{ggk.ColorType_RGBA8888, 0, 1, 8, 8},
-	{ggk.ColorType_RGBA8888, 1, 1, 8, 12},
-	{ggk.ColorType_RGBA8888, 1, 0, 8, 4},
-	{ggk.ColorType_RGBA8888, 0, 0, 0, 0},
-	{ggk.ColorType_RGBA8888, -1, 1, 8, 0},
+	{ggk.ColorTypeRGBA8888, 0, 0, 0, 0},
+	{ggk.ColorTypeRGBA8888, 0, 1, 4, 4},
+	{ggk.ColorTypeRGBA8888, 0, 1, 8, 8},
+	{ggk.ColorTypeRGBA8888, 1, 1, 8, 12},
+	{ggk.ColorTypeRGBA8888, 1, 0, 8, 4},
+	{ggk.ColorTypeRGBA8888, 0, 0, 0, 0},
+	{ggk.ColorTypeRGBA8888, -1, 1, 8, 0},
 	{ggk.ColorType(-1), 1, 1, 8, 0},
-	{ggk.ColorType_Unknown, 1, 1, 8, 0},
-	{ggk.ColorType_RGBA8888, 1, 1, 7, 0},
+	{ggk.ColorTypeUnknown, 1, 1, 8, 0},
+	{ggk.ColorTypeRGBA8888, 1, 1, 7, 0},
 }
 
 func TestColorType(t *testing.T) {
@@ -83,29 +83,29 @@ var imageInfoEqTests = []struct {
 	isEqual bool
 }{
 	{
-		ggk.NewImageInfo(100, 100, ggk.ColorType_RGBA8888, ggk.AlphaType_Opaque, ggk.ColorProfileType_Linear),
-		ggk.NewImageInfo(100, 100, ggk.ColorType_RGBA8888, ggk.AlphaType_Opaque, ggk.ColorProfileType_Linear),
+		ggk.NewImageInfo(100, 100, ggk.ColorTypeRGBA8888, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
+		ggk.NewImageInfo(100, 100, ggk.ColorTypeRGBA8888, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
 		true,
 	},
 	{
-		ggk.NewImageInfo(100, 100, ggk.ColorType_RGBA8888, ggk.AlphaType_Opaque, ggk.ColorProfileType_Linear),
-		ggk.NewImageInfo(100, 100, ggk.ColorType_BGRA8888, ggk.AlphaType_Opaque, ggk.ColorProfileType_Linear),
+		ggk.NewImageInfo(100, 100, ggk.ColorTypeRGBA8888, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
+		ggk.NewImageInfo(100, 100, ggk.ColorTypeBGRA8888, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
 		false,
 	},
 }
 
 var imageInfoMinRowBytesTests = []struct {
 	imageInfo     *ggk.ImageInfo
-	minRowBytes64 uint64
-	minRowBytes   uint
+	minRowBytes64 int64
+	minRowBytes   int
 }{
 	{
-		ggk.NewImageInfo(100, 100, ggk.ColorTypeN32(), ggk.AlphaType_Opaque, ggk.ColorProfileType_Linear),
+		ggk.NewImageInfo(100, 100, ggk.ColorTypeN32, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
 		400,
 		400,
 	},
 	{
-		ggk.NewImageInfo(5000, 100, ggk.ColorTypeN32(), ggk.AlphaType_Opaque, ggk.ColorProfileType_Linear),
+		ggk.NewImageInfo(5000, 100, ggk.ColorTypeN32, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
 		20000,
 		20000,
 	},
@@ -113,12 +113,12 @@ var imageInfoMinRowBytesTests = []struct {
 
 var imageInfoSafeSizeTests = []struct {
 	imageInfo  *ggk.ImageInfo
-	rowBytes   uint
+	rowBytes   int
 	safeSize   uint
 	safeSize64 uint64
 }{
 	{
-		ggk.NewImageInfo(900, 601, ggk.ColorTypeN32(), ggk.AlphaType_Opaque, ggk.ColorProfileType_Linear),
+		ggk.NewImageInfo(900, 601, ggk.ColorTypeN32, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
 		5000,
 		3003600,
 		3003600,
@@ -134,13 +134,13 @@ func TestImageInfo(t *testing.T) {
 	}
 
 	for _, tt := range imageInfoMinRowBytesTests {
-		var minRowBytes uint = tt.imageInfo.MinRowBytes()
+		var minRowBytes int = tt.imageInfo.MinRowBytes()
 
 		if minRowBytes != tt.minRowBytes {
 			t.Errorf("ImageInfo(%v).MinRowBytes() want %v get %v", tt.imageInfo, tt.minRowBytes, minRowBytes)
 		}
 
-		var minRowBytes64 uint64 = tt.imageInfo.MinRowBytes64()
+		var minRowBytes64 int64 = tt.imageInfo.MinRowBytes64()
 		if minRowBytes64 != tt.minRowBytes64 {
 			t.Errorf("ImageInfo(%v).MinRowBytes64() want %v get %v", tt.imageInfo, tt.minRowBytes64, minRowBytes64)
 		}
