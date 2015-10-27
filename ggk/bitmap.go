@@ -47,13 +47,13 @@ func (bmp *Bitmap) ProfileType() ColorProfileType {
 }
 
 // Return the number of bytes per pixel based on the colortype. If the colortype is
-// ColorType_Unknown, then 0 is returend.
+// KColorTypeUnknown, then 0 is returend.
 func (bmp *Bitmap) BytesPerPixel() int {
 	return bmp.info.BytesPerPixel()
 }
 
 // Return the rowBytes expressed as a number of pixels (like width and height).
-// If the colortype is ColorType_Unknown, then 0 is returend.
+// If the colortype is KColorTypeUnknown, then 0 is returend.
 func (bmp *Bitmap) RowBytesAsPixels() int {
 	return bmp.rowBytes >> uint(bmp.ShiftPerPixel())
 }

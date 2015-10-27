@@ -68,7 +68,7 @@ type PixelRefVirt interface {
 }
 
 type PixelRef struct {
-	PixelRefVirt
+	Virt PixelRefVirt
 
 	info      ImageInfo
 	prelocked bool
@@ -80,7 +80,6 @@ type PixelRef struct {
 func NewPixelRef(imageInfo ImageInfo) *PixelRef {
 	// TOIMPL
 	var p = new(PixelRef)
-	p.PixelRefVirt = p
 	return p
 }
 
@@ -139,12 +138,19 @@ func (p *PixelRef) LockPixels() bool {
 	return false
 }
 
+func (p *PixelRef) LockPixelsToRec() (bool, *PixelRefLockRec) {
+	if p.LockPixels() {
+		return true, &(p.lockRec)
+	}
+	return false, nil
+}
+
 // Increments lockCount only on success.
 func (p *PixelRef) LockPixelsInsideMutex() bool {
 	p.lockCount++
 
 	if p.lockCount == 1 {
-		if !p.PixelRefVirt.OnNewLockPixels(&p.lockRec) {
+		if !p.Virt.OnNewLockPixels(&p.lockRec) {
 			p.lockRec.SetZero()
 			p.lockCount -= 1 // We return lockCount unchanged if we faile.
 			return false
@@ -168,7 +174,7 @@ func (p *PixelRef) UnlockPixels() {
 		if p.lockCount == 0 {
 			// Don't call OnUnlockPixels unless OnLockPixels succeeded.
 			if p.lockRec.pixels != nil {
-				p.PixelRefVirt.OnUnlockPixels()
+				p.Virt.OnUnlockPixels()
 				p.lockRec.SetZero()
 			}
 		}
@@ -176,11 +182,32 @@ func (p *PixelRef) UnlockPixels() {
 }
 
 func (p *PixelRef) LockPixelsAreWritable() bool {
-	return p.PixelRefVirt.OnLockPixelsAreWritable()
+	return p.Virt.OnLockPixelsAreWritable()
 }
 
+// OnLockPixelsAreWritable default impl return true.
 func (p *PixelRef) OnLockPixelsAreWritable() bool {
 	return true
+}
+
+func (p *PixelRef) ReadPixels(dst *Bitmap, subset *Rect) bool {
+	return p.Virt.OnReadPixels(dst, subset)
+}
+
+func (p *PixelRef) OnReadPixels(dst *Bitmap, subset *Rect) bool {
+	return false
+}
+
+func (p *PixelRef) OnNotifyPixelsChanged() {
+	// empty
+}
+
+// func (p *PixelRef) OnRefEncodedData() *Data {
+// 	return nil
+// }
+
+func (p *PixelRef) GetAllocatedSizeInBytes() uint {
+	return 0
 }
 
 // PixelRefLockRec to access the actual pixels of a pixelRef, it must be
