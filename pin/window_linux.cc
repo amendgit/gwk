@@ -9,9 +9,10 @@
 #include <algorithm>
 
 #include "_cgo_export.h"
-#include "window.h"
+#include "window_linux.h"
 #include "events.h"
-#include "gtkcompat.h"
+#include "gtkcompat_linux.h"
+#include "general_linux.h"
 
 WindowContext * WindowContextBase::smGrabWindow = NULL;
 WindowContext * WindowContextBase::smMouseDragWindow = NULL;

@@ -1,5 +1,5 @@
 
-#include "gtkcompat.h"
+#include "gtkcompat_linux.h"
 #include <X11/Xlib.h>
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>

@@ -1,5 +1,5 @@
-#ifndef GTKCOMPAT_H
-#define GTKCOMPAT_H
+#ifndef GTKCOMPAT_LINUX_H
+#define GTKCOMPAT_LINUX_H
 
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
@@ -84,4 +84,4 @@ void GdkWindow_GetSize(GdkWindow *window, gint *w, gint *h);
 
 void GdkDisplay_GetPointer(GdkDisplay* display, gint* x, gint *y);
 
-#endif /* GTKCOMPAT_H */
+#endif /* GTKCOMPAT_LINUX_H */

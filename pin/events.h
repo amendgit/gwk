@@ -1,10 +1,6 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include <glib.h>
-#include <gdk/gdk.h>
-#include <gtk/gtk.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -15,7 +11,7 @@ enum {
 
 	WindowEvent_Close   = 521,
 	WindowEvent_Destroy = 522,
-	
+
 	WindowEvent_Minimize = 531,
 	WindowEvent_Maximize = 532,
 	WindowEvent_Restore  = 533,
@@ -64,7 +60,7 @@ enum {
 	KeyEvent_Typed = 113,
 
 	// Key event modifier flags.
-	// CONTROL/WINDOWS and OPTION/ALT are equal, because they 
+	// CONTROL/WINDOWS and OPTION/ALT are equal, because they
 	// are mapped to each other on Mac/Windows.
 	KeyEvent_ModifierNone     = 0,
 	KeyEvent_ModifierShift    = 1 << 0,
@@ -115,7 +111,7 @@ enum {
 	// Navigation Keys
 	KeyCode_PageUp   = 0x21,
 	KeyCode_PageDown = 0x22,
-	KeyCode_End      = 0x23, 
+	KeyCode_End      = 0x23,
 	KeyCode_Home     = 0x24,
 	KeyCode_Left     = 0x25,
 	KeyCode_Up       = 0x26,
@@ -124,7 +120,7 @@ enum {
 
 	// Misc 2
 	KeyCode_Comma            = 0x2C,
-	KeyCode_Minus            = 0x2D, 
+	KeyCode_Minus            = 0x2D,
 	KeyCode_Period           = 0x2E,
 	KeyCode_Slash            = 0x2F,
 	KeyCode_Semicolon        = 0x3B,
@@ -174,7 +170,7 @@ enum {
 
 	// Alpha keys.
 	KeyCode_A = 0x41,
-	KeyCode_B = 0x42, 
+	KeyCode_B = 0x42,
 	KeyCode_C = 0x43,
 	KeyCode_D = 0x44,
 	KeyCode_E = 0x45,
@@ -241,7 +237,6 @@ enum {
 
 int KeyCodeFromChar(char c);
 const char *KeyEventName(int eventType);
-int GdkModifierMaskToGwk(guint mask);
 
 #ifdef __cplusplus
 }

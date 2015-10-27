@@ -3,13 +3,8 @@
 package pin
 
 // #cgo pkg-config: gtk+-3.0
-// #include "gtk_application.h"
-// #include "events.h"
+// #include "application_linux.h"
 import "C"
-
-const (
-	WindowEvent_Restore = C.WindowEvent_Restore
-)
 
 type Runnable func()
 

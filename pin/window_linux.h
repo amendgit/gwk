@@ -1,5 +1,5 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef WINDOW_LINUX_H
+#define WINDOW_LINUX_H
 
 #include <stdbool.h>
 #include <gtk/gtk.h>
@@ -43,10 +43,10 @@ enum BoundsType {
 };
 
 struct WindowGeometry {
-	WindowGeometry(): finalWidth(), finalHeight(), refX(), refY(), gravityX(), 
+	WindowGeometry(): finalWidth(), finalHeight(), refX(), refY(), gravityX(),
 	gravityY(), currentWidth(), currentHeight(), extents() {}
 
-	// estimate of the final width the window will get after all pending 
+	// estimate of the final width the window will get after all pending
 	// configure requests are processed by the window manager.
 	struct {
 		int value;
@@ -170,9 +170,9 @@ protected:
 	// It is mostly used for popup windows.
 	static WindowContext *smGrabWindow;
 
-	// smMouseDragWindow points to a WindowContext from which a mouse drag 
+	// smMouseDragWindow points to a WindowContext from which a mouse drag
 	// strated. This WindowContext holding a mouse grab during this drag. After
-	// releasing all mouse buttons smMouseDragWindow becomes NULL and 
+	// releasing all mouse buttons smMouseDragWindow becomes NULL and
 	// smGrabWindow's mouse grab should be restored if present.
 	//
 	// This is done in order to mimic Windows behavior:
@@ -245,9 +245,9 @@ class WindowContextTop : public WindowContextBase {
 	// WindowGeometry geometry;
 	int stateConfigNotifications;
 	struct Resizable {
-		Resizable(): requestType(RequestType_None), value(true), prev(false), 
+		Resizable(): requestType(RequestType_None), value(true), prev(false),
 			minW(-1), minH(-1), maxW(-1), maxH(-1) {
-			// empty		
+			// empty
 		}
 		RequestType requestType;
 		bool value;
@@ -261,7 +261,7 @@ class WindowContextTop : public WindowContextBase {
 
 public:
 	WindowContextTop(GoObject gwkWindow, WindowContext *owner, GoObject screen, WindowFrameType frameType, WindowType windowType);
-	
+
 	WindowFrameExtents GetFrameExtents();
 	void EnterFullScreen();
 	void ExitFullScreen();
@@ -291,4 +291,4 @@ public:
 	void ApplyShapeMask(void *, uint width, uint height) {}
 };
 
-#endif
+#endif /* WINDOW_LINUX_H */
