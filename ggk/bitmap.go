@@ -171,7 +171,7 @@ func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
 		return false
 	}
 
-	if imageInfo.ColorType() == ColorTypeUnknown {
+	if imageInfo.ColorType() == KColorTypeUnknown {
 		rowBytes = 0
 	} else if rowBytes == 0 {
 		rowBytes = int(minRowBytes)
@@ -189,7 +189,7 @@ func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
 }
 
 func (bmp *Bitmap) AllocPixels(requestedInfo ImageInfo, rowBytes int) bool {
-	if requestedInfo.ColorType() == ColorTypeIndex8 {
+	if requestedInfo.ColorType() == KColorTypeIndex8 {
 		bmp.Reset()
 		return false
 	}

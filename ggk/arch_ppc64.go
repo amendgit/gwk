@@ -2,18 +2,18 @@ package ggk
 
 // powerpc cpu is big endian.
 const (
-	ARGB_A32Shift = 24
-	ARGB_R32Shift = 16
-	ARGB_G32Shift = 8
-	ARGB_B32Shift = 0
+	KARGB32ShiftA = 24
+	KARGB32ShiftR = 16
+	KARGB32ShiftG = 8
+	KARGB32ShiftB = 0
 
-	BGRA_B32Shift = 24
-	BGRA_G32Shift = 16
-	BGRA_R32Shift = 8
-	BGRA_A32Shift = 0
+	KBGRA32ShiftB = 24
+	KBGRA32ShiftG = 16
+	KBGRA32ShiftR = 8
+	KBGRA32ShiftA = 0
 
-	RGBA_R32Shift = 24
-	RGBA_G32Shift = 16
-	RGBA_B32Shift = 8
-	RGBA_A32Shift = 0
+	KRGBA32ShiftR = 24
+	KRGBA32ShiftG = 16
+	KRGBA32ShiftB = 8
+	KRGBA32ShiftA = 0
 )

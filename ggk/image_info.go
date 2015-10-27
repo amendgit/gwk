@@ -10,37 +10,37 @@ type AlphaType int
 
 const (
 	// AlphaTypeUnknown represent unknown alpha type value.
-	AlphaTypeUnknown AlphaType = iota
+	KAlphaTypeUnknown AlphaType = iota
 
 	// AlphaTypeOpaque all pixels are stored as opaque. This differs slightly from
 	// kIgnore in that kOpaque has correct "Opaque" values stored in the pixels,
 	// while kIgnore may not, but in both cases the caller should treat the pixels
 	// as opaque.
-	AlphaTypeOpaque
+	KAlphaTypeOpaque
 
 	// AlphaTypePremul all pixels have their alpha premultiplied in their color
 	// components. This is the natural format for the rendering target pixels.
-	AlphaTypePremul
+	KAlphaTypePremul
 
 	// AlphaTypeUnpremul pixels have their color components stroed without any
 	// regard to the alpha. e.g. this is the default configuration for PNG images.
 	//
 	// This alpha-type is ONLY supported for input images. Rendering cannot
 	// generate this on output.
-	AlphaTypeUnpremul
+	KAlphaTypeUnpremul
 
 	// AlphaTypeLastEnum is the
-	AlphaTypeLastEnum = AlphaTypeUnpremul
+	KAlphaTypeLastEnum = KAlphaTypeUnpremul
 )
 
 // IsOpaque return true if AlphaType value is opaque.
 func (at AlphaType) IsOpaque() bool {
-	return at == AlphaTypeOpaque
+	return at == KAlphaTypeOpaque
 }
 
 // IsValid return true if AlphaType value is vaild.
 func (at AlphaType) IsValid() bool {
-	return at >= 0 && at <= AlphaTypeLastEnum
+	return at >= 0 && at <= KAlphaTypeLastEnum
 }
 
 // ColorType describes how to interpret the components of a pixel.
@@ -50,16 +50,16 @@ func (at AlphaType) IsValid() bool {
 type ColorType int
 
 const (
-	ColorTypeUnknown ColorType = iota
-	ColorTypeAlpha8
-	ColorTypeRGB565
-	ColorTypeARGB4444
-	ColorTypeRGBA8888
-	ColorTypeBGRA8888
-	ColorTypeIndex8
-	ColorTypeGray8
+	KColorTypeUnknown ColorType = iota
+	KColorTypeAlpha8
+	KColorTypeRGB565
+	KColorTypeARGB4444
+	KColorTypeRGBA8888
+	KColorTypeBGRA8888
+	KColorTypeIndex8
+	KColorTypeGray8
 
-	ColorTypeLastEnum = ColorTypeGray8
+	KColorTypeLastEnum = KColorTypeGray8
 )
 
 func (ct ColorType) BytesPerPixel() int {
@@ -86,11 +86,11 @@ func (ct ColorType) MinRowBytes(width int) int {
 }
 
 func (ct ColorType) IsVaild() bool {
-	return ct >= 0 && ct <= ColorTypeLastEnum
+	return ct >= 0 && ct <= KColorTypeLastEnum
 }
 
 func (ct ColorType) ComputeOffset(x, y int, rowBytes uint) uint {
-	if x < 0 || y < 0 || (!ct.IsVaild()) || (ct == ColorTypeUnknown) ||
+	if x < 0 || y < 0 || (!ct.IsVaild()) || (ct == KColorTypeUnknown) ||
 		(rowBytes%uint(ct.BytesPerPixel()) != 0) {
 		return 0
 	}
@@ -104,27 +104,27 @@ var ErrAlphaTypeCanNotCanonical = errors.New("color type can't be canonical")
 // alphaType for this colorType, return it in canonical.
 func (ct ColorType) ValidateAlphaType(alphaType AlphaType) (canonical AlphaType, err error) {
 	switch ct {
-	case ColorTypeUnknown:
-		alphaType = AlphaTypeUnknown
+	case KColorTypeUnknown:
+		alphaType = KAlphaTypeUnknown
 
-	case ColorTypeAlpha8:
-		if alphaType == AlphaTypeUnpremul {
-			alphaType = AlphaTypePremul
+	case KColorTypeAlpha8:
+		if alphaType == KAlphaTypeUnpremul {
+			alphaType = KAlphaTypePremul
 		}
 
 		fallthrough
 
-	case ColorTypeIndex8, ColorTypeARGB4444, ColorTypeRGBA8888,
-		ColorTypeBGRA8888:
-		if alphaType == AlphaTypeUnknown {
-			return AlphaTypeUnknown, ErrAlphaTypeCanNotCanonical
+	case KColorTypeIndex8, KColorTypeARGB4444, KColorTypeRGBA8888,
+		KColorTypeBGRA8888:
+		if alphaType == KAlphaTypeUnknown {
+			return KAlphaTypeUnknown, ErrAlphaTypeCanNotCanonical
 		}
 
-	case ColorTypeGray8, ColorTypeRGB565:
-		alphaType = AlphaTypeOpaque
+	case KColorTypeGray8, KColorTypeRGB565:
+		alphaType = KAlphaTypeOpaque
 
 	default:
-		return AlphaTypeUnknown, ErrAlphaTypeCanNotCanonical
+		return KAlphaTypeUnknown, ErrAlphaTypeCanNotCanonical
 	}
 
 	return alphaType, nil
@@ -135,28 +135,28 @@ type YUVColorSpace int
 
 const (
 	// Standard JPEG color space.
-	YUVColorSpaceJPEG YUVColorSpace = iota
+	KYUVColorSpaceJPEG YUVColorSpace = iota
 	// SDTV standard Rec. 601 color space. Uses "studio swing" [16, 245] color
 	// range. See http://en.wikipedia.org/wiki/Rec._601 for details.
-	YUVColorSpaceRec601
+	KYUVColorSpaceRec601
 	// HDTV standard Rec. 709 color space. Uses "studio swing" [16, 235] color
 	// range. See http://en.wikipedia.org/wiki/Rec._709 for details.
-	YUVColorSpaceRec709
+	KYUVColorSpaceRec709
 
-	YUVColorSpaceLastEnum = YUVColorSpaceRec709
+	KYUVColorSpaceLastEnum = KYUVColorSpaceRec709
 )
 
 // Color profile type
 type ColorProfileType int
 
 const (
-	ColorProfileTypeLinear ColorProfileType = iota
-	ColorProfileTypeSRGB
-	ColorProfileTypeLastEnum = ColorProfileTypeSRGB
+	KColorProfileTypeLinear ColorProfileType = iota
+	KColorProfileTypeSRGB
+	KColorProfileTypeLastEnum = KColorProfileTypeSRGB
 )
 
 func (pt ColorProfileType) IsValid() bool {
-	return pt >= 0 && pt <= ColorProfileTypeLastEnum
+	return pt >= 0 && pt <= KColorProfileTypeLastEnum
 }
 
 // Describe an image's dimensions and pixel type.
@@ -184,19 +184,19 @@ func NewImageInfo(width, height int, colorType ColorType, alphaType AlphaType,
 }
 
 func NewImageInfoN32(width, height int, alphaType AlphaType, profileType ColorProfileType) *ImageInfo {
-	return NewImageInfo(width, height, ColorTypeN32, alphaType, profileType)
+	return NewImageInfo(width, height, KColorTypeN32, alphaType, profileType)
 }
 
 func NewImageInfoN32Premul(width, height int, profileType ColorProfileType) *ImageInfo {
-	return NewImageInfo(width, height, ColorTypeN32, AlphaTypePremul, profileType)
+	return NewImageInfo(width, height, KColorTypeN32, KAlphaTypePremul, profileType)
 }
 
 func NewImageInfoA8(width, height int) *ImageInfo {
-	return NewImageInfo(width, height, ColorTypeAlpha8, AlphaTypePremul, ColorProfileTypeLinear)
+	return NewImageInfo(width, height, KColorTypeAlpha8, KAlphaTypePremul, KColorProfileTypeLinear)
 }
 
 func NewImageInfoUnknown(width, height int) *ImageInfo {
-	return NewImageInfo(width, height, ColorTypeUnknown, AlphaTypeUnknown, ColorProfileTypeLinear)
+	return NewImageInfo(width, height, KColorTypeUnknown, KAlphaTypeUnknown, KColorProfileTypeLinear)
 }
 
 func (ii *ImageInfo) Width() int {
@@ -232,11 +232,11 @@ func (ii *ImageInfo) IsOpaque() bool {
 }
 
 func (ii *ImageInfo) IsLinear() bool {
-	return ii.profileType == ColorProfileTypeLinear
+	return ii.profileType == KColorProfileTypeLinear
 }
 
 func (ii *ImageInfo) IsSRGB() bool {
-	return ii.profileType == ColorProfileTypeSRGB
+	return ii.profileType == KColorProfileTypeSRGB
 }
 
 func (ii *ImageInfo) ComputeOffset(x, y int, rowBytes uint) (uint, error) {

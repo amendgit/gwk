@@ -13,23 +13,23 @@ type Color uint32
 
 // common colors
 const (
-	ColorAlphaTransparent Color = 0x00 // transparent Alpha value
-	ColorAlphaOpaque            = 0xff // opaque Alpha value
+	KColorAlphaTransparent Color = 0x00 // transparent Alpha value
+	KColorAlphaOpaque            = 0xff // opaque Alpha value
 
-	ColorTransparent = 0x00000000 // transparent Color value
+	KColorTransparent = 0x00000000 // transparent Color value
 
-	ColorBlack  = 0xff000000 // black Color value
-	ColorDkgray = 0xff444444 // dark gray Color value
-	ColorGray   = 0xff888888 // gray Color value
-	ColorLtgray = 0xffcccccc // light gray Color value
-	ColorWhite  = 0xffffffff // white Color value
+	KColorBlack  = 0xff000000 // black Color value
+	KColorDkgray = 0xff444444 // dark gray Color value
+	KColorGray   = 0xff888888 // gray Color value
+	KColorLtgray = 0xffcccccc // light gray Color value
+	KColorWhite  = 0xffffffff // white Color value
 
-	ColorRed     = 0xffff0000 // red Color value
-	ColorGreen   = 0xff00ff00 // green Color value
-	ColorBlue    = 0xff0000ff // blue Color value
-	ColorYellow  = 0xffffff00 // yellow Color value
-	ColorCyan    = 0xff00ffff // cyan Color value
-	ColorMagenta = 0xffff00ff // magenta Color value
+	KColorRed     = 0xffff0000 // red Color value
+	KColorGreen   = 0xff00ff00 // green Color value
+	KColorBlue    = 0xff0000ff // blue Color value
+	KColorYellow  = 0xffffff00 // yellow Color value
+	KColorCyan    = 0xff00ffff // cyan Color value
+	KColorMagenta = 0xffff00ff // magenta Color value
 )
 
 // ColorWithARGB return a Color from 8-bit component values.
@@ -66,10 +66,10 @@ func (color Color) Blue() uint8 {
 // ARGB return the alpha red green blue bytes in order from a Color value
 func (color Color) ARGB() (uint8, uint8, uint8, uint8) {
 	var a, r, g, b uint8
-	a = uint8((color >> ARGB_A32Shift) & 0xff)
-	r = uint8((color >> ARGB_R32Shift) & 0xff)
-	g = uint8((color >> ARGB_G32Shift) & 0xff)
-	b = uint8((color >> ARGB_B32Shift) & 0xff)
+	a = uint8((color >> KARGB32ShiftA) & 0xff)
+	r = uint8((color >> KARGB32ShiftR) & 0xff)
+	g = uint8((color >> KARGB32ShiftG) & 0xff)
+	b = uint8((color >> KARGB32ShiftB) & 0xff)
 	return a, r, g, b
 }
 
@@ -94,8 +94,8 @@ func PremulColorFromARGB32(a, r, g, b uint8) (PremulColor, error) {
 	if r > a || g > a || b > a {
 		return 0, ErrARGBIsNotPremultipled
 	}
-	return PremulColor((a << ARGB_A32Shift) | (r << ARGB_R32Shift) |
-		(g << ARGB_G32Shift) | (b << ARGB_B32Shift)), nil
+	return PremulColor((a << KARGB32ShiftA) | (r << KARGB32ShiftR) |
+		(g << KARGB32ShiftG) | (b << KARGB32ShiftB)), nil
 }
 
 // PremultiplyARGB return a PremultipliedColor value from unpremultiplied 8-bit

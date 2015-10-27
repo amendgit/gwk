@@ -9,11 +9,11 @@ var atTests = []struct {
 	at      ggk.AlphaType
 	isValid bool
 }{
-	{ggk.AlphaTypeUnknown, true},
-	{ggk.AlphaTypeOpaque, true},
-	{ggk.AlphaTypePremul, true},
-	{ggk.AlphaTypeUnpremul, true},
-	{ggk.AlphaTypeLastEnum, true},
+	{ggk.KAlphaTypeUnknown, true},
+	{ggk.KAlphaTypeOpaque, true},
+	{ggk.KAlphaTypePremul, true},
+	{ggk.KAlphaTypeUnpremul, true},
+	{ggk.KAlphaTypeLastEnum, true},
 	{ggk.AlphaType(-1), false},
 	{ggk.AlphaType(777), false},
 }
@@ -31,14 +31,14 @@ var ctBytesPerPixelTests = []struct {
 	ct       ggk.ColorType
 	numBytes int
 }{
-	{ggk.ColorTypeUnknown, 0},
-	{ggk.ColorTypeAlpha8, 1},
-	{ggk.ColorTypeRGB565, 2},
-	{ggk.ColorTypeARGB4444, 2},
-	{ggk.ColorTypeRGBA8888, 4},
-	{ggk.ColorTypeBGRA8888, 4},
-	{ggk.ColorTypeIndex8, 1},
-	{ggk.ColorTypeGray8, 1},
+	{ggk.KColorTypeUnknown, 0},
+	{ggk.KColorTypeAlpha8, 1},
+	{ggk.KColorTypeRGB565, 2},
+	{ggk.KColorTypeARGB4444, 2},
+	{ggk.KColorTypeRGBA8888, 4},
+	{ggk.KColorTypeBGRA8888, 4},
+	{ggk.KColorTypeIndex8, 1},
+	{ggk.KColorTypeGray8, 1},
 	{ggk.ColorType(1000), 0},
 	{ggk.ColorType(-1), 0},
 }
@@ -49,16 +49,16 @@ var ctComputeOffsetTests = []struct {
 	rowBytes uint
 	offset   uint
 }{
-	{ggk.ColorTypeRGBA8888, 0, 0, 0, 0},
-	{ggk.ColorTypeRGBA8888, 0, 1, 4, 4},
-	{ggk.ColorTypeRGBA8888, 0, 1, 8, 8},
-	{ggk.ColorTypeRGBA8888, 1, 1, 8, 12},
-	{ggk.ColorTypeRGBA8888, 1, 0, 8, 4},
-	{ggk.ColorTypeRGBA8888, 0, 0, 0, 0},
-	{ggk.ColorTypeRGBA8888, -1, 1, 8, 0},
+	{ggk.KColorTypeRGBA8888, 0, 0, 0, 0},
+	{ggk.KColorTypeRGBA8888, 0, 1, 4, 4},
+	{ggk.KColorTypeRGBA8888, 0, 1, 8, 8},
+	{ggk.KColorTypeRGBA8888, 1, 1, 8, 12},
+	{ggk.KColorTypeRGBA8888, 1, 0, 8, 4},
+	{ggk.KColorTypeRGBA8888, 0, 0, 0, 0},
+	{ggk.KColorTypeRGBA8888, -1, 1, 8, 0},
 	{ggk.ColorType(-1), 1, 1, 8, 0},
-	{ggk.ColorTypeUnknown, 1, 1, 8, 0},
-	{ggk.ColorTypeRGBA8888, 1, 1, 7, 0},
+	{ggk.KColorTypeUnknown, 1, 1, 8, 0},
+	{ggk.KColorTypeRGBA8888, 1, 1, 7, 0},
 }
 
 func TestColorType(t *testing.T) {
@@ -83,13 +83,13 @@ var imageInfoEqTests = []struct {
 	isEqual bool
 }{
 	{
-		ggk.NewImageInfo(100, 100, ggk.ColorTypeRGBA8888, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
-		ggk.NewImageInfo(100, 100, ggk.ColorTypeRGBA8888, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
+		ggk.NewImageInfo(100, 100, ggk.KColorTypeRGBA8888, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
+		ggk.NewImageInfo(100, 100, ggk.KColorTypeRGBA8888, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
 		true,
 	},
 	{
-		ggk.NewImageInfo(100, 100, ggk.ColorTypeRGBA8888, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
-		ggk.NewImageInfo(100, 100, ggk.ColorTypeBGRA8888, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
+		ggk.NewImageInfo(100, 100, ggk.KColorTypeRGBA8888, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
+		ggk.NewImageInfo(100, 100, ggk.KColorTypeBGRA8888, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
 		false,
 	},
 }
@@ -100,12 +100,12 @@ var imageInfoMinRowBytesTests = []struct {
 	minRowBytes   int
 }{
 	{
-		ggk.NewImageInfo(100, 100, ggk.ColorTypeN32, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
+		ggk.NewImageInfo(100, 100, ggk.KColorTypeN32, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
 		400,
 		400,
 	},
 	{
-		ggk.NewImageInfo(5000, 100, ggk.ColorTypeN32, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
+		ggk.NewImageInfo(5000, 100, ggk.KColorTypeN32, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
 		20000,
 		20000,
 	},
@@ -118,7 +118,7 @@ var imageInfoSafeSizeTests = []struct {
 	safeSize64 uint64
 }{
 	{
-		ggk.NewImageInfo(900, 601, ggk.ColorTypeN32, ggk.AlphaTypeOpaque, ggk.ColorProfileTypeLinear),
+		ggk.NewImageInfo(900, 601, ggk.KColorTypeN32, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
 		5000,
 		3003600,
 		3003600,

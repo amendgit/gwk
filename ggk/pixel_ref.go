@@ -10,7 +10,7 @@ func validatePixelsColorTable(info ImageInfo, ct *ColorTable) {
 		return // can't require ct if the dimensions are empty.
 	}
 
-	if info.ColorType() == ColorTypeIndex8 {
+	if info.ColorType() == KColorTypeIndex8 {
 		if ct == nil {
 			log.Printf(`WARNING: validatePixelsColorTable ct is nil for ColorTypeIndex8`)
 		}
