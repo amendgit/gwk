@@ -9,10 +9,11 @@
 #include <algorithm>
 
 #include "_cgo_export.h"
-#include "window_linux.h"
 #include "events.h"
+#include "window_linux.h"
 #include "gtkcompat_linux.h"
 #include "general_linux.h"
+#include "key_linux.h"
 
 WindowContext * WindowContextBase::smGrabWindow = NULL;
 WindowContext * WindowContextBase::smMouseDragWindow = NULL;
@@ -20,17 +21,21 @@ WindowContext * WindowContextBase::smMouseDragWindow = NULL;
 GdkAtom g_atomNetWmState = gdk_atom_intern_static_string("_NET_WM_STATE");
 
 bool WindowContextBase::HasIME() {
+    // TOIMPL
     return TRUE;
 }
 
 bool WindowContextBase::FilterIME(GdkEvent *) {
+    // TOIMPL
     return TRUE;
 }
 
 void WindowContextBase::EnableOrResetIME() {
+    // TOIMPL
 }
 
 void WindowContextBase::DisableIME() {
+    // TOIMPL
 }
 
 GdkWindow* WindowContextBase::GetGdkWindow() {
@@ -53,13 +58,13 @@ bool WindowContextBase::IsEnabled() {
 }
 
 void WindowContextBase::NotifyState(int state) {
-    if (state == WindowEvent_Restore) {
+    if (state == kWindowEventRestore) {
         if (isMaximized) {
-            state = WindowEvent_Maximize;
+            state = kWindowEventMaximize;
         }
 
         int w, h;
-        GdkWindow_GetSize(gdkWindow, &w, &h);
+        GdkWindowGetSize(gdkWindow, &w, &h);
         if (gwkView != NULL) {
             ViewOnRepaint(gwkView, 0, 0, w, h);
             // check go exception
@@ -87,11 +92,11 @@ void WindowContextBase::ProcessState(GdkEventWindowState *event) {
         int stateChangedEvent;
 
         if (isIconified) {
-            stateChangedEvent = WindowEvent_Minimize;
+            stateChangedEvent = kWindowEventMinimize;
         } else if (isMaximized) {
-            stateChangedEvent = WindowEvent_Maximize;
+            stateChangedEvent = kWindowEventMaximize;
         } else {
-            stateChangedEvent = WindowEvent_Restore;
+            stateChangedEvent = kWindowEventRestore;
         }
 
         NotifyState(stateChangedEvent);
@@ -110,7 +115,7 @@ void WindowContextBase::ProcessFocus(GdkEventFocus *event) {
     if (gwkWindow != NULL) {
         if (!event->in || IsEnabled()) {
             WindowOnNotifyFocus(gwkWindow,
-                event->in ? WindowEvent_FocusGained : WindowEvent_FocusLost);
+                event->in ? kWindowEventFocusGained : kWindowEventFocusLost);
             // check go exception.
         } else {
             WindowOnFocusDisabled(gwkWindow);
@@ -199,14 +204,14 @@ void WindowContextBase::ProcessExpose(GdkEventExpose *event) {
 static inline int gtk_button_number_to_mouse_button(guint button) {
     switch (button) {
         case 1:
-            return MouseEvent_ButtonLeft;
+            return kMouseEventButtonLeft;
         case 2:
-            return MouseEvent_ButtonOther;
+            return kMouseEventButtonOther;
         case 3:
-            return MouseEvent_ButtonRight;
+            return kMouseEventButtonRight;
         default:
             // Other buttons are not supported by quantum and are not reported by other platforms.
-            return MouseEvent_ButtonNone;
+            return kMouseEventButtonNone;
     }
 }
 
@@ -239,7 +244,7 @@ void WindowContextBase::ProcessMouseButton(GdkEventButton *event) {
     if (press) {
         GdkDevice *device = event->device;
 
-        if (GdkDevice_IsGrabbed(device) && GdkDevice_GetWindowAtPosition(device, NULL, NULL) == NULL) {
+        if (GdkDeviceIsGrabbed(device) && GdkDeviceGetWindowAtPosition(device, NULL, NULL) == NULL) {
             UngrabFocus();
             return ;
         }
@@ -257,9 +262,9 @@ void WindowContextBase::ProcessMouseButton(GdkEventButton *event) {
 
     int button = gtk_button_number_to_mouse_button(event->button);
 
-    if (gwkView != NULL && button != MouseEvent_ButtonNone) {
+    if (gwkView != NULL && button != kMouseEventButtonNone) {
         ViewOnMouse(gwkView,
-            press ? MouseEvent_Down : MouseEvent_Up,
+            press ? kMouseEventDown : kMouseEventUp,
             button,
             (int)event->x, (int)event->y, (int)event->x_root, (int)event->y_root,
             GdkModifierMaskToGwk(state),
@@ -278,21 +283,21 @@ void WindowContextBase::ProcessMouseButton(GdkEventButton *event) {
 void WindowContextBase::ProcessMouseMotion(GdkEventMotion *event) {
     int glassModifier = 0; // gdk_modifier_mask_to_glass(event->state);
     int isDrag = glassModifier & (
-            KeyEvent_ModifierButtonPrimary |
-            KeyEvent_ModifierButtonMiddle |
-            KeyEvent_ModifierButtonSecondary);
-    int button = MouseEvent_ButtonNone;
+            kKeyEventModifierButtonPrimary |
+            kKeyEventModifierButtonMiddle |
+            kKeyEventModifierButtonSecondary);
+    int button = kMouseEventButtonNone;
 
-    if (glassModifier & KeyEvent_ModifierButtonPrimary) {
-        button = MouseEvent_ButtonLeft;
-    } else if (glassModifier & KeyEvent_ModifierButtonMiddle) {
-        button = MouseEvent_ButtonOther;
-    } else if (glassModifier & KeyEvent_ModifierButtonSecondary) {
-        button = MouseEvent_ButtonRight;
+    if (glassModifier & kKeyEventModifierButtonPrimary) {
+        button = kMouseEventButtonLeft;
+    } else if (glassModifier & kKeyEventModifierButtonMiddle) {
+        button = kMouseEventButtonOther;
+    } else if (glassModifier & kKeyEventModifierButtonSecondary) {
+        button = kMouseEventButtonRight;
     }
 
     if (gwkView != NULL) {
-        ViewOnMouse(gwkView, isDrag ? MouseEvent_Drag : MouseEvent_Move,
+        ViewOnMouse(gwkView, isDrag ? kMouseEventDrag : kMouseEventMove,
             button,
             event->x, event->y,
             event->x_root, event->y_root,
@@ -323,14 +328,14 @@ void WindowContextBase::ProcessMouseScroll(GdkEventScroll *event) {
     }
 
     if (gwkView != NULL) {
-        // GwkViewOnScroll(gwkView,
-        //     event->x, event->y,
-        //     event->x_root, event->y_root,
-        //     dx, dy,
-        //     gdk_modifier_mask_to_glass(event->state),
-        //     0, 0,
-        //     0, 0,
-        //     (double)40.0, (double)40.0);
+        ViewOnScroll(gwkView,
+            event->x, event->y,
+            event->x_root, event->y_root,
+            dx, dy,
+            GdkModifierMaskToGwk(event->state),
+            0, 0,
+            0, 0,
+            (double)40.0, (double)40.0);
         // check exception.
     }
 }
@@ -345,13 +350,13 @@ void WindowContextBase::ProcessMouseCross(GdkEventCrossing *event) {
 
         if (enter != isMouseEntered) {
             isMouseEntered = enter;
-            // GwkViewOnMouse(gwkView,
-            //     enter ? MouseEvent_Enter, MouseEvent_Exit,
-            //     MouseEvent_ButtonNone,
-            //     event->x, event->y,
-            //     event->x_root, event->y_root,
-            //     gdk_modifier_mask_to_glass(state),
-            //     false, false);
+            ViewOnMouse(gwkView,
+                enter ? kMouseEventEnter : kMouseEventExit,
+                kMouseEventButtonNone,
+                event->x, event->y,
+                event->x_root, event->y_root,
+                GdkModifierMaskToGwk(state),
+                false, false);
             // check exception.
         }
     }
@@ -359,38 +364,43 @@ void WindowContextBase::ProcessMouseCross(GdkEventCrossing *event) {
 
 void WindowContextBase::ProcessKey(GdkEventKey *event) {
     bool press = event->type == GDK_KEY_PRESS;
-    // int glassKey = get_glass_key(event);
-    int glassModifier = 0; // gdk_modifier_mask_to_glass(event->state);
+    int gwkKey = GetGwkKey(event);
+    int gwkModifier = GdkModifierMaskToGwk(event->state);
     if (press) {
-        // glassModifier |= glass_key_to_modifier(glassKey);
+        gwkModifier |= GwkKeyToModifier(gwkKey);
     } else {
-        // glassModifier &= ~glass_key_to_modifier(glassKey);
+        gwkModifier &= ~GwkKeyToModifier(gwkKey);
     }
 
     char *chars = NULL;
+    int charsCount = 0;
     char key = gdk_keyval_to_unicode(event->keyval);
     if (key > 'a' && key <= 'z' && (event->state & GDK_CONTROL_MASK)) {
         key = key - 'a' + 1;
     } else {
-        // key = glass_gtk_fixup_typed_key(key, event->keyval);
+        key = GtkFixupTypedKey(key, event->keyval);
     }
 
     if (key > 0) {
         chars = new char[1];
         chars[1] = key;
+        charsCount = 1;
     }
 
     if (gwkView != NULL) {
         if (press) {
-            // GwkViewOnKey(gwkView, KeyEvent_Press, glassKey, chars, glassModifier);
+            ViewOnKey(gwkView, kKeyEventPress, gwkKey, chars, charsCount,
+                gwkModifier);
             // check go exception.
 
             if (gwkView != NULL && key > 0) {
-                // GwkViewOnKey(gwkView, KeyEvent_Typed, KeyCode_Undefined, chars, glassModifier);
+                ViewOnKey(gwkView, kKeyEventTyped, kKeyCodeUndefined, chars,
+                    charsCount, gwkModifier);
                 // check go exception.
             }
         } else {
-            // GwkViewOnKey(gwkView, KeyEvent_Release, glassKey, chars, glassModifier);
+            ViewOnKey(gwkView, kKeyEventRelease, gwkKey, chars,
+                charsCount, gwkModifier);
             // check go exception.
         }
     }
@@ -402,7 +412,7 @@ void WindowContextBase::Paint(void *data, int width, int height) {
     }
 
     cairo_t *context;
-    // context = gdk_cairo_create(GDK_DRAWABLE(gdkWindow));
+    context = gdk_cairo_create(gdkWindow);
 
     cairo_surface_t *cairo_surface;
     cairo_surface = cairo_image_surface_create_for_data(
@@ -422,19 +432,19 @@ void WindowContextBase::Paint(void *data, int width, int height) {
 
 void WindowContextBase::AddChild(WindowContextTop* child) {
     children.insert(child);
-    // gtk_window_set_transient_for(child->GetGtkWindow(), this->GetGtkWindow());
+    gtk_window_set_transient_for(child->GetGtkWindow(), this->GetGtkWindow());
 }
 
 void WindowContextBase::RemoveChild(WindowContextTop *child) {
     children.erase(child);
-    // gtk_window_set_transient_for(child->GetGtkWindow(), NULL);
+    gtk_window_set_transient_for(child->GetGtkWindow(), NULL);
 }
 
 void WindowContextBase::ShowOrHideChildren(bool show) {
     std::set<WindowContextTop *>::iterator it;
     for (it = children.begin(); it != children.end(); ++it) {
-        // (*it)->SetVisible(show);
-        // (*it)->ShowOrHideChildren(show);
+        (*it)->SetVisible(show);
+        (*it)->ShowOrHideChildren(show);
     }
 }
 
@@ -454,14 +464,14 @@ void WindowContextBase::SetVisible(bool visible) {
         gtk_widget_hide(gtkWidget);
         if (gwkView != NULL && isMouseEntered) {
             isMouseEntered = false;
-            // GwkViewOnMouse(gwkView,
-            //     MouseEvent_Exit,
-            //     MouseEvent_ButtonNone,
-            //     0, 0,
-            //     0, 0,
-            //     0,
-            //     FALSE,
-            //     FALSE);
+            ViewOnMouse(gwkView,
+                kMouseEventExit,
+                kMouseEventButtonNone,
+                0, 0,
+                0, 0,
+                0,
+                FALSE,
+                FALSE);
             // check go exception.
         }
     }
@@ -480,7 +490,7 @@ void WindowContextBase::SetView(GoObject view) {
         gint width, height;
         gwkView = view; // Ref(view);
         gtk_window_get_size(GTK_WINDOW(gtkWidget), &width, &height);
-        // GwkViewOnResize(view, width, height);
+        ViewOnResize(view, width, height);
         // check go exception.
     } else {
         memset(&gwkView, 0, sizeof(gwkView));
@@ -499,42 +509,42 @@ bool WindowContextBase::GrabMouseDragFocus() {
 
 void WindowContextBase::UngrabMouseDragFocus() {
     WindowContextBase::smMouseDragWindow = NULL;
-    // glass_gdk_mouse_devices_ungrab();
+    GdkMouseDevicesUngrab();
     if (WindowContextBase::smGrabWindow) {
         WindowContextBase::smGrabWindow->GrabFocus();
     }
 }
 
 bool WindowContextBase::GrabFocus() {
-    // if (WindowContextBase::smMouseDragWindow || glass_gdk_mouse_devices_grab(gdkWindow)) {
-    //     WindowContextBase::smGrabWindow = this;
-    //     return TRUE;
-    // } else {
-    //     return FALSE;
-    // }
+    if (WindowContextBase::smMouseDragWindow || GdkMouseDevicesGrab(gdkWindow)) {
+        WindowContextBase::smGrabWindow = this;
+        return TRUE;
+    } else {
+        return FALSE;
+    }
     return FALSE;
 }
 
 void WindowContextBase::UngrabFocus() {
     if (!WindowContextBase::smMouseDragWindow) {
-        // glass_gdk_mouse_devices_ungrab();
+        GdkMouseDevicesUngrab();
     }
     WindowContextBase::smGrabWindow = NULL;
 
     if (gwkWindow != NULL) {
-        // GwkWindowOnFocusUngrab();
+        WindowOnFocusUngrab(gwkWindow);
         // check go exception.
     }
 }
 
 void WindowContextBase::SetCursor(GdkCursor *cursor) {
-    // if (!IsInDrag()) {
-    //     if (WindowContextBase::smMouseDragWindow) {
-    //         glass_gdk_mouse_devices_grab_with_cursor(WindowContextBase::smMouseDragWindow->GetGdkWindow(), cursor, FALSE);
-    //     } else if (WindowContextBase::smGrabWindow) {
-    //         glass_gdk_mouse_devices_grab_with_cursor(WindowContextBase::smGrabWindow->GetGdkWindow(), cursor);
-    //     }
-    // }
+    if (/*!IsInDrag()*/ 1) {
+        if (WindowContextBase::smMouseDragWindow) {
+            GdkMouseDevicesGrabWithCursor(WindowContextBase::smMouseDragWindow->GetGdkWindow(), cursor, FALSE);
+        } else if (WindowContextBase::smGrabWindow) {
+            GdkMouseDevicesGrabWithCursor(WindowContextBase::smGrabWindow->GetGdkWindow(), cursor);
+        }
+    }
     gdk_window_set_cursor(gdkWindow, cursor);
 }
 

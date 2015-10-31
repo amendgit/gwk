@@ -58,3 +58,8 @@ func WindowOnDestroy(p unsafe.Pointer) {
 func WindowOnClose(p unsafe.Pointer) {
 	return
 }
+
+//export WindowOnFocusUngrab
+func WindowOnFocusUngrab(p unsafe.Pointer) {
+
+}

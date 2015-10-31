@@ -2,7 +2,7 @@
 
 const char *WindowEventName(int eventType) {
 	switch (eventType) {
-		case WindowEvent_Resize:
+		case kWindowEventResize:
 			return "RESIZE";
 		default:
 			return "UNKNOWN";

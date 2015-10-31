@@ -4,5 +4,5 @@ package pin
 import "C"
 
 const (
-	WindowEvent_Restore = C.WindowEvent_Restore
+	kWindowEventRestore = C.kWindowEventRestore
 )
