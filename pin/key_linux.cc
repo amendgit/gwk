@@ -189,14 +189,14 @@ int GetGwkKey(GdkEventKey *e) {
         // We failed to find a keyval in our keymap, this may happen with
         // non-latin layouts(e.g. Cyrillic). So here we try to find a keyval
         // from a default layout (we assume that it is a US-like one).
-         GdkKeymapKey kk;
-         kk.keycode = e->hardware_keycode;
-         kk.group = kk.level = 0;
+        GdkKeymapKey kk;
+        kk.keycode = e->hardware_keycode;
+        kk.group = kk.level = 0;
 
-         keyval = gdk_keymap_lookup_key(gdk_keymap_get_default(), &kk);
+        keyval = gdk_keymap_lookup_key(gdk_keymap_get_default(), &kk);
 
-         key = GPOINTER_TO_INT(g_hash_table_lookup(g_keyMap,
-             GINT_TO_POINTER(keyval)));
+        key = GPOINTER_TO_INT(g_hash_table_lookup(g_keyMap,
+            GINT_TO_POINTER(keyval)));
     }
 
     return key;
