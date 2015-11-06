@@ -21,13 +21,13 @@ func validatePixelsColorTable(info ImageInfo, ct *ColorTable) {
 	}
 }
 
-type PixelRefVirt interface {
+type PixelsVirt interface {
 	// OnNewLockPixels returns true and fills out the LockRec for the pixels on
 	// success, returns false and ignores the LockRec parameter on failure.
 	//
 	// The caller will have already acquired a mutex for thread safety, so this
 	// method need not do that.
-	OnNewLockPixels(*PixelRefLockRec) bool
+	OnNewLockPixels(*PixelsLockRec) bool
 
 	// OnUnlockPixels balancing the previous successful call to OnNewLockPixels.
 	// Tht locked pixel address will no longer be referenced, so the subclass is
@@ -67,57 +67,50 @@ type PixelRefVirt interface {
 	// OnRequestLock(*LockRequest, *LockResult) bool
 }
 
-type PixelRef struct {
-	Virt PixelRefVirt
+type Pixels struct {
+	// Virt is virtual interface, set Virt in NewXYZ() call Pixels.Virt.Func()
+	// to get the virtual aliblity.
+	Virt PixelsVirt
 
-	info      ImageInfo
 	prelocked bool
 	mutex     sync.Mutex
-	lockRec   PixelRefLockRec
+	lockRec   PixelsLockRec
 	lockCount int
 }
 
-func NewPixelRef(imageInfo ImageInfo) *PixelRef {
+func NewPixels() *Pixels {
 	// TOIMPL
-	var p = new(PixelRef)
+	var p = new(Pixels)
 	return p
-}
-
-func (p *PixelRef) Info() ImageInfo {
-	return p.info
 }
 
 // Pixels return the pixel memory bytes returned from LockPixels, or nil if the
 // lockCount is 0.
-func (p *PixelRef) Pixels() []byte {
+func (p *Pixels) Pixels() []byte {
 	return p.lockRec.pixels
 }
 
 // ColorTable return the current colorTable (if any) if pixels are locked, or
 // nil.
-func (p *PixelRef) ColorTable() *ColorTable {
+func (p *Pixels) ColorTable() *ColorTable {
 	return p.lockRec.colorTable
 }
 
 // RowBytes return the current rowBytes (if any) if pixels are locked, or nil.
-func (p *PixelRef) RowBytes() int {
+func (p *Pixels) RowBytes() int {
 	return p.lockRec.rowBytes
 }
 
-func (p *PixelRef) SetAlphaType(alphaType AlphaType) {
-	p.info.SetAlphaType(alphaType)
-}
-
 // Just need a > 0 value, so pick a funny one to aid in debugging.
-const pixelRefPrelockedLockCount = 123456789
+const kPixelsPrelockedLockCount = 123456789
 
 // LockPixels try to get the pixels lock, and prepare for read/write the pixels.
 // For the historical reasons, we always inc lockCount, even if we return false.
 // It would be nice to change this (it seems), and only inc if we actually
 // succeeding...
-func (p *PixelRef) LockPixels() bool {
-	if p.prelocked && p.lockCount != pixelRefPrelockedLockCount {
-		log.Printf(`WARNING: PixelRef.LockPixels prelocked and lockCount is not matched.`)
+func (p *Pixels) LockPixels() bool {
+	if p.prelocked && p.lockCount != kPixelsPrelockedLockCount {
+		log.Printf(`WARNING: Pixels.LockPixels prelocked and lockCount is not matched.`)
 	}
 
 	if !p.prelocked {
@@ -130,15 +123,10 @@ func (p *PixelRef) LockPixels() bool {
 		}
 	}
 
-	if p.lockRec.pixels != nil {
-		validatePixelsColorTable(p.info, p.lockRec.colorTable)
-		return true
-	}
-
 	return false
 }
 
-func (p *PixelRef) LockPixelsToRec() (bool, *PixelRefLockRec) {
+func (p *Pixels) LockPixelsToRec() (bool, *PixelsLockRec) {
 	if p.LockPixels() {
 		return true, &(p.lockRec)
 	}
@@ -146,7 +134,7 @@ func (p *PixelRef) LockPixelsToRec() (bool, *PixelRefLockRec) {
 }
 
 // Increments lockCount only on success.
-func (p *PixelRef) LockPixelsInsideMutex() bool {
+func (p *Pixels) LockPixelsInsideMutex() bool {
 	p.lockCount++
 
 	if p.lockCount == 1 {
@@ -157,15 +145,10 @@ func (p *PixelRef) LockPixelsInsideMutex() bool {
 		}
 	}
 
-	if p.lockRec.pixels != nil {
-		validatePixelsColorTable(p.info, p.lockRec.colorTable)
-		return true
-	}
-
 	return false
 }
 
-func (p *PixelRef) UnlockPixels() {
+func (p *Pixels) UnlockPixels() {
 	if !p.prelocked {
 		p.mutex.Lock()
 		defer p.mutex.Unlock()
@@ -181,61 +164,107 @@ func (p *PixelRef) UnlockPixels() {
 	}
 }
 
-func (p *PixelRef) LockPixelsAreWritable() bool {
+func (p *Pixels) LockPixelsAreWritable() bool {
 	return p.Virt.OnLockPixelsAreWritable()
 }
 
 // OnLockPixelsAreWritable default impl return true.
-func (p *PixelRef) OnLockPixelsAreWritable() bool {
+func (p *Pixels) OnLockPixelsAreWritable() bool {
 	return true
 }
 
-func (p *PixelRef) ReadPixels(dst *Bitmap, subset *Rect) bool {
+func (p *Pixels) ReadPixels(dst *Bitmap, subset *Rect) bool {
 	return p.Virt.OnReadPixels(dst, subset)
 }
 
-func (p *PixelRef) OnReadPixels(dst *Bitmap, subset *Rect) bool {
+func (p *Pixels) OnReadPixels(dst *Bitmap, subset *Rect) bool {
 	return false
 }
 
-func (p *PixelRef) OnNotifyPixelsChanged() {
+func (p *Pixels) OnNotifyPixelsChanged() {
 	// empty
 }
 
-// func (p *PixelRef) OnRefEncodedData() *Data {
+// func (p *Pixels) OnRefEncodedData() *Data {
 // 	return nil
 // }
 
-func (p *PixelRef) GetAllocatedSizeInBytes() uint {
+func (p *Pixels) GetAllocatedSizeInBytes() uint {
 	return 0
+}
+
+func (p *Pixels) SetPrelocked(pixels []byte) {
+	// only call me in your constructor, other wise fLockCount tracking can get
+	// out of sync.
+	p.lockRec.pixels = pixels
+	p.lockCount = kPixelsPrelockedLockCount
+	p.prelocked = true
 }
 
 // PixelRefLockRec to access the actual pixels of a pixelRef, it must be
 // "locked". Calling LockPixels returns a PixelRefLockRec struct (on success).
-type PixelRefLockRec struct {
+type PixelsLockRec struct {
 	pixels     []byte
 	colorTable *ColorTable
 	rowBytes   int
 }
 
-func (r *PixelRefLockRec) SetZero() {
-	var zero PixelRefLockRec
+func (r *PixelsLockRec) SetZero() {
+	var zero PixelsLockRec
 	*r = zero
 }
 
-func (r PixelRefLockRec) IsZero() bool {
+func (r PixelsLockRec) IsZero() bool {
 	return r.pixels == nil && r.colorTable == nil && r.rowBytes == 0
 }
 
-type MallocPixelRefFactory struct {
+type MemPixelsFactory struct {
 }
 
-func MallocPixelRefDefaultFactory() *MallocPixelRefFactory {
+func MemPixelsDefaultFactory() *MemPixelsFactory {
 	// TOIMPL
 	return nil
 }
 
-func (f *MallocPixelRefFactory) Create(imageInfo ImageInfo, rowBytes int, colorTable *ColorTable) *PixelRef {
+func (f *MemPixelsFactory) Create(imageInfo ImageInfo, rowBytes int, colorTable *ColorTable) *Pixels {
 	// TOIMPL
 	return nil
+}
+
+type MemPixels struct {
+	*Pixels
+	storage []byte
+}
+
+// NewMemPixels return a new instance with the provided stroage, rowBytes,
+// and optional colortable. The caller is responsible for managing the
+// lifetime of the pixel storage buffer, as this pixels will not try
+// to delete it.
+//
+// The pixels will ref the colortable (if not nil)
+//
+// Returns nil on failture.
+func NewMemPixels(storage []byte) *MemPixels {
+	var p MemPixels
+	p.Pixels = NewPixels()
+	p.storage = storage
+	p.SetPrelocked(storage)
+	return &p
+}
+
+func NewMemPixelsAlloc(info ImageInfo, rowBytes int) *MemPixels {
+	var p MemPixels
+	p.Pixels = NewPixels()
+	p.storage = make([]byte, info.SafeSize(rowBytes))
+	p.SetPrelocked(p.storage)
+	return &p
+}
+
+func isImageInfoValid(info ImageInfo) bool {
+	if info.Width() < 0 || info.Height() < 0 || !info.ColorType().IsVaild() ||
+		!info.AlphaType().IsValid() {
+		return false
+	}
+
+	return true
 }

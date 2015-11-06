@@ -1,21 +1,25 @@
 package ggk
 
-import "sync/atomic"
+import (
+	"errors"
+	"sync/atomic"
+)
 
 type Bitmap struct {
-	rowBytes       int
-	flags          uint8
-	info           ImageInfo
-	colorTable     *ColorTable // cached from pixelRef
-	pixels         []byte      // cached from pixelRef
-	pixelRef       *PixelRef
-	pixelRefOrigin Point
+	rowBytes int
+	flags    uint8
+
+	info       ImageInfo
+	colorTable *ColorTable
+
+	pixels         *Pixels
+	pixelOrigin    Point
 	pixelLockCount int32
 }
 
 // Swap the fields of the two bitmaps. This routine is guaranteed to never fail or throw.
 func (bmp *Bitmap) Swap(other *Bitmap) {
-	// bmp.colorTable, other.colorTable = other.colorTable, bmp.colorTable
+	bmp.colorTable, other.colorTable = other.colorTable, bmp.colorTable
 	bmp.pixels, other.pixels = other.pixels, bmp.pixels
 	bmp.info, other.info = other.info, bmp.info
 	bmp.flags, other.flags = other.flags, bmp.flags
@@ -26,11 +30,11 @@ func (bmp *Bitmap) Info() ImageInfo {
 	return bmp.info
 }
 
-func (bmp *Bitmap) Width() int {
+func (bmp *Bitmap) Width() Scalar {
 	return bmp.info.Width()
 }
 
-func (bmp *Bitmap) Height() int {
+func (bmp *Bitmap) Height() Scalar {
 	return bmp.info.Height()
 }
 
@@ -74,7 +78,45 @@ func (bmp *Bitmap) IsEmpty() bool {
 // dimensions of the bitmap are > 0 (see IsEmpty()).
 // Hey! Before you use this, see if you really want to know DrawNothing() intead.
 func (bmp *Bitmap) IsNil() bool {
-	return bmp.pixelRef == nil
+	return bmp.pixels == nil
+}
+
+var ErrBitmapIsNotValid = errors.New(`error: bitmap is not valid.`)
+
+// IsValid return true iff the bitmap has valid imageInfo, pixels and colorTable
+func (bmp *Bitmap) IsValid() bool {
+	if !bmp.info.IsValid() {
+		return false
+	}
+
+	if !bmp.info.ValidRowBytes(bmp.rowBytes) {
+		return false
+	}
+
+	if bmp.info.ColorType() == KColorTypeRGB565 &&
+		bmp.info.AlphaType() != KAlphaTypeOpaque {
+		return false
+	}
+
+	// TOIMPL
+
+	if bmp.pixels != nil {
+		if bmp.pixelLockCount <= 0 &&
+			//    !bmp.pixels.IsLock() &&
+			bmp.rowBytes < bmp.info.MinRowBytes() &&
+			bmp.pixelOrigin.X() < 0 &&
+			bmp.pixelOrigin.Y() < 0 &&
+			bmp.info.Width() < bmp.Width()+bmp.pixelOrigin.X() &&
+			bmp.info.Height() < bmp.Height()+bmp.pixelOrigin.Y() {
+			return false
+		}
+	} else {
+		if bmp.colorTable != nil {
+			return false
+		}
+	}
+
+	return true
 }
 
 // Return true iff drawing the bitmap has no effect.
@@ -102,54 +144,60 @@ func (bmp *Bitmap) SetAlphaType(alphaType AlphaType) bool {
 
 	if bmp.info.alphaType != alphaType {
 		bmp.info.SetAlphaType(alphaType)
-		if bmp.pixelRef != nil {
-			bmp.pixelRef.SetAlphaType(alphaType)
-		}
 	}
 
 	return true
 }
 
-func (bmp *Bitmap) updatePixelsFromRef() {
-	if bmp.pixelRef == nil {
-		return
-	}
-
-	if bmp.pixelLockCount > 0 {
-		var p = bmp.pixelRef.Pixels()
-		if p != nil {
-			var idx = int(bmp.pixelRefOrigin.Y())*bmp.rowBytes +
-				int(bmp.pixelRefOrigin.X())*bmp.info.BytesPerPixel()
-			p = p[idx:]
-		}
-		bmp.pixels = p
-		bmp.colorTable = bmp.pixelRef.ColorTable()
-	} else {
-		bmp.pixels = nil
-		bmp.colorTable = nil
-	}
+func (bmp *Bitmap) Pixels() []byte {
+	return bmp.pixels.Pixels()
 }
 
-// func (pslf *Bitmap) Pixels()                  {}
-// func (pslf *Bitmap) Size() int                {}
-// func (pslf *Bitmap) SafeSize() int            {}
-// func (pslf *Bitmap) ComputeSize64() int64     {}
-// func (pslf *Bitmap) ComputeSafeSize64() int64 {}
-// func (pslf *Bitmap) Immutable() bool          {}
-// func (pslf *Bitmap) SetImmutale()             {}
-// func (pslf *Bitmap) Opaque()                  {}
-// func (pslf *Bitmap) IsVolatile() bool         {}
-// func (pslf *Bitmap) SetIsVolatile()           {}
+func (bmp *Bitmap) InstallPixels(requestedInfo ImageInfo, pixels []byte, rowBytes int, colorTable *ColorTable) bool {
+	if !bmp.SetInfo(requestedInfo, rowBytes) {
+		// release pixels
+		bmp.Reset()
+		return false
+	}
+	if pixels == nil {
+		// release pixels
+		return true // we behaved as if they called setInfo()
+	}
+
+	var mempixs = NewMemPixels(pixels)
+	if mempixs == nil {
+		bmp.Reset()
+		return false
+	}
+
+	bmp.pixels = mempixs.Pixels
+
+	// since we're already allocated, we LockPixels right away.
+	bmp.LockPixels()
+	// if !bmp.Validate() {
+	// 	log.Printf(`xyz`)
+	// }
+	return true
+}
+
 func (bmp *Bitmap) Reset() {
 	bmp.freePixels()
 	var zero Bitmap
 	*bmp = zero
 }
 
-// func (pslf *Bitmap) ComputeIsOpaque() bool    {}
+func (bmp *Bitmap) Bounds() Rect {
+	var (
+		x      = bmp.pixelOrigin.X()
+		y      = bmp.pixelOrigin.Y()
+		width  = bmp.info.Width()
+		height = bmp.info.Height()
+	)
 
-// func (pslf *Bitmap) Bounds() Rect {}
-// func (pslf *Bitmap) Dimensions() Size {}
+	var bounds = MakeRect(x, y, width, height)
+
+	return bounds
+}
 
 func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
 	alphaType, err := imageInfo.ColorType().ValidateAlphaType(imageInfo.AlphaType())
@@ -188,15 +236,17 @@ func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
 	return true
 }
 
-func (bmp *Bitmap) AllocPixels(requestedInfo ImageInfo, rowBytes int) bool {
+var ErrAllocPixels = errors.New(`ERROR: bad imageInfo, rowBytes. or allocate failed`)
+
+func (bmp *Bitmap) AllocPixels(requestedInfo ImageInfo, rowBytes int) error {
 	if requestedInfo.ColorType() == KColorTypeIndex8 {
 		bmp.Reset()
-		return false
+		return ErrAllocPixels
 	}
 
 	if !bmp.SetInfo(requestedInfo, rowBytes) {
 		bmp.Reset()
-		return false
+		return ErrAllocPixels
 	}
 
 	// SetInfo may have corrected info (e.g. 565 is always opaque).
@@ -205,75 +255,63 @@ func (bmp *Bitmap) AllocPixels(requestedInfo ImageInfo, rowBytes int) bool {
 	// SetInfo may have computed a valid rowBytes if 0 were passed in
 	rowBytes = bmp.RowBytes()
 
-	var pixelRef *PixelRef = MallocPixelRefDefaultFactory().Create(correctedInfo, rowBytes, nil)
-	if pixelRef == nil {
+	// Allocate memories.
+	var mempixs = NewMemPixelsAlloc(correctedInfo, rowBytes)
+	if mempixs == nil {
 		bmp.Reset()
-		return false
+		return ErrAllocPixels
 	}
 
-	bmp.SetPixelRef(pixelRef, PointZero)
-
-	if !bmp.LockPixels() {
+	bmp.pixels = mempixs.Pixels
+	if bmp.LockPixels() != nil {
 		bmp.Reset()
-		return false
+		return ErrAllocPixels
 	}
 
-	return true
+	return ErrAllocPixels
 }
 
-// Assign a pixelRef and origin to the bitmap. PixelRefs are reference.
+// Assign a pixels and origin to the bitmap. Pixels are reference.
 // so the existing one (if any) will be unref'd and the new one will be
 // ref'd. (x,y) specify the offset within the pixelRef's pixels for the
 // top/left corner of the bitmap. For a bitmap that encompass the entire
-// pixels of the pixelref, these will be (0,0).
-func (bmp *Bitmap) SetPixelRef(pixelRef *PixelRef, origin Point) *PixelRef {
+// pixels of the pixel ref, these will be (0,0).
+func (bmp *Bitmap) SetPixels(pixels *Pixels, origin Point) {
 	// TOIMPL
-	return bmp.pixelRef
 }
 
 // Call this to ensure that the bitmap points to the current pixel address
-// in the pixelRef. Balance it with a call to UnlockPixels(). These calls
+// in the pixels. Balance it with a call to UnlockPixels(). These calls
 // are harmless if there is no pixelRef.
-func (bmp *Bitmap) LockPixels() bool {
-	if bmp.pixelRef != nil && atomic.AddInt32(&bmp.pixelLockCount, 1) == 0 {
-		bmp.pixelRef.LockPixels()
-		bmp.updatePixelsFromRef()
+func (bmp *Bitmap) LockPixels() error {
+	if bmp.pixels != nil && atomic.AddInt32(&bmp.pixelLockCount, 1) == 1 {
+		bmp.pixels.LockPixels()
 	}
-	return true
+	return nil
 }
 
 // When you are finished access the pixel memory, call this to balance a
 // previous call to LockPixels(). This allows pixelRefs that implement
 // cached/deferred image decoding to know when there are active clients of
 // a given image.
-func (bmp *Bitmap) UnlockPixels() {
-	// TOIMPL
+func (bmp *Bitmap) UnlockPixels() error {
+	if bmp.pixels != nil && atomic.AddInt32(&bmp.pixelLockCount, -1) == 0 {
+		bmp.pixels.UnlockPixels()
+	}
+	return nil
 }
 
-// func AllocN32Pixels(width, height int, isOpaque bool) {}
-// func InstallPixels(image_info *ImageInfo, pixels []byte, row_bytes int, color_table *ColorTable, context interface{}) bool {
-// }
-
-// unreference any pixelRefs or colorTables.
+// Unreference any pixels or colorTables.
 func (bmp *Bitmap) freePixels() {
-	if bmp.pixelRef != nil {
+	if bmp.pixels != nil {
 		if bmp.pixelLockCount > 0 {
-			bmp.pixelRef.UnlockPixels()
+			bmp.UnlockPixels()
 		}
-		bmp.pixelRef = nil
-		bmp.pixelRefOrigin = PointZero
+		bmp.pixels = nil
+		bmp.pixelOrigin = PointZero
 	}
 
 	bmp.pixelLockCount = 0
 	bmp.pixels = nil
 	bmp.colorTable = nil
 }
-
-// func CanCopy(color_type ColorType) bool {}
-// func DeepCopy() *Bitmap                 {}
-// func Copy(color_type ColorType) *Bitmap {}
-
-// func SetPixels(pixels []byte, colort_table ColorTable)                          {}
-// func PeekPixels(pixmap Pixmap)                                                  {}
-// func CopyPixels(dst_size int, dst_row_bytes int, preserved_dst_pad bool) []byte {}
-// func ColorAtIndex(x, y int) Color                                               {}

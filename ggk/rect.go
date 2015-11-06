@@ -1,5 +1,7 @@
 package ggk
 
+var RectZero Rect
+
 type Rect struct {
 	left   Scalar
 	top    Scalar
