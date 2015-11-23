@@ -1,26 +1,32 @@
 package ggk
 
 import (
+	"bufio"
 	"image"
+	"image/png"
 	"io"
+	"os"
 )
 
-func ImageFromReader(r io.Reader) *Bitmap {
+func BitmapFromReader(r io.Reader) (*Bitmap, error) {
 	var img, _, err = image.Decode(r)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	var (
-		pixels []uint8
-		ct     ColorType
-		at     AlphaType
+		pixels   []uint8
+		ct       ColorType
+		at       AlphaType
+		rowBytes int
 	)
-	switch i := img.(type) {
+
+	switch t := img.(type) {
 	case *image.RGBA:
 		ct = KColorTypeRGBA8888
 		at = KAlphaTypeUnpremul
-		pixels = i.Pix
+		pixels = t.Pix
+		rowBytes = t.Stride
 	}
 
 	var info ImageInfo
@@ -29,7 +35,49 @@ func ImageFromReader(r io.Reader) *Bitmap {
 	info.SetAlphaType(at)
 
 	var bmp Bitmap
-	bmp.InstallPixels(info, pixels, info.MinRowBytes(), nil)
+	bmp.InstallPixels(info, pixels, rowBytes, nil)
 
-	return &bmp
+	return &bmp, nil
+}
+
+func BitmapFromFile(name string) (*Bitmap, error) {
+	var f, err = os.Open(name)
+	if err != nil {
+		return nil, err
+	}
+
+	return BitmapFromReader(bufio.NewReader(f))
+}
+
+func BitmapToGoImage(bmp *Bitmap) (image.Image, error) {
+	var img image.Image
+
+	switch bmp.ColorType() {
+	case KColorTypeRGBA8888:
+		img = &image.RGBA{
+			Pix:    bmp.PixelsData(),
+			Stride: bmp.RowBytes(),
+			Rect:   bmp.Bounds().GoRect(),
+		}
+	}
+
+	return img, nil
+}
+
+func BitmapToPNGWriter(bmp *Bitmap, w io.Writer) error {
+	var img, err = BitmapToGoImage(bmp)
+	if err != nil {
+		return err
+	}
+
+	return png.Encode(w, img)
+}
+
+func BitmapToPNGFile(bmp *Bitmap, name string) error {
+	var f, err = os.Open(name)
+	if err != nil {
+		return err
+	}
+
+	return BitmapToPNGWriter(bmp, bufio.NewWriter(f))
 }

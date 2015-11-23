@@ -153,6 +153,12 @@ func (bmp *Bitmap) Pixels() []byte {
 	return bmp.pixels.Pixels()
 }
 
+func (bmp *Bitmap) PixelsData() []byte {
+	bmp.pixels.LockPixels()
+	var data = bmp.pixels.Pixels()
+	return data
+}
+
 func (bmp *Bitmap) InstallPixels(requestedInfo ImageInfo, pixels []byte, rowBytes int, colorTable *ColorTable) bool {
 	if !bmp.SetInfo(requestedInfo, rowBytes) {
 		// release pixels

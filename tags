@@ -1,0 +1,580 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ATTR	sysc/exp/._cocoa_go.c	/^/;"	v
+ATTR	sysc/exp/._cocoa_gui.c	/^/;"	v
+ATTR	sysc/exp/._cocoa_gui.h	/^/;"	v
+ATTR	views/exp/._host_window_darwin.c	/^/;"	v
+AddChild	pin/window_linux.cc	/^void WindowContextBase::AddChild(WindowContextTop* child) {$/;"	f	class:WindowContextBase
+ApplyShapeMask	pin/window_linux.h	/^	void ApplyShapeMask(void *, uint width, uint height) {}$/;"	f	class:WindowContextTop
+BOUNDSTYPE_CONTENT	pin/window_linux.h	/^	BOUNDSTYPE_CONTENT,$/;"	e	enum:BoundsType
+BOUNDSTYPE_WINDOW	pin/window_linux.h	/^	BOUNDSTYPE_WINDOW,$/;"	e	enum:BoundsType
+BoundsType	pin/window_linux.h	/^enum BoundsType {$/;"	g
+ConfigureOpaqueWindow	pin/gtkcompat_linux.cc	/^ConfigureOpaqueWindow(GtkWidget *window) {$/;"	f	file:
+ConfigureTransparentWindow	pin/gtkcompat_linux.cc	/^ConfigureTransparentWindow(GtkWidget *window) {$/;"	f	file:
+ConfigureWindowTransparency	pin/gtkcompat_linux.cc	/^ConfigureWindowTransparency(GtkWidget *window, gboolean transparent) {$/;"	f	file:
+DecrementEventsCounter	pin/window_linux.cc	/^void WindowContextBase::DecrementEventsCounter() {$/;"	f	class:WindowContextBase
+DeviceGrabContext	pin/gtkcompat_linux.cc	/^} DeviceGrabContext;$/;"	t	typeref:struct:__anon6	file:
+DisableIME	pin/window_linux.cc	/^void WindowContextBase::DisableIME() {$/;"	f	class:WindowContextBase
+ERROR0	pin/general_linux.h	/^#define ERROR0(/;"	d
+ERROR1	pin/general_linux.h	/^#define ERROR1(/;"	d
+ERROR2	pin/general_linux.h	/^#define ERROR2(/;"	d
+ERROR3	pin/general_linux.h	/^#define ERROR3(/;"	d
+ERROR4	pin/general_linux.h	/^#define ERROR4(/;"	d
+EVENTS_H	pin/events.h	/^#define EVENTS_H$/;"	d
+EnableOrResetIME	pin/window_linux.cc	/^void WindowContextBase::EnableOrResetIME() {$/;"	f	class:WindowContextBase
+EnterFullScreen	pin/window_linux.cc	/^void WindowContextTop::EnterFullScreen() {}$/;"	f	class:WindowContextTop
+EventsCount	pin/window_linux.cc	/^size_t WindowContextBase::EventsCount() {$/;"	f	class:WindowContextBase
+ExitFullScreen	pin/window_linux.cc	/^void WindowContextTop::ExitFullScreen() {}$/;"	f	class:WindowContextTop
+FilterIME	pin/window_linux.cc	/^bool WindowContextBase::FilterIME(GdkEvent *) {$/;"	f	class:WindowContextBase
+FindGdkKeyvalForGwkKeycode	pin/key_linux.cc	/^gint FindGdkKeyvalForGwkKeycode(int code) {$/;"	f
+GCC_HASCLASSVISIBILITY	pin/expr/swig/example_wrap.cxx	/^#    define GCC_HASCLASSVISIBILITY$/;"	d	file:
+GDK_KEY_CONSTANT	pin/gtkcompat_linux.h	/^#define GDK_KEY_CONSTANT(/;"	d
+GENERAL_LINUX_H	pin/general_linux.h	/^#define GENERAL_LINUX_H$/;"	d
+GTKCOMPAT_LINUX_H	pin/gtkcompat_linux.h	/^#define GTKCOMPAT_LINUX_H$/;"	d
+GTK_APPLICTION_H	pin/application_linux.h	/^#define GTK_APPLICTION_H$/;"	d
+GWKWindow_run	views/exp/host_window_darwin.c	/^void GWKWindow_run(id slf) {$/;"	f
+GWKWindow_setDelegate	views/exp/host_window_darwin.c	/^void GWKWindow_setDelegate(void* slf, void* delegate) {$/;"	f
+GdkDeviceGetWindowAtPosition	pin/gtkcompat_linux.cc	/^GdkDeviceGetWindowAtPosition(GdkDevice *device, gint *x, gint *y) {$/;"	f
+GdkDeviceIsGrabbed	pin/gtkcompat_linux.cc	/^GdkDeviceIsGrabbed(GdkDevice *device) {$/;"	f
+GdkDeviceUngrab	pin/gtkcompat_linux.cc	/^GdkDeviceUngrab(GdkDevice *device) {$/;"	f
+GdkDisplayGetPointer	pin/gtkcompat_linux.cc	/^GdkDisplayGetPointer(GdkDisplay* display, gint* x, gint *y) {$/;"	f
+GdkDragContextGetActions	pin/gtkcompat_linux.h	/^#define GdkDragContextGetActions(/;"	d
+GdkDragContextGetDestWindow	pin/gtkcompat_linux.h	/^#define GdkDragContextGetDestWindow(/;"	d
+GdkDragContextGetSelectedAction	pin/gtkcompat_linux.h	/^#define GdkDragContextGetSelectedAction(/;"	d
+GdkDragContextGetSselectedAction	pin/gtkcompat_linux.h	/^#define GdkDragContextGetSselectedAction(/;"	d
+GdkDragContextGetSuggestedAction	pin/gtkcompat_linux.h	/^#define GdkDragContextGetSuggestedAction(/;"	d
+GdkDragContextListTargets	pin/gtkcompat_linux.h	/^#define GdkDragContextListTargets(/;"	d
+GdkKeyvalToGwk	pin/key_linux.cc	/^int GdkKeyvalToGwk(guint keyval) {$/;"	f
+GdkMasterPointerGetPosition	pin/gtkcompat_linux.cc	/^GdkMasterPointerGetPosition(gint *x, gint *y) {$/;"	f
+GdkMasterPointerGrab	pin/gtkcompat_linux.cc	/^GdkMasterPointerGrab(GdkWindow *window, GdkCursor *cursor) {$/;"	f
+GdkMasterPointerUngrab	pin/gtkcompat_linux.cc	/^GdkMasterPointerUngrab() {$/;"	f
+GdkModifierMaskToGwk	pin/key_linux.cc	/^int GdkModifierMaskToGwk(guint mask) {$/;"	f
+GdkMouseDevicesGrab	pin/gtkcompat_linux.cc	/^GdkMouseDevicesGrab(GdkWindow *gdkWindow) {$/;"	f
+GdkMouseDevicesGrabWithCursor	pin/gtkcompat_linux.cc	/^GdkMouseDevicesGrabWithCursor(GdkWindow *gdkWindow, GdkCursor *cursor) {$/;"	f
+GdkMouseDevicesGrabWithCursor	pin/gtkcompat_linux.cc	/^GdkMouseDevicesGrabWithCursor(GdkWindow *gdkWindow, GdkCursor *cursor, gboolean owner_events) {$/;"	f
+GdkMouseDevicesUngrab	pin/gtkcompat_linux.cc	/^GdkMouseDevicesUngrab() {$/;"	f
+GdkSelectionEventGetRequestor	pin/gtkcompat_linux.h	/^#define GdkSelectionEventGetRequestor(/;"	d
+GdkWindowForeignNewForDisplay	pin/gtkcompat_linux.h	/^#define GdkWindowForeignNewForDisplay(/;"	d
+GdkWindowGetDisplay	pin/gtkcompat_linux.cc	/^GdkWindowGetDisplay(GdkWindow * gdkWindow) {$/;"	f
+GdkWindowGetScreen	pin/gtkcompat_linux.cc	/^GdkWindowGetScreen(GdkWindow * gdkWindow) {$/;"	f
+GdkWindowGetSize	pin/gtkcompat_linux.cc	/^GdkWindowGetSize(GdkWindow *window, gint *w, gint *h) {$/;"	f
+GdkWindowLookupForDisplay	pin/gtkcompat_linux.h	/^#define GdkWindowLookupForDisplay(/;"	d
+GetEmbeddedX	pin/window_linux.h	/^	int GetEmbeddedX() { return 0; }$/;"	f	class:WindowContextBase
+GetEmbeddedY	pin/window_linux.h	/^	int GetEmbeddedY() { return 0; }$/;"	f	class:WindowContextBase
+GetFrameExtents	pin/window_linux.cc	/^WindowFrameExtents WindowContextTop::GetFrameExtents() {$/;"	f	class:WindowContextTop
+GetGdkWindow	pin/window_linux.cc	/^GdkWindow* WindowContextBase::GetGdkWindow() {$/;"	f	class:WindowContextBase
+GetGtkWindow	pin/window_linux.cc	/^GtkWindow *WindowContextTop::GetGtkWindow() { return NULL; }$/;"	f	class:WindowContextTop
+GetGwkKey	pin/key_linux.cc	/^int GetGwkKey(GdkEventKey *e) {$/;"	f
+GetGwkView	pin/window_linux.cc	/^GoObject WindowContextBase::GetGwkView() {$/;"	f	class:WindowContextBase
+GetGwkWindow	pin/window_linux.cc	/^GoObject WindowContextBase::GetGwkWindow() {$/;"	f	class:WindowContextBase
+GoObject	pin/bridge.h	/^#define GoObject /;"	d
+GrabFocus	pin/window_linux.cc	/^bool WindowContextBase::GrabFocus() {$/;"	f	class:WindowContextBase
+GrabFocus	pin/window_linux.cc	/^bool WindowContextTop::GrabFocus() { return TRUE; }$/;"	f	class:WindowContextTop
+GrabMouseDevice	pin/gtkcompat_linux.cc	/^GrabMouseDevice(GdkDevice *device, DeviceGrabContext *context) {$/;"	f	file:
+GrabMouseDragFocus	pin/window_linux.cc	/^bool WindowContextBase::GrabMouseDragFocus() {$/;"	f	class:WindowContextBase
+GrabMouseDragFocus	pin/window_linux.cc	/^bool WindowContextTop::GrabMouseDragFocus() { return TRUE; }$/;"	f	class:WindowContextTop
+GtkApplicationEnterNestedEventLoopImpl	pin/application_linux.cc	/^GtkApplicationEnterNestedEventLoopImpl() {$/;"	f
+GtkApplicationInit	pin/application_linux.cc	/^GtkApplicationInit(void *handler, bool disableGrab) {$/;"	f
+GtkApplicationLeaveNestedEventLoopImpl	pin/application_linux.cc	/^GtkApplicationLeaveNestedEventLoopImpl() {$/;"	f
+GtkApplicationRunLoop	pin/application_linux.cc	/^GtkApplicationRunLoop() {$/;"	f
+GtkApplicationSaticViewGetMultiClickMaxY	pin/application_linux.cc	/^GtkApplicationSaticViewGetMultiClickMaxY() {$/;"	f
+GtkApplicationStaticTimerGetMaxPeriod	pin/application_linux.cc	/^GtkApplicationStaticTimerGetMaxPeriod() {$/;"	f
+GtkApplicationStaticTimerGetMinPeriod	pin/application_linux.cc	/^GtkApplicationStaticTimerGetMinPeriod() {$/;"	f
+GtkApplicationStaticViewGetMultiClickTime	pin/application_linux.cc	/^GtkApplicationStaticViewGetMultiClickTime() {$/;"	f
+GtkApplicationStaticViewGetMutliClickMaxX	pin/application_linux.cc	/^GtkApplicationStaticViewGetMutliClickMaxX() {$/;"	f
+GtkApplicationSupportsTransparentWindows	pin/application_linux.cc	/^GtkApplicationSupportsTransparentWindows() {$/;"	f
+GtkApplicationTerminateLoop	pin/application_linux.cc	/^GtkApplicationTerminateLoop() {$/;"	f
+GtkConfigureTransparencyAndRealize	pin/gtkcompat_linux.cc	/^GtkConfigureTransparencyAndRealize(GtkWidget *window, gboolean transparent) {$/;"	f
+GtkConfigureTransparencyAndRealize	pin/gtkcompat_linux.cc	/^GtkConfigureTransparencyAndRealize(GtkWidget *window,$/;"	f
+GtkFixupTypedKey	pin/gtkcompat_linux.cc	/^GtkFixupTypedKey(int key, int keyval) {$/;"	f
+GtkSelectionDataGetDataWithLength	pin/gtkcompat_linux.cc	/^GtkSelectionDataGetDataWithLength($/;"	f
+GtkShowWindow	pin/application_linux.cc	/^GtkShowWindow () {$/;"	f
+GtkWindowConfigureFromVisual	pin/gtkcompat_linux.cc	/^GtkWindowConfigureFromVisual(GtkWidget *widget, GdkVisual *visual) {$/;"	f
+GtkWindowSetHasResizeGrip	pin/gtkcompat_linux.h	/^#define GtkWindowSetHasResizeGrip(/;"	d
+GwkKeyToModifier	pin/key_linux.cc	/^int GwkKeyToModifier(int gwkKey) {$/;"	f
+GwkMaskToWindowFrameType	pin/window_linux.cc	/^static WindowFrameType GwkMaskToWindowFrameType(int mask) {$/;"	f	file:
+GwkMaskToWindowType	pin/window_linux.cc	/^static WindowType GwkMaskToWindowType(int mask) {$/;"	f	file:
+HasIME	pin/window_linux.cc	/^bool WindowContextBase::HasIME() {$/;"	f	class:WindowContextBase
+IncrementEventsCounter	pin/window_linux.cc	/^void WindowContextBase::IncrementEventsCounter() {$/;"	f	class:WindowContextBase
+IsDead	pin/window_linux.cc	/^bool WindowContextBase::IsDead() {$/;"	f	class:WindowContextBase
+IsEnabled	pin/window_linux.cc	/^bool WindowContextBase::IsEnabled() {$/;"	f	class:WindowContextBase
+IsVisible	pin/window_linux.cc	/^bool WindowContextBase::IsVisible() {$/;"	f	class:WindowContextBase
+IsWindowEnabledForEvent	pin/application_linux.cc	/^IsWindowEnabledForEvent(GdkWindow *window, gint eventType) {$/;"	f
+KEY_LINUX_H	pin/key_linux.h	/^#define KEY_LINUX_H$/;"	d
+KeyMapInit	pin/key_linux.cc	/^static void KeyMapInit() {$/;"	f	file:
+KeyMapInsert	pin/key_linux.cc	/^static void KeyMapInsert(gint key, gint val) {$/;"	f	file:
+LOG0	pin/general_linux.h	/^#define LOG0(/;"	d
+LOG1	pin/general_linux.h	/^#define LOG1(/;"	d
+LOG2	pin/general_linux.h	/^#define LOG2(/;"	d
+LOG3	pin/general_linux.h	/^#define LOG3(/;"	d
+LOG4	pin/general_linux.h	/^#define LOG4(/;"	d
+LOG5	pin/general_linux.h	/^#define LOG5(/;"	d
+LOG_STRING_ARRAY	pin/general_linux.h	/^#define LOG_STRING_ARRAY(/;"	d
+MOUSE_BUTTONS_MASK	pin/window_linux.h	/^static const guint MOUSE_BUTTONS_MASK = (guint)(GDK_BUTTON1_MASK |GDK_BUTTON2_MASK | GDK_BUTTON3_MASK);$/;"	v
+NewGWKWindow	views/exp/host_window_darwin.c	/^void *NewGWKWindow() {$/;"	f
+NewWindow	pin/window_linux.cc	/^void *NewWindow(GoObject obj, void *owner, GoObject screen, int frameType, int type) {$/;"	f
+NotifyState	pin/window_linux.cc	/^void WindowContextBase::NotifyState(int state) {$/;"	f	class:WindowContextBase
+Paint	pin/window_linux.cc	/^void WindowContextBase::Paint(void *data, int width, int height) {$/;"	f	class:WindowContextBase
+ProcessConfigure	pin/window_linux.cc	/^void WindowContextTop::ProcessConfigure(GdkEventConfigure *) {}$/;"	f	class:WindowContextTop
+ProcessDelete	pin/window_linux.cc	/^void WindowContextBase::ProcessDelete() {$/;"	f	class:WindowContextBase
+ProcessDestroy	pin/window_linux.cc	/^void WindowContextBase::ProcessDestroy() {$/;"	f	class:WindowContextBase
+ProcessEvents	pin/application_linux.cc	/^ProcessEvents(GdkEvent *event, gpointer data) {$/;"	f	file:
+ProcessExpose	pin/window_linux.cc	/^void WindowContextBase::ProcessExpose(GdkEventExpose *event) {$/;"	f	class:WindowContextBase
+ProcessFocus	pin/window_linux.cc	/^void WindowContextBase::ProcessFocus(GdkEventFocus *event) {$/;"	f	class:WindowContextBase
+ProcessKey	pin/window_linux.cc	/^void WindowContextBase::ProcessKey(GdkEventKey *event) {$/;"	f	class:WindowContextBase
+ProcessMap	pin/window_linux.h	/^	void ProcessMap() {}$/;"	f	class:WindowContextBase
+ProcessMouseButton	pin/window_linux.cc	/^void WindowContextBase::ProcessMouseButton(GdkEventButton *event) {$/;"	f	class:WindowContextBase
+ProcessMouseCross	pin/window_linux.cc	/^void WindowContextBase::ProcessMouseCross(GdkEventCrossing *event) {$/;"	f	class:WindowContextBase
+ProcessMouseMotion	pin/window_linux.cc	/^void WindowContextBase::ProcessMouseMotion(GdkEventMotion *event) {$/;"	f	class:WindowContextBase
+ProcessMouseScroll	pin/window_linux.cc	/^void WindowContextBase::ProcessMouseScroll(GdkEventScroll *event) {$/;"	f	class:WindowContextBase
+ProcessPropertyNotify	pin/window_linux.cc	/^void WindowContextTop::ProcessPropertyNotify(GdkEventProperty*) {}$/;"	f	class:WindowContextTop
+ProcessState	pin/window_linux.cc	/^void WindowContextBase::ProcessState(GdkEventWindowState *event) {$/;"	f	class:WindowContextBase
+RemoveChild	pin/window_linux.cc	/^void WindowContextBase::RemoveChild(WindowContextTop *child) {$/;"	f	class:WindowContextBase
+ReparentChildren	pin/window_linux.cc	/^void WindowContextBase::ReparentChildren(WindowContext *parent) {$/;"	f	class:WindowContextBase
+RequestType	pin/window_linux.h	/^enum RequestType {$/;"	g
+RequestType_None	pin/window_linux.h	/^	RequestType_None,$/;"	e	enum:RequestType
+RequestType_NotResizable	pin/window_linux.h	/^	RequestType_NotResizable,$/;"	e	enum:RequestType
+RequestType_Resizable	pin/window_linux.h	/^	RequestType_Resizable,$/;"	e	enum:RequestType
+Resizable	pin/window_linux.h	/^		Resizable(): requestType(RequestType_None), value(true), prev(false),$/;"	f	struct:WindowContextTop::Resizable
+Resizable	pin/window_linux.h	/^	struct Resizable {$/;"	s	class:WindowContextTop
+Restack	pin/window_linux.cc	/^void WindowContextTop::Restack(bool) {}$/;"	f	class:WindowContextTop
+ReuqestFocus	pin/window_linux.cc	/^void WindowContextTop::ReuqestFocus() {}$/;"	f	class:WindowContextTop
+SIMPLECLASS_H	pin/expr/swig/simpleclass.h	/^#define SIMPLECLASS_H$/;"	d
+SWIGEXPORT	pin/expr/swig/example_wrap.cxx	/^#     define SWIGEXPORT /;"	d	file:
+SWIGEXPORT	pin/expr/swig/example_wrap.cxx	/^#     define SWIGEXPORT$/;"	d	file:
+SWIGINLINE	pin/expr/swig/example_wrap.cxx	/^#   define SWIGINLINE /;"	d	file:
+SWIGINLINE	pin/expr/swig/example_wrap.cxx	/^#   define SWIGINLINE$/;"	d	file:
+SWIGINTERN	pin/expr/swig/example_wrap.cxx	/^# define SWIGINTERN /;"	d	file:
+SWIGINTERNINLINE	pin/expr/swig/example_wrap.cxx	/^# define SWIGINTERNINLINE /;"	d	file:
+SWIGMODULE	pin/expr/swig/example_wrap.cxx	/^#define SWIGMODULE /;"	d	file:
+SWIGSTDCALL	pin/expr/swig/example_wrap.cxx	/^#   define SWIGSTDCALL /;"	d	file:
+SWIGSTDCALL	pin/expr/swig/example_wrap.cxx	/^#   define SWIGSTDCALL$/;"	d	file:
+SWIGTEMPLATEDISAMBIGUATOR	pin/expr/swig/example_wrap.cxx	/^#  define SWIGTEMPLATEDISAMBIGUATOR /;"	d	file:
+SWIGTEMPLATEDISAMBIGUATOR	pin/expr/swig/example_wrap.cxx	/^#  define SWIGTEMPLATEDISAMBIGUATOR$/;"	d	file:
+SWIGUNUSED	pin/expr/swig/example_wrap.cxx	/^#     define SWIGUNUSED /;"	d	file:
+SWIGUNUSED	pin/expr/swig/example_wrap.cxx	/^#     define SWIGUNUSED$/;"	d	file:
+SWIGUNUSED	pin/expr/swig/example_wrap.cxx	/^#   define SWIGUNUSED /;"	d	file:
+SWIGUNUSED	pin/expr/swig/example_wrap.cxx	/^#   define SWIGUNUSED$/;"	d	file:
+SWIGUNUSEDPARM	pin/expr/swig/example_wrap.cxx	/^#   define SWIGUNUSEDPARM(/;"	d	file:
+SWIG_PARM_SIZE	pin/expr/swig/simplelib_gc.c	/^#define SWIG_PARM_SIZE /;"	d	file:
+SWIG_contract_assert	pin/expr/swig/example_wrap.cxx	/^#define SWIG_contract_assert(/;"	d	file:
+ScreenSettingsChanged	pin/application_linux.cc	/^ScreenSettingsChanged() {$/;"	f
+SetAlpha	pin/window_linux.cc	/^void WindowContextTop::SetAlpha(double) {}$/;"	f	class:WindowContextTop
+SetBackground	pin/window_linux.cc	/^void WindowContextBase::SetBackground(float r, float g, float b) {$/;"	f	class:WindowContextBase
+SetBounds	pin/window_linux.cc	/^void WindowContextTop::SetBounds() {}$/;"	f	class:WindowContextTop
+SetCursor	pin/window_linux.cc	/^void WindowContextBase::SetCursor(GdkCursor *cursor) {$/;"	f	class:WindowContextBase
+SetCursor	pin/window_linux.cc	/^void WindowContextTop::SetCursor(GdkCursor *) {}$/;"	f	class:WindowContextTop
+SetEnabled	pin/window_linux.cc	/^void WindowContextTop::SetEnabled(bool) {}$/;"	f	class:WindowContextTop
+SetFocusable	pin/window_linux.cc	/^void WindowContextTop::SetFocusable() {}$/;"	f	class:WindowContextTop
+SetGravity	pin/window_linux.cc	/^void WindowContextTop::SetGravity(float, float) {}$/;"	f	class:WindowContextTop
+SetIcon	pin/window_linux.cc	/^void WindowContextTop::SetIcon(GdkPixbuf *) {}$/;"	f	class:WindowContextTop
+SetLevel	pin/window_linux.h	/^	void SetLevel(int) {};$/;"	f	class:WindowContextBase
+SetMaximumSize	pin/window_linux.cc	/^void WindowContextTop::SetMaximumSize(int, int) {}$/;"	f	class:WindowContextTop
+SetMaximuzed	pin/window_linux.cc	/^void WindowContextTop::SetMaximuzed(bool) {}$/;"	f	class:WindowContextTop
+SetMinimized	pin/window_linux.cc	/^void WindowContextTop::SetMinimized(bool) {}$/;"	f	class:WindowContextTop
+SetMinimumSize	pin/window_linux.cc	/^void WindowContextTop::SetMinimumSize(int, int) {}$/;"	f	class:WindowContextTop
+SetModal	pin/window_linux.cc	/^void WindowContextTop::SetModal(bool, WindowContext *parent) {}$/;"	f	class:WindowContextTop
+SetResizable	pin/window_linux.cc	/^void WindowContextTop::SetResizable() {}$/;"	f	class:WindowContextTop
+SetTitle	pin/window_linux.cc	/^void WindowContextTop::SetTitle(const char *) {}$/;"	f	class:WindowContextTop
+SetView	pin/window_linux.cc	/^void WindowContextBase::SetView(GoObject view) {$/;"	f	class:WindowContextBase
+SetVisible	pin/window_linux.cc	/^void WindowContextBase::SetVisible(bool visible) {$/;"	f	class:WindowContextBase
+ShowOrHideChildren	pin/window_linux.cc	/^void WindowContextBase::ShowOrHideChildren(bool show) {$/;"	f	class:WindowContextBase
+SimpleClass	pin/expr/swig/simpleclass.h	/^    SimpleClass(){};$/;"	f	class:SimpleClass
+SimpleClass	pin/expr/swig/simpleclass.h	/^class SimpleClass$/;"	c
+SimpleClassB	pin/expr/swig/simpleclass.h	/^class SimpleClassB : SimpleClass$/;"	c
+SomeFunc	pin/expr/cgo/a.c	/^void *SomeFunc(GoInterface arg) {$/;"	f
+SwigMovePointer	pin/expr/swig/example_wrap.cxx	/^    SwigMovePointer(T *p) : ptr(p) { }$/;"	f	struct:SwigValueWrapper::SwigMovePointer
+SwigMovePointer	pin/expr/swig/example_wrap.cxx	/^  struct SwigMovePointer {$/;"	s	class:SwigValueWrapper	file:
+SwigValueInit	pin/expr/swig/example_wrap.cxx	/^template <typename T> T SwigValueInit() {$/;"	f
+SwigValueWrapper	pin/expr/swig/example_wrap.cxx	/^  SwigValueWrapper() : pointer(0) { }$/;"	f	class:SwigValueWrapper
+SwigValueWrapper	pin/expr/swig/example_wrap.cxx	/^template<typename T> class SwigValueWrapper {$/;"	c	file:
+UngrabFocus	pin/window_linux.cc	/^void WindowContextBase::UngrabFocus() {$/;"	f	class:WindowContextBase
+UngrabFocus	pin/window_linux.cc	/^void WindowContextTop::UngrabFocus() {}$/;"	f	class:WindowContextTop
+UngrabMouseDevice	pin/gtkcompat_linux.cc	/^UngrabMouseDevice(GdkDevice *device) {$/;"	f	file:
+UngrabMouseDragFocus	pin/window_linux.cc	/^void WindowContextBase::UngrabMouseDragFocus() {$/;"	f	class:WindowContextBase
+UngrabMouseDragFocus	pin/window_linux.cc	/^void WindowContextTop::UngrabMouseDragFocus() {}$/;"	f	class:WindowContextTop
+WINDOW_LINUX_H	pin/window_linux.h	/^#define WINDOW_LINUX_H$/;"	d
+WindowContext	pin/window_linux.h	/^class WindowContext {$/;"	c
+WindowContextBase	pin/window_linux.h	/^class WindowContextBase: public WindowContext {$/;"	c
+WindowContextTop	pin/window_linux.cc	/^WindowContextTop::WindowContextTop(GoObject gwkWindow, WindowContext *owner, GoObject screen, WindowFrameType frameType, WindowType windowType) {$/;"	f	class:WindowContextTop
+WindowContextTop	pin/window_linux.h	/^class WindowContextTop : public WindowContextBase {$/;"	c
+WindowEventName	pin/events.cc	/^const char *WindowEventName(int eventType) {$/;"	f
+WindowFrameExtents	pin/window_linux.h	/^struct WindowFrameExtents {$/;"	s
+WindowFrameType	pin/window_linux.h	/^enum WindowFrameType {$/;"	g
+WindowFrameType_Titled	pin/window_linux.h	/^	WindowFrameType_Titled,$/;"	e	enum:WindowFrameType
+WindowFrameType_Transparent	pin/window_linux.h	/^	WindowFrameType_Transparent,$/;"	e	enum:WindowFrameType
+WindowFrameType_Untitled	pin/window_linux.h	/^	WindowFrameType_Untitled,$/;"	e	enum:WindowFrameType
+WindowGeometry	pin/window_linux.h	/^	WindowGeometry(): finalWidth(), finalHeight(), refX(), refY(), gravityX(),$/;"	f	struct:WindowGeometry
+WindowGeometry	pin/window_linux.h	/^struct WindowGeometry {$/;"	s
+WindowType	pin/window_linux.h	/^enum WindowType {$/;"	g
+WindowType_Normal	pin/window_linux.h	/^	WindowType_Normal,$/;"	e	enum:WindowType
+WindowType_Popup	pin/window_linux.h	/^	WindowType_Popup,$/;"	e	enum:WindowType
+WindowType_Utility	pin/window_linux.h	/^	WindowType_Utility,$/;"	e	enum:WindowType
+_CRT_SECURE_NO_DEPRECATE	pin/expr/swig/example_wrap.cxx	/^# define _CRT_SECURE_NO_DEPRECATE$/;"	d	file:
+_SCL_SECURE_NO_DEPRECATE	pin/expr/swig/example_wrap.cxx	/^# define _SCL_SECURE_NO_DEPRECATE$/;"	d	file:
+_XIM	pin/window_linux.h	/^	struct _XIM {$/;"	s	class:WindowContextBase
+_goslice_	pin/expr/swig/example_wrap.cxx	/^typedef struct { void* array; intgo len; intgo cap; } _goslice_;$/;"	t	typeref:struct:__anon5	file:
+_gostring_	pin/expr/swig/example_wrap.cxx	/^typedef struct { char *p; intgo n; } _gostring_;$/;"	t	typeref:struct:__anon4	file:
+_swig_goallocate	pin/expr/swig/example_wrap.cxx	/^static void *_swig_goallocate(size_t len) {$/;"	f	file:
+_swig_gopanic	pin/expr/swig/example_wrap.cxx	/^static void _swig_gopanic(const char *p) {$/;"	f	file:
+_swig_makegostring	pin/expr/swig/example_wrap.cxx	/^static _gostring_ _swig_makegostring(const char *p, size_t l) {$/;"	f	file:
+_swig_wrap_ByteVector_add	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_ByteVector_add(struct {$/;"	f
+_swig_wrap_ByteVector_capacity	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_ByteVector_capacity(struct {$/;"	f
+_swig_wrap_ByteVector_clear	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_ByteVector_clear(struct {$/;"	f
+_swig_wrap_ByteVector_get	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_ByteVector_get(struct {$/;"	f
+_swig_wrap_ByteVector_isEmpty	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_ByteVector_isEmpty(struct {$/;"	f
+_swig_wrap_ByteVector_reserve	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_ByteVector_reserve(struct {$/;"	f
+_swig_wrap_ByteVector_set	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_ByteVector_set(struct {$/;"	f
+_swig_wrap_ByteVector_size	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_ByteVector_size(struct {$/;"	f
+_swig_wrap_SimpleClass_GetWindow	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_SimpleClass_GetWindow(struct {$/;"	f
+_swig_wrap_SimpleClass_hello	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_SimpleClass_hello(struct {$/;"	f
+_swig_wrap_SimpleClass_helloBytes	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_SimpleClass_helloBytes(struct {$/;"	f
+_swig_wrap_SimpleClass_helloString	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_SimpleClass_helloString(struct {$/;"	f
+_swig_wrap_StringVector_add	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_StringVector_add(struct {$/;"	f
+_swig_wrap_StringVector_capacity	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_StringVector_capacity(struct {$/;"	f
+_swig_wrap_StringVector_clear	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_StringVector_clear(struct {$/;"	f
+_swig_wrap_StringVector_get	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_StringVector_get(struct {$/;"	f
+_swig_wrap_StringVector_isEmpty	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_StringVector_isEmpty(struct {$/;"	f
+_swig_wrap_StringVector_reserve	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_StringVector_reserve(struct {$/;"	f
+_swig_wrap_StringVector_set	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_StringVector_set(struct {$/;"	f
+_swig_wrap_StringVector_size	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_StringVector_size(struct {$/;"	f
+_swig_wrap_delete_ByteVector	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_delete_ByteVector(struct {$/;"	f
+_swig_wrap_delete_SimpleClass	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_delete_SimpleClass(struct {$/;"	f
+_swig_wrap_delete_SimpleClassB	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_delete_SimpleClassB(struct {$/;"	f
+_swig_wrap_delete_StringVector	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_delete_StringVector(struct {$/;"	f
+_swig_wrap_new_ByteVector__SWIG_0	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_new_ByteVector__SWIG_0(struct {$/;"	f
+_swig_wrap_new_ByteVector__SWIG_1	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_new_ByteVector__SWIG_1(struct {$/;"	f
+_swig_wrap_new_SimpleClassB	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_new_SimpleClassB(struct {$/;"	f
+_swig_wrap_new_StringVector__SWIG_0	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_new_StringVector__SWIG_0(struct {$/;"	f
+_swig_wrap_new_StringVector__SWIG_1	pin/expr/swig/simplelib_gc.c	/^·_swig_wrap_new_StringVector__SWIG_1(struct {$/;"	f
+_wrap_ByteVector_add	pin/expr/swig/example_wrap.cxx	/^_wrap_ByteVector_add(void *swig_v)$/;"	f
+_wrap_ByteVector_capacity	pin/expr/swig/example_wrap.cxx	/^_wrap_ByteVector_capacity(void *swig_v)$/;"	f
+_wrap_ByteVector_clear	pin/expr/swig/example_wrap.cxx	/^_wrap_ByteVector_clear(void *swig_v)$/;"	f
+_wrap_ByteVector_get	pin/expr/swig/example_wrap.cxx	/^_wrap_ByteVector_get(void *swig_v)$/;"	f
+_wrap_ByteVector_isEmpty	pin/expr/swig/example_wrap.cxx	/^_wrap_ByteVector_isEmpty(void *swig_v)$/;"	f
+_wrap_ByteVector_reserve	pin/expr/swig/example_wrap.cxx	/^_wrap_ByteVector_reserve(void *swig_v)$/;"	f
+_wrap_ByteVector_set	pin/expr/swig/example_wrap.cxx	/^_wrap_ByteVector_set(void *swig_v)$/;"	f
+_wrap_ByteVector_size	pin/expr/swig/example_wrap.cxx	/^_wrap_ByteVector_size(void *swig_v)$/;"	f
+_wrap_SimpleClass_GetWindow	pin/expr/swig/example_wrap.cxx	/^_wrap_SimpleClass_GetWindow(void *swig_v)$/;"	f
+_wrap_SimpleClass_hello	pin/expr/swig/example_wrap.cxx	/^_wrap_SimpleClass_hello(void *swig_v)$/;"	f
+_wrap_SimpleClass_helloBytes	pin/expr/swig/example_wrap.cxx	/^_wrap_SimpleClass_helloBytes(void *swig_v)$/;"	f
+_wrap_SimpleClass_helloString	pin/expr/swig/example_wrap.cxx	/^_wrap_SimpleClass_helloString(void *swig_v)$/;"	f
+_wrap_StringVector_add	pin/expr/swig/example_wrap.cxx	/^_wrap_StringVector_add(void *swig_v)$/;"	f
+_wrap_StringVector_capacity	pin/expr/swig/example_wrap.cxx	/^_wrap_StringVector_capacity(void *swig_v)$/;"	f
+_wrap_StringVector_clear	pin/expr/swig/example_wrap.cxx	/^_wrap_StringVector_clear(void *swig_v)$/;"	f
+_wrap_StringVector_get	pin/expr/swig/example_wrap.cxx	/^_wrap_StringVector_get(void *swig_v)$/;"	f
+_wrap_StringVector_isEmpty	pin/expr/swig/example_wrap.cxx	/^_wrap_StringVector_isEmpty(void *swig_v)$/;"	f
+_wrap_StringVector_reserve	pin/expr/swig/example_wrap.cxx	/^_wrap_StringVector_reserve(void *swig_v)$/;"	f
+_wrap_StringVector_set	pin/expr/swig/example_wrap.cxx	/^_wrap_StringVector_set(void *swig_v)$/;"	f
+_wrap_StringVector_size	pin/expr/swig/example_wrap.cxx	/^_wrap_StringVector_size(void *swig_v)$/;"	f
+_wrap_delete_ByteVector	pin/expr/swig/example_wrap.cxx	/^_wrap_delete_ByteVector(void *swig_v)$/;"	f
+_wrap_delete_SimpleClass	pin/expr/swig/example_wrap.cxx	/^_wrap_delete_SimpleClass(void *swig_v)$/;"	f
+_wrap_delete_SimpleClassB	pin/expr/swig/example_wrap.cxx	/^_wrap_delete_SimpleClassB(void *swig_v)$/;"	f
+_wrap_delete_StringVector	pin/expr/swig/example_wrap.cxx	/^_wrap_delete_StringVector(void *swig_v)$/;"	f
+_wrap_new_ByteVector__SWIG_0	pin/expr/swig/example_wrap.cxx	/^_wrap_new_ByteVector__SWIG_0(void *swig_v)$/;"	f
+_wrap_new_ByteVector__SWIG_1	pin/expr/swig/example_wrap.cxx	/^_wrap_new_ByteVector__SWIG_1(void *swig_v)$/;"	f
+_wrap_new_SimpleClassB	pin/expr/swig/example_wrap.cxx	/^_wrap_new_SimpleClassB(void *swig_v)$/;"	f
+_wrap_new_StringVector__SWIG_0	pin/expr/swig/example_wrap.cxx	/^_wrap_new_StringVector__SWIG_0(void *swig_v)$/;"	f
+_wrap_new_StringVector__SWIG_1	pin/expr/swig/example_wrap.cxx	/^_wrap_new_StringVector__SWIG_1(void *swig_v)$/;"	f
+activate	pin/application_linux.cc	/^activate (GtkApplication* app, gpointer user_data) {$/;"	f	file:
+array	pin/expr/swig/example_wrap.cxx	/^typedef struct { void* array; intgo len; intgo cap; } _goslice_;$/;"	m	struct:__anon5	file:
+c_main	sysc/exp/cocoa_gui.c	/^int c_main(int argc, char *argv[]) {$/;"	f
+canBeDeleted	pin/window_linux.h	/^	bool canBeDeleted;$/;"	m	class:WindowContextBase
+cap	pin/expr/swig/example_wrap.cxx	/^typedef struct { void* array; intgo len; intgo cap; } _goslice_;$/;"	m	struct:__anon5	file:
+children	pin/window_linux.h	/^	std::set<WindowContextTop *> children;$/;"	m	class:WindowContextBase
+currentHeight	pin/window_linux.h	/^	int currentHeight;$/;"	m	struct:WindowGeometry
+currentWidth	pin/window_linux.h	/^	int currentWidth;$/;"	m	struct:WindowGeometry
+destroy_and_delete_ctx	pin/window_linux.cc	/^void destroy_and_delete_ctx(WindowContext *ctx) {$/;"	f
+enabled	pin/window_linux.h	/^		bool enabled;$/;"	m	struct:WindowContextBase::_XIM
+eventsProcessingCount	pin/window_linux.h	/^	size_t eventsProcessingCount;$/;"	m	class:WindowContextBase
+extents	pin/window_linux.h	/^	WindowFrameExtents extents;$/;"	m	struct:WindowGeometry
+finalHeight	pin/window_linux.h	/^	} finalWidth, finalHeight;$/;"	m	struct:WindowGeometry	typeref:struct:WindowGeometry::__anon7
+finalWidth	pin/window_linux.h	/^	} finalWidth, finalHeight;$/;"	m	struct:WindowGeometry	typeref:struct:WindowGeometry::__anon7
+frameExtentsInitialized	pin/window_linux.h	/^	bool frameExtentsInitialized;$/;"	m	class:WindowContextTop
+frameType	pin/window_linux.h	/^	WindowFrameType frameType;$/;"	m	class:WindowContextTop
+g_atomNetWmState	pin/window_linux.cc	/^GdkAtom g_atomNetWmState = gdk_atom_intern_static_string("_NET_WM_STATE");$/;"	v
+g_disableGrab	pin/gtkcompat_linux.cc	/^gboolean g_disableGrab = FALSE;$/;"	v
+g_isKeyMapInitialized	pin/key_linux.cc	/^static gboolean g_isKeyMapInitialized = FALSE;$/;"	v	file:
+g_keyMap	pin/key_linux.cc	/^static GHashTable *g_keyMap = NULL;$/;"	v	file:
+g_processEventsPrev	pin/application_linux.cc	/^GdkEventFunc g_processEventsPrev;$/;"	v
+gdkWindow	pin/window_linux.h	/^	GdkWindow *gdkWindow;$/;"	m	class:WindowContextBase
+grabbed	pin/gtkcompat_linux.cc	/^    gboolean grabbed;$/;"	m	struct:__anon6	file:
+gravityX	pin/window_linux.h	/^	float gravityX;$/;"	m	struct:WindowGeometry
+gravityY	pin/window_linux.h	/^	float gravityY;$/;"	m	struct:WindowGeometry
+gtkWidget	pin/window_linux.h	/^	GtkWidget *gtkWidget;$/;"	m	class:WindowContextBase
+gtk_button_number_to_mouse_button	pin/window_linux.cc	/^static inline int gtk_button_number_to_mouse_button(guint button) {$/;"	f	file:
+gwkView	pin/window_linux.h	/^	GoObject gwkView;$/;"	m	class:WindowContextBase
+gwkWindow	pin/window_linux.h	/^	GoObject gwkWindow;$/;"	m	class:WindowContextBase
+height	pin/window_linux.h	/^	int height;$/;"	m	struct:WindowFrameExtents
+hello	pin/expr/swig/simpleclass.cpp	/^std::string SimpleClass::hello(){$/;"	f	class:SimpleClass
+helloBytes	pin/expr/swig/simpleclass.cpp	/^void SimpleClass::helloBytes(std::vector<char> *results){$/;"	f	class:SimpleClass
+helloString	pin/expr/swig/simpleclass.cpp	/^void SimpleClass::helloString(std::vector<std::string> *results){$/;"	f	class:SimpleClass
+ic	pin/window_linux.h	/^		XIC ic;$/;"	m	struct:WindowContextBase::_XIM
+im	pin/window_linux.h	/^		XIM im;$/;"	m	struct:WindowContextBase::_XIM
+intgo	pin/expr/swig/example_wrap.cxx	/^typedef int intgo;$/;"	t	file:
+isIconified	pin/window_linux.h	/^	bool isIconified;$/;"	m	class:WindowContextBase
+isMaximized	pin/window_linux.h	/^	bool isMaximized;$/;"	m	class:WindowContextBase
+isMouseEntered	pin/window_linux.h	/^	bool isMouseEntered;$/;"	m	class:WindowContextBase
+isRunning	sysc/exp/cocoa_go.c	/^bool NSApp·isRunning() {$/;"	f
+kKeyCode0	pin/events.h	/^	kKeyCode0 = 0x30,$/;"	e	enum:__anon3
+kKeyCode1	pin/events.h	/^	kKeyCode1 = 0x31,$/;"	e	enum:__anon3
+kKeyCode2	pin/events.h	/^	kKeyCode2 = 0x32,$/;"	e	enum:__anon3
+kKeyCode3	pin/events.h	/^	kKeyCode3 = 0x33,$/;"	e	enum:__anon3
+kKeyCode4	pin/events.h	/^	kKeyCode4 = 0x34,$/;"	e	enum:__anon3
+kKeyCode5	pin/events.h	/^	kKeyCode5 = 0x35,$/;"	e	enum:__anon3
+kKeyCode6	pin/events.h	/^	kKeyCode6 = 0x36,$/;"	e	enum:__anon3
+kKeyCode7	pin/events.h	/^	kKeyCode7 = 0x37,$/;"	e	enum:__anon3
+kKeyCode8	pin/events.h	/^	kKeyCode8 = 0x38,$/;"	e	enum:__anon3
+kKeyCode9	pin/events.h	/^	kKeyCode9 = 0x39,$/;"	e	enum:__anon3
+kKeyCodeA	pin/events.h	/^	kKeyCodeA = 0x41,$/;"	e	enum:__anon3
+kKeyCodeAdd	pin/events.h	/^	kKeyCodeAdd              = 0x6B,$/;"	e	enum:__anon3
+kKeyCodeAlt	pin/events.h	/^	kKeyCodeAlt         = 0x12,$/;"	e	enum:__anon3
+kKeyCodeAltGraph	pin/events.h	/^	kKeyCodeAltGraph    = 0xFF7E,$/;"	e	enum:__anon3
+kKeyCodeAmpersand	pin/events.h	/^	kKeyCodeAmpersand        = 0x96,$/;"	e	enum:__anon3
+kKeyCodeAsterisk	pin/events.h	/^	kKeyCodeAsterisk         = 0x97,$/;"	e	enum:__anon3
+kKeyCodeAt	pin/events.h	/^	kKeyCodeAt               = 0x0200,$/;"	e	enum:__anon3
+kKeyCodeB	pin/events.h	/^	kKeyCodeB = 0x42,$/;"	e	enum:__anon3
+kKeyCodeBackQuote	pin/events.h	/^	kKeyCodeBackQuote        = 0xC0,$/;"	e	enum:__anon3
+kKeyCodeBackslash	pin/events.h	/^	kKeyCodeBackslash        = 0x5C,$/;"	e	enum:__anon3
+kKeyCodeBackspace	pin/events.h	/^	kKeyCodeBackspace   = '\\b',$/;"	e	enum:__anon3
+kKeyCodeC	pin/events.h	/^	kKeyCodeC = 0x43,$/;"	e	enum:__anon3
+kKeyCodeCapsLock	pin/events.h	/^	kKeyCodeCapsLock    = 0x14,$/;"	e	enum:__anon3
+kKeyCodeCircumflex	pin/events.h	/^	kKeyCodeCircumflex       = 0x0202,$/;"	e	enum:__anon3
+kKeyCodeClear	pin/events.h	/^	kKeyCodeClear       = 0x0C,$/;"	e	enum:__anon3
+kKeyCodeColon	pin/events.h	/^	kKeyCodeColon            = 0x0201,$/;"	e	enum:__anon3
+kKeyCodeComma	pin/events.h	/^	kKeyCodeComma            = 0x2C,$/;"	e	enum:__anon3
+kKeyCodeCommand	pin/events.h	/^	kKeyCodeCommand     = 0x0300,$/;"	e	enum:__anon3
+kKeyCodeContextMenu	pin/events.h	/^	kKeyCodeContextMenu = 0x020D,$/;"	e	enum:__anon3
+kKeyCodeControl	pin/events.h	/^	kKeyCodeControl     = 0x11,$/;"	e	enum:__anon3
+kKeyCodeD	pin/events.h	/^	kKeyCodeD = 0x44,$/;"	e	enum:__anon3
+kKeyCodeDecimal	pin/events.h	/^	kKeyCodeDecimal          = 0x6E,$/;"	e	enum:__anon3
+kKeyCodeDelete	pin/events.h	/^	kKeyCodeDelete      = 0x7F,$/;"	e	enum:__anon3
+kKeyCodeDivide	pin/events.h	/^	kKeyCodeDivide           = 0x6F,$/;"	e	enum:__anon3
+kKeyCodeDollar	pin/events.h	/^	kKeyCodeDollar           = 0x0203,$/;"	e	enum:__anon3
+kKeyCodeDoubleQuote	pin/events.h	/^	kKeyCodeDoubleQuote      = 0x98,$/;"	e	enum:__anon3
+kKeyCodeDown	pin/events.h	/^	kKeyCodeDown     = 0x28,$/;"	e	enum:__anon3
+kKeyCodeE	pin/events.h	/^	kKeyCodeE = 0x45,$/;"	e	enum:__anon3
+kKeyCodeEnd	pin/events.h	/^	kKeyCodeEnd      = 0x23,$/;"	e	enum:__anon3
+kKeyCodeEnter	pin/events.h	/^	kKeyCodeEnter       = '\\n',$/;"	e	enum:__anon3
+kKeyCodeEquals	pin/events.h	/^	kKeyCodeEquals           = 0x3D,$/;"	e	enum:__anon3
+kKeyCodeEscape	pin/events.h	/^	kKeyCodeEscape      = 0x1B,$/;"	e	enum:__anon3
+kKeyCodeEuroSign	pin/events.h	/^	kKeyCodeEuroSign         = 0x0204,$/;"	e	enum:__anon3
+kKeyCodeExclamation	pin/events.h	/^	kKeyCodeExclamation      = 0x0205,$/;"	e	enum:__anon3
+kKeyCodeF	pin/events.h	/^	kKeyCodeF = 0x46,$/;"	e	enum:__anon3
+kKeyCodeF1	pin/events.h	/^	kKeyCodeF1  = 0x70,$/;"	e	enum:__anon3
+kKeyCodeF10	pin/events.h	/^	kKeyCodeF10 = 0x79,$/;"	e	enum:__anon3
+kKeyCodeF11	pin/events.h	/^	kKeyCodeF11 = 0x7A,$/;"	e	enum:__anon3
+kKeyCodeF12	pin/events.h	/^	kKeyCodeF12 = 0x7B,$/;"	e	enum:__anon3
+kKeyCodeF13	pin/events.h	/^	kKeyCodeF13 = 0xF000,$/;"	e	enum:__anon3
+kKeyCodeF14	pin/events.h	/^	kKeyCodeF14 = 0xF001,$/;"	e	enum:__anon3
+kKeyCodeF15	pin/events.h	/^	kKeyCodeF15 = 0xF002,$/;"	e	enum:__anon3
+kKeyCodeF16	pin/events.h	/^	kKeyCodeF16 = 0xF003,$/;"	e	enum:__anon3
+kKeyCodeF17	pin/events.h	/^	kKeyCodeF17 = 0xF004,$/;"	e	enum:__anon3
+kKeyCodeF18	pin/events.h	/^	kKeyCodeF18 = 0xF005,$/;"	e	enum:__anon3
+kKeyCodeF19	pin/events.h	/^	kKeyCodeF19 = 0xF006,$/;"	e	enum:__anon3
+kKeyCodeF2	pin/events.h	/^	kKeyCodeF2  = 0x71,$/;"	e	enum:__anon3
+kKeyCodeF20	pin/events.h	/^	kKeyCodeF20 = 0xF007,$/;"	e	enum:__anon3
+kKeyCodeF21	pin/events.h	/^	kKeyCodeF21 = 0xF008,$/;"	e	enum:__anon3
+kKeyCodeF22	pin/events.h	/^	kKeyCodeF22 = 0xF009,$/;"	e	enum:__anon3
+kKeyCodeF23	pin/events.h	/^	kKeyCodeF23 = 0xF00A,$/;"	e	enum:__anon3
+kKeyCodeF24	pin/events.h	/^	kKeyCodeF24 = 0xF00B,$/;"	e	enum:__anon3
+kKeyCodeF3	pin/events.h	/^	kKeyCodeF3  = 0x72,$/;"	e	enum:__anon3
+kKeyCodeF4	pin/events.h	/^	kKeyCodeF4  = 0x73,$/;"	e	enum:__anon3
+kKeyCodeF5	pin/events.h	/^	kKeyCodeF5  = 0x74,$/;"	e	enum:__anon3
+kKeyCodeF6	pin/events.h	/^	kKeyCodeF6  = 0x75,$/;"	e	enum:__anon3
+kKeyCodeF7	pin/events.h	/^	kKeyCodeF7  = 0x76,$/;"	e	enum:__anon3
+kKeyCodeF8	pin/events.h	/^	kKeyCodeF8  = 0x77,$/;"	e	enum:__anon3
+kKeyCodeF9	pin/events.h	/^	kKeyCodeF9  = 0x78,$/;"	e	enum:__anon3
+kKeyCodeG	pin/events.h	/^	kKeyCodeG = 0x47,$/;"	e	enum:__anon3
+kKeyCodeGreater	pin/events.h	/^	kKeyCodeGreater          = 0xA0,$/;"	e	enum:__anon3
+kKeyCodeH	pin/events.h	/^	kKeyCodeH = 0x48,$/;"	e	enum:__anon3
+kKeyCodeHelp	pin/events.h	/^	kKeyCodeHelp        = 0x9C,$/;"	e	enum:__anon3
+kKeyCodeHome	pin/events.h	/^	kKeyCodeHome     = 0x24,$/;"	e	enum:__anon3
+kKeyCodeI	pin/events.h	/^	kKeyCodeI = 0x49,$/;"	e	enum:__anon3
+kKeyCodeInsert	pin/events.h	/^	kKeyCodeInsert      = 0x9B,$/;"	e	enum:__anon3
+kKeyCodeInvExclamation	pin/events.h	/^	kKeyCodeInvExclamation   = 0x0206,$/;"	e	enum:__anon3
+kKeyCodeJ	pin/events.h	/^	kKeyCodeJ = 0x4A,$/;"	e	enum:__anon3
+kKeyCodeK	pin/events.h	/^	kKeyCodeK = 0x4B,$/;"	e	enum:__anon3
+kKeyCodeL	pin/events.h	/^	kKeyCodeL = 0x4C,$/;"	e	enum:__anon3
+kKeyCodeLeft	pin/events.h	/^	kKeyCodeLeft     = 0x25,$/;"	e	enum:__anon3
+kKeyCodeLeftBrace	pin/events.h	/^	kKeyCodeLeftBrace        = 0xA1,$/;"	e	enum:__anon3
+kKeyCodeLeftBracket	pin/events.h	/^	kKeyCodeLeftBracket      = 0x5B,$/;"	e	enum:__anon3
+kKeyCodeLeftParenthesis	pin/events.h	/^	kKeyCodeLeftParenthesis  = 0x0207,$/;"	e	enum:__anon3
+kKeyCodeLess	pin/events.h	/^	kKeyCodeLess             = 0x99,$/;"	e	enum:__anon3
+kKeyCodeM	pin/events.h	/^	kKeyCodeM = 0x4D,$/;"	e	enum:__anon3
+kKeyCodeMinus	pin/events.h	/^	kKeyCodeMinus            = 0x2D,$/;"	e	enum:__anon3
+kKeyCodeMultiply	pin/events.h	/^	kKeyCodeMultiply         = 0x6A,$/;"	e	enum:__anon3
+kKeyCodeN	pin/events.h	/^	kKeyCodeN = 0x4E,$/;"	e	enum:__anon3
+kKeyCodeNumLock	pin/events.h	/^	kKeyCodeNumLock     = 0x90,$/;"	e	enum:__anon3
+kKeyCodeNumberSign	pin/events.h	/^	kKeyCodeNumberSign       = 0x0208,$/;"	e	enum:__anon3
+kKeyCodeNumpad0	pin/events.h	/^	kKeyCodeNumpad0 = 0x60,$/;"	e	enum:__anon3
+kKeyCodeNumpad1	pin/events.h	/^	kKeyCodeNumpad1 = 0x61,$/;"	e	enum:__anon3
+kKeyCodeNumpad2	pin/events.h	/^	kKeyCodeNumpad2 = 0x62,$/;"	e	enum:__anon3
+kKeyCodeNumpad3	pin/events.h	/^	kKeyCodeNumpad3 = 0x63,$/;"	e	enum:__anon3
+kKeyCodeNumpad4	pin/events.h	/^	kKeyCodeNumpad4 = 0x64,$/;"	e	enum:__anon3
+kKeyCodeNumpad5	pin/events.h	/^	kKeyCodeNumpad5 = 0x65,$/;"	e	enum:__anon3
+kKeyCodeNumpad6	pin/events.h	/^	kKeyCodeNumpad6 = 0x66,$/;"	e	enum:__anon3
+kKeyCodeNumpad7	pin/events.h	/^	kKeyCodeNumpad7 = 0x67,$/;"	e	enum:__anon3
+kKeyCodeNumpad8	pin/events.h	/^	kKeyCodeNumpad8 = 0x68,$/;"	e	enum:__anon3
+kKeyCodeNumpad9	pin/events.h	/^	kKeyCodeNumpad9 = 0x69,$/;"	e	enum:__anon3
+kKeyCodeO	pin/events.h	/^	kKeyCodeO = 0x4F,$/;"	e	enum:__anon3
+kKeyCodeP	pin/events.h	/^	kKeyCodeP = 0x50,$/;"	e	enum:__anon3
+kKeyCodePageDown	pin/events.h	/^	kKeyCodePageDown = 0x22,$/;"	e	enum:__anon3
+kKeyCodePageUp	pin/events.h	/^	kKeyCodePageUp   = 0x21,$/;"	e	enum:__anon3
+kKeyCodePause	pin/events.h	/^	kKeyCodePause       = 0x13,$/;"	e	enum:__anon3
+kKeyCodePeriod	pin/events.h	/^	kKeyCodePeriod           = 0x2E,$/;"	e	enum:__anon3
+kKeyCodePlus	pin/events.h	/^	kKeyCodePlus             = 0x0209,$/;"	e	enum:__anon3
+kKeyCodePrintScreen	pin/events.h	/^	kKeyCodePrintScreen = 0x9A,$/;"	e	enum:__anon3
+kKeyCodeQ	pin/events.h	/^	kKeyCodeQ = 0x51,$/;"	e	enum:__anon3
+kKeyCodeQuote	pin/events.h	/^	kKeyCodeQuote            = 0xDE,$/;"	e	enum:__anon3
+kKeyCodeR	pin/events.h	/^	kKeyCodeR = 0x52,$/;"	e	enum:__anon3
+kKeyCodeRight	pin/events.h	/^	kKeyCodeRight    = 0x27,$/;"	e	enum:__anon3
+kKeyCodeRightBrace	pin/events.h	/^	kKeyCodeRightBrace       = 0xA2,$/;"	e	enum:__anon3
+kKeyCodeRightBracket	pin/events.h	/^	kKeyCodeRightBracket     = 0x5D,$/;"	e	enum:__anon3
+kKeyCodeRightParenthesis	pin/events.h	/^	kKeyCodeRightParenthesis = 0x020A,$/;"	e	enum:__anon3
+kKeyCodeS	pin/events.h	/^	kKeyCodeS = 0x53,$/;"	e	enum:__anon3
+kKeyCodeScrollLock	pin/events.h	/^	kKeyCodeScrollLock  = 0x91,$/;"	e	enum:__anon3
+kKeyCodeSemicolon	pin/events.h	/^	kKeyCodeSemicolon        = 0x3B,$/;"	e	enum:__anon3
+kKeyCodeSeparator	pin/events.h	/^	kKeyCodeSeparator        = 0x6C,$/;"	e	enum:__anon3
+kKeyCodeShift	pin/events.h	/^	kKeyCodeShift       = 0x10,$/;"	e	enum:__anon3
+kKeyCodeSlash	pin/events.h	/^	kKeyCodeSlash            = 0x2F,$/;"	e	enum:__anon3
+kKeyCodeSpace	pin/events.h	/^	kKeyCodeSpace       = 0x20,$/;"	e	enum:__anon3
+kKeyCodeSubtract	pin/events.h	/^	kKeyCodeSubtract         = 0x6D,$/;"	e	enum:__anon3
+kKeyCodeT	pin/events.h	/^	kKeyCodeT = 0x54,$/;"	e	enum:__anon3
+kKeyCodeTab	pin/events.h	/^	kKeyCodeTab         = '\\t',$/;"	e	enum:__anon3
+kKeyCodeU	pin/events.h	/^	kKeyCodeU = 0x55,$/;"	e	enum:__anon3
+kKeyCodeUndefined	pin/events.h	/^	kKeyCodeUndefined = 0x0,$/;"	e	enum:__anon3
+kKeyCodeUnderscore	pin/events.h	/^	kKeyCodeUnderscore       = 0x020B,$/;"	e	enum:__anon3
+kKeyCodeUp	pin/events.h	/^	kKeyCodeUp       = 0x26,$/;"	e	enum:__anon3
+kKeyCodeV	pin/events.h	/^	kKeyCodeV = 0x56,$/;"	e	enum:__anon3
+kKeyCodeW	pin/events.h	/^	kKeyCodeW = 0x57,$/;"	e	enum:__anon3
+kKeyCodeWindows	pin/events.h	/^	kKeyCodeWindows     = 0x020C,$/;"	e	enum:__anon3
+kKeyCodeX	pin/events.h	/^	kKeyCodeX = 0x58,$/;"	e	enum:__anon3
+kKeyCodeY	pin/events.h	/^	kKeyCodeY = 0x59,$/;"	e	enum:__anon3
+kKeyCodeZ	pin/events.h	/^	kKeyCodeZ = 0x60,$/;"	e	enum:__anon3
+kKeyEventModifierAlt	pin/events.h	/^	kKeyEventModifierAlt    = 1 << 3,$/;"	e	enum:__anon3
+kKeyEventModifierButtonMiddle	pin/events.h	/^	kKeyEventModifierButtonMiddle    = 1 << 7,$/;"	e	enum:__anon3
+kKeyEventModifierButtonPrimary	pin/events.h	/^	kKeyEventModifierButtonPrimary   = 1 << 5,$/;"	e	enum:__anon3
+kKeyEventModifierButtonSecondary	pin/events.h	/^	kKeyEventModifierButtonSecondary = 1 << 6,$/;"	e	enum:__anon3
+kKeyEventModifierCommand	pin/events.h	/^	kKeyEventModifierCommand = 1 << 4,$/;"	e	enum:__anon3
+kKeyEventModifierControl	pin/events.h	/^	kKeyEventModifierControl  = 1 << 2,$/;"	e	enum:__anon3
+kKeyEventModifierFunction	pin/events.h	/^	kKeyEventModifierFunction = 1 << 1,$/;"	e	enum:__anon3
+kKeyEventModifierMeta	pin/events.h	/^	kKeyEventModifierMeta    = 1 << 4,$/;"	e	enum:__anon3
+kKeyEventModifierNone	pin/events.h	/^	kKeyEventModifierNone     = 0,$/;"	e	enum:__anon3
+kKeyEventModifierOption	pin/events.h	/^	kKeyEventModifierOption = 1 << 3,$/;"	e	enum:__anon3
+kKeyEventModifierShift	pin/events.h	/^	kKeyEventModifierShift    = 1 << 0,$/;"	e	enum:__anon3
+kKeyEventModifierWindows	pin/events.h	/^	kKeyEventModifierWindows = 1 << 4,$/;"	e	enum:__anon3
+kKeyEventPress	pin/events.h	/^	kKeyEventPress = 111,$/;"	e	enum:__anon3
+kKeyEventRelease	pin/events.h	/^	kKeyEventRelease = 112,$/;"	e	enum:__anon3
+kKeyEventTyped	pin/events.h	/^	kKeyEventTyped = 113,$/;"	e	enum:__anon3
+kMouseEventButtonLeft	pin/events.h	/^	kMouseEventButtonLeft  = 212,$/;"	e	enum:__anon2
+kMouseEventButtonNone	pin/events.h	/^	kMouseEventButtonNone  = 211,$/;"	e	enum:__anon2
+kMouseEventButtonOther	pin/events.h	/^	kMouseEventButtonOther = 214,$/;"	e	enum:__anon2
+kMouseEventButtonRight	pin/events.h	/^	kMouseEventButtonRight = 213,$/;"	e	enum:__anon2
+kMouseEventClick	pin/events.h	/^	kMouseEventClick = 227, \/\/ synthetic$/;"	e	enum:__anon2
+kMouseEventDown	pin/events.h	/^	kMouseEventDown  = 221,$/;"	e	enum:__anon2
+kMouseEventDrag	pin/events.h	/^	kMouseEventDrag  = 223,$/;"	e	enum:__anon2
+kMouseEventEnter	pin/events.h	/^	kMouseEventEnter = 225,$/;"	e	enum:__anon2
+kMouseEventExit	pin/events.h	/^	kMouseEventExit  = 226,$/;"	e	enum:__anon2
+kMouseEventMove	pin/events.h	/^	kMouseEventMove  = 224,$/;"	e	enum:__anon2
+kMouseEventUp	pin/events.h	/^	kMouseEventUp    = 222,$/;"	e	enum:__anon2
+kMouseEventWheel	pin/events.h	/^	kMouseEventWheel = 228,$/;"	e	enum:__anon2
+kWindowEventClose	pin/events.h	/^	kWindowEventClose   = 521,$/;"	e	enum:__anon1
+kWindowEventDestroy	pin/events.h	/^	kWindowEventDestroy = 522,$/;"	e	enum:__anon1
+kWindowEventFocusDisabled	pin/events.h	/^	kWindowEventFocusDisabled = 545,$/;"	e	enum:__anon1
+kWindowEventFocusGained	pin/events.h	/^	kWindowEventFocusGained         = 542,$/;"	e	enum:__anon1
+kWindowEventFocusGainedBackward	pin/events.h	/^	kWindowEventFocusGainedBackward = 544,$/;"	e	enum:__anon1
+kWindowEventFocusGainedForward	pin/events.h	/^	kWindowEventFocusGainedForward  = 543,$/;"	e	enum:__anon1
+kWindowEventFocusLost	pin/events.h	/^	kWindowEventFocusLost           = 541,$/;"	e	enum:__anon1
+kWindowEventFocusMax	pin/events.h	/^	kWindowEventFocusMax            = 544,$/;"	e	enum:__anon1
+kWindowEventFocusMin	pin/events.h	/^	kWindowEventFocusMin            = 541,$/;"	e	enum:__anon1
+kWindowEventFocusUngrab	pin/events.h	/^	kWindowEventFocusUngrab   = 546,$/;"	e	enum:__anon1
+kWindowEventInitAccessibility	pin/events.h	/^	kWindowEventInitAccessibility = 551,$/;"	e	enum:__anon1
+kWindowEventMaximize	pin/events.h	/^	kWindowEventMaximize = 532,$/;"	e	enum:__anon1
+kWindowEventMinimize	pin/events.h	/^	kWindowEventMinimize = 531,$/;"	e	enum:__anon1
+kWindowEventMove	pin/events.h	/^	kWindowEventMove   = 512,$/;"	e	enum:__anon1
+kWindowEventResize	pin/events.h	/^	kWindowEventResize = 511,$/;"	e	enum:__anon1
+kWindowEventRestore	pin/events.h	/^	kWindowEventRestore  = 533,$/;"	e	enum:__anon1
+left	pin/window_linux.h	/^	int left;$/;"	m	struct:WindowFrameExtents
+len	pin/expr/swig/example_wrap.cxx	/^typedef struct { void* array; intgo len; intgo cap; } _goslice_;$/;"	m	struct:__anon5	file:
+locationAssigned	pin/window_linux.h	/^	bool locationAssigned;$/;"	m	class:WindowContextTop
+mapReceived	pin/window_linux.h	/^	bool mapReceived;$/;"	m	class:WindowContextTop
+maxH	pin/window_linux.h	/^		int minW, minH, maxW, maxH;$/;"	m	struct:WindowContextTop::Resizable
+maxW	pin/window_linux.h	/^		int minW, minH, maxW, maxH;$/;"	m	struct:WindowContextTop::Resizable
+minH	pin/window_linux.h	/^		int minW, minH, maxW, maxH;$/;"	m	struct:WindowContextTop::Resizable
+minW	pin/window_linux.h	/^		int minW, minH, maxW, maxH;$/;"	m	struct:WindowContextTop::Resizable
+n	pin/expr/swig/example_wrap.cxx	/^typedef struct { char *p; intgo n; } _gostring_;$/;"	m	struct:__anon4	file:
+operator &	pin/expr/swig/example_wrap.cxx	/^  T *operator&() { return pointer.ptr; }$/;"	f	class:SwigValueWrapper
+operator =	pin/expr/swig/example_wrap.cxx	/^    SwigMovePointer& operator=(SwigMovePointer& rhs) { T* oldptr = ptr; ptr = 0; delete oldptr; ptr = rhs.ptr; rhs.ptr = 0; return *this; }$/;"	f	struct:SwigValueWrapper::SwigMovePointer
+operator =	pin/expr/swig/example_wrap.cxx	/^  SwigValueWrapper& operator=(const T& t) { SwigMovePointer tmp(new T(t)); pointer = tmp; return *this; }$/;"	f	class:SwigValueWrapper
+operator T&	pin/expr/swig/example_wrap.cxx	/^  operator T&() const { return *pointer.ptr; }$/;"	f	class:SwigValueWrapper
+owner	pin/window_linux.h	/^	WindowContext *owner;$/;"	m	class:WindowContextTop
+p	pin/expr/swig/example_wrap.cxx	/^typedef struct { char *p; intgo n; } _gostring_;$/;"	m	struct:__anon4	file:
+parseparam	sysc/mksyscall_windows.pl	/^sub parseparam($) {$/;"	s
+parseparamlist	sysc/mksyscall_windows.pl	/^sub parseparamlist($) {$/;"	s
+pointer	pin/expr/swig/example_wrap.cxx	/^  } pointer;$/;"	m	class:SwigValueWrapper	typeref:struct:SwigValueWrapper::SwigMovePointer	file:
+prev	pin/window_linux.h	/^		bool prev;$/;"	m	struct:WindowContextTop::Resizable
+ptr	pin/expr/swig/example_wrap.cxx	/^    T *ptr;$/;"	m	struct:SwigValueWrapper::SwigMovePointer	file:
+refX	pin/window_linux.h	/^	float refX;$/;"	m	struct:WindowGeometry
+refY	pin/window_linux.h	/^	float refY;$/;"	m	struct:WindowGeometry
+requestType	pin/window_linux.h	/^		RequestType requestType;$/;"	m	struct:WindowContextTop::Resizable
+resizable	pin/window_linux.h	/^	} resizable;$/;"	m	class:WindowContextTop	typeref:struct:WindowContextTop::Resizable
+screen	pin/window_linux.h	/^	GoObject screen;$/;"	m	class:WindowContextTop
+setDelegate	views/exp/host_window_darwin.c	/^- (void)setDelegate:(id)delegate {$/;"	f
+sizeAssigned	pin/window_linux.h	/^	bool sizeAssigned;$/;"	m	class:WindowContextTop
+smGrabWindow	pin/window_linux.cc	/^WindowContext * WindowContextBase::smGrabWindow = NULL;$/;"	m	class:WindowContextBase	file:
+smGrabWindow	pin/window_linux.h	/^	static WindowContext *smGrabWindow;$/;"	m	class:WindowContextBase
+smMouseDragWindow	pin/window_linux.cc	/^WindowContext * WindowContextBase::smMouseDragWindow = NULL;$/;"	m	class:WindowContextBase	file:
+smMouseDragWindow	pin/window_linux.h	/^	static WindowContext *smMouseDragWindow;$/;"	m	class:WindowContextBase
+stateConfigNotifications	pin/window_linux.h	/^	int stateConfigNotifications;$/;"	m	class:WindowContextTop
+std_vector_Sl_char_Sg__get	pin/expr/swig/example_wrap.cxx	/^SWIGINTERN std::vector< char >::const_reference std_vector_Sl_char_Sg__get(std::vector< char > *self,int i){$/;"	f
+std_vector_Sl_char_Sg__set	pin/expr/swig/example_wrap.cxx	/^SWIGINTERN void std_vector_Sl_char_Sg__set(std::vector< char > *self,int i,std::vector< char >::value_type const &val){$/;"	f
+std_vector_Sl_std_string_Sg__get	pin/expr/swig/example_wrap.cxx	/^SWIGINTERN std::vector< std::string >::const_reference std_vector_Sl_std_string_Sg__get(std::vector< std::string > *self,int i){$/;"	f
+std_vector_Sl_std_string_Sg__set	pin/expr/swig/example_wrap.cxx	/^SWIGINTERN void std_vector_Sl_std_string_Sg__set(std::vector< std::string > *self,int i,std::vector< std::string >::value_type const &val){$/;"	f
+swiggo_long_long	pin/expr/swig/example_wrap.cxx	/^typedef long long swiggo_long_long;$/;"	t	file:
+swiggo_size_assert	pin/expr/swig/example_wrap.cxx	/^#define swiggo_size_assert(/;"	d	file:
+swiggo_size_assert_eq	pin/expr/swig/example_wrap.cxx	/^#define swiggo_size_assert_eq(/;"	d	file:
+top	pin/window_linux.h	/^	int top;$/;"	m	struct:WindowFrameExtents
+type	pin/window_linux.h	/^		BoundsType type;$/;"	m	struct:WindowGeometry::__anon7
+uintgo	pin/expr/swig/example_wrap.cxx	/^typedef unsigned int uintgo;$/;"	t	file:
+value	pin/window_linux.h	/^		bool value;$/;"	m	struct:WindowContextTop::Resizable
+value	pin/window_linux.h	/^		int value;$/;"	m	struct:WindowGeometry::__anon7
+width	pin/window_linux.h	/^	int width;$/;"	m	struct:WindowFrameExtents
+window	pin/gtkcompat_linux.cc	/^    GdkWindow * window;$/;"	m	struct:__anon6	file:
+x_wrap_ByteVector_add	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_ByteVector_add)(void*) = _wrap_ByteVector_add;$/;"	v	file:
+x_wrap_ByteVector_capacity	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_ByteVector_capacity)(void*) = _wrap_ByteVector_capacity;$/;"	v	file:
+x_wrap_ByteVector_clear	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_ByteVector_clear)(void*) = _wrap_ByteVector_clear;$/;"	v	file:
+x_wrap_ByteVector_get	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_ByteVector_get)(void*) = _wrap_ByteVector_get;$/;"	v	file:
+x_wrap_ByteVector_isEmpty	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_ByteVector_isEmpty)(void*) = _wrap_ByteVector_isEmpty;$/;"	v	file:
+x_wrap_ByteVector_reserve	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_ByteVector_reserve)(void*) = _wrap_ByteVector_reserve;$/;"	v	file:
+x_wrap_ByteVector_set	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_ByteVector_set)(void*) = _wrap_ByteVector_set;$/;"	v	file:
+x_wrap_ByteVector_size	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_ByteVector_size)(void*) = _wrap_ByteVector_size;$/;"	v	file:
+x_wrap_SimpleClass_GetWindow	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_SimpleClass_GetWindow)(void*) = _wrap_SimpleClass_GetWindow;$/;"	v	file:
+x_wrap_SimpleClass_hello	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_SimpleClass_hello)(void*) = _wrap_SimpleClass_hello;$/;"	v	file:
+x_wrap_SimpleClass_helloBytes	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_SimpleClass_helloBytes)(void*) = _wrap_SimpleClass_helloBytes;$/;"	v	file:
+x_wrap_SimpleClass_helloString	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_SimpleClass_helloString)(void*) = _wrap_SimpleClass_helloString;$/;"	v	file:
+x_wrap_StringVector_add	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_StringVector_add)(void*) = _wrap_StringVector_add;$/;"	v	file:
+x_wrap_StringVector_capacity	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_StringVector_capacity)(void*) = _wrap_StringVector_capacity;$/;"	v	file:
+x_wrap_StringVector_clear	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_StringVector_clear)(void*) = _wrap_StringVector_clear;$/;"	v	file:
+x_wrap_StringVector_get	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_StringVector_get)(void*) = _wrap_StringVector_get;$/;"	v	file:
+x_wrap_StringVector_isEmpty	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_StringVector_isEmpty)(void*) = _wrap_StringVector_isEmpty;$/;"	v	file:
+x_wrap_StringVector_reserve	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_StringVector_reserve)(void*) = _wrap_StringVector_reserve;$/;"	v	file:
+x_wrap_StringVector_set	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_StringVector_set)(void*) = _wrap_StringVector_set;$/;"	v	file:
+x_wrap_StringVector_size	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_StringVector_size)(void*) = _wrap_StringVector_size;$/;"	v	file:
+x_wrap_delete_ByteVector	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_delete_ByteVector)(void*) = _wrap_delete_ByteVector;$/;"	v	file:
+x_wrap_delete_SimpleClass	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_delete_SimpleClass)(void*) = _wrap_delete_SimpleClass;$/;"	v	file:
+x_wrap_delete_SimpleClassB	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_delete_SimpleClassB)(void*) = _wrap_delete_SimpleClassB;$/;"	v	file:
+x_wrap_delete_StringVector	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_delete_StringVector)(void*) = _wrap_delete_StringVector;$/;"	v	file:
+x_wrap_new_ByteVector__SWIG_0	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_new_ByteVector__SWIG_0)(void*) = _wrap_new_ByteVector__SWIG_0;$/;"	v	file:
+x_wrap_new_ByteVector__SWIG_1	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_new_ByteVector__SWIG_1)(void*) = _wrap_new_ByteVector__SWIG_1;$/;"	v	file:
+x_wrap_new_SimpleClassB	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_new_SimpleClassB)(void*) = _wrap_new_SimpleClassB;$/;"	v	file:
+x_wrap_new_StringVector__SWIG_0	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_new_StringVector__SWIG_0)(void*) = _wrap_new_StringVector__SWIG_0;$/;"	v	file:
+x_wrap_new_StringVector__SWIG_1	pin/expr/swig/simplelib_gc.c	/^static void (*x_wrap_new_StringVector__SWIG_1)(void*) = _wrap_new_StringVector__SWIG_1;$/;"	v	file:
+xim	pin/window_linux.h	/^	} xim;$/;"	m	class:WindowContextBase	typeref:struct:WindowContextBase::_XIM
+~SwigMovePointer	pin/expr/swig/example_wrap.cxx	/^    ~SwigMovePointer() { delete ptr; }$/;"	f	struct:SwigValueWrapper::SwigMovePointer
+~WindowContext	pin/window_linux.h	/^	virtual ~WindowContext() {}$/;"	f	class:WindowContext
+~WindowContextBase	pin/window_linux.cc	/^WindowContextBase::~WindowContextBase() {$/;"	f	class:WindowContextBase

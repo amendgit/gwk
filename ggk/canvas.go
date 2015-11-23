@@ -1,9 +1,9 @@
 package ggk
 
 type Canvas struct {
-	// surfaceProps SurfaceProps
-	saveCount int
-	// metaData *MetaData
+	surfaceProps SurfaceProps
+	saveCount    int
+	metaData     *MetaData
 	// baseSurface *BaseSurface
 	// mcStack *Dequeue
 	// clipStack ClipStack
@@ -19,8 +19,7 @@ type Canvas struct {
 	conservativeRasterClip bool
 }
 
-func (c *Canvas) readPixels(dstInfo ImageInfo, dstData []byte, rowBytes int,
-	x, y int) error {
+func (c *Canvas) ReadPixels(dstInfo ImageInfo, dstData []byte, rowBytes int, x, y int) error {
 	// TOIMPL
 	return nil
 }
