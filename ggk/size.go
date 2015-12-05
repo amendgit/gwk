@@ -5,6 +5,8 @@ type Size struct {
 	height Scalar
 }
 
+var SizeZero Size
+
 func MakeSize(w, h Scalar) Size {
 	return Size{w, h}
 }

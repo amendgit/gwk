@@ -53,3 +53,40 @@ type Device interface {
 type BaseDevice struct {
 	Device Device
 }
+
+func NewBaseDeivce() *BaseDevice {
+	var baseDevice = new(BaseDevice)
+	return baseDevice
+}
+
+func (b *BaseDevice) OnAttachToCanvas(canvas *Canvas) {
+	toimpl()
+}
+
+func (b *BaseDevice) OnDetachFromCanvas() {
+	toimpl()
+}
+
+func (b *BaseDevice) ReadPixels(info *ImageInfo, pixels []byte, rowBytes int, x, y Scalar) error {
+	toimpl()
+	return nil
+}
+
+func (b *BaseDevice) Width() Scalar {
+	toimpl()
+	return 0
+}
+
+func (b *BaseDevice) Height() Scalar {
+	toimpl()
+	return 0
+}
+
+type BitmapDevice struct {
+	*BaseDevice
+}
+
+func NewBitmapDevice(bmp *Bitmap, props SurfaceProps) *BitmapDevice {
+	toimpl()
+	return nil
+}

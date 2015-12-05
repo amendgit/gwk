@@ -1,5 +1,5 @@
 package ggk
 
-// AAClip anti-alising clip.
+// AAClip is anti-alising clip.
 type AAClip struct {
 }

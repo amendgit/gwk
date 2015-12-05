@@ -199,6 +199,14 @@ func NewImageInfoUnknown(width, height Scalar) *ImageInfo {
 	return NewImageInfo(width, height, KColorTypeUnknown, KAlphaTypeUnknown, KColorProfileTypeLinear)
 }
 
+func (ii *ImageInfo) CloneWH(width, height Scalar) *ImageInfo {
+	var newInfo ImageInfo
+	newInfo = *ii
+	newInfo.width = width
+	newInfo.height = height
+	return &newInfo
+}
+
 func (ii *ImageInfo) Width() Scalar {
 	return ii.width
 }
@@ -312,4 +320,69 @@ func (ii *ImageInfo) SafeSize(rowBytes int) uint {
 		return 0
 	}
 	return uint(size)
+}
+
+// ReadPixelsHlp is helper to package and trim the parameters passed to
+// ReadPixels()
+type tReadPixelsHlp struct {
+	Pixels   []byte
+	RowBytes int
+	Info     *ImageInfo
+	X        Scalar
+	Y        Scalar
+}
+
+func newReadPixelsHlp(info *ImageInfo, pixels []byte, rowBytes int, x, y Scalar) *tReadPixelsHlp {
+	var hlp = new(tReadPixelsHlp)
+	hlp.Info = info
+	hlp.Pixels = pixels
+	hlp.RowBytes = rowBytes
+	hlp.X = x
+	hlp.Y = y
+	return hlp
+}
+
+// On nil, may have modified its fields (except RowBytes) to make it a legal
+// subset of the specified src width/height.
+//
+// On error, leaves self unchanged, but indicates that it does not overlap src,
+// or is not valid (e.g. bad Info) for ReadPixels().
+func (h *tReadPixelsHlp) Trim(srcWidth, srcHeight Scalar) error {
+	var ct = h.Info.ColorType()
+	if ct == KColorTypeUnknown || ct == KColorTypeIndex8 {
+		return errors.New("tReadPixelsHlp Trim: bad color type")
+	}
+
+	if h.Pixels == nil || h.RowBytes < h.Info.MinRowBytes() {
+		return errors.New("tReadPixelsHlp Trim: bad pixels or rowBytes")
+	}
+
+	if h.Info.Width() == 0 || h.Info.Width() == 0 {
+		return errors.New("tReadPixelsHlp Trim: bad width or height")
+	}
+
+	var x, y = h.X, h.Y
+	var srcRect = MakeRect(x, y, h.Info.Width(), h.Info.Height())
+	if !srcRect.IntersectXYWH(0, 0, srcWidth, srcHeight) {
+		return errors.New("tReadPixelsHlp Trim: bad srcRect")
+	}
+
+	// if x or y are negative, then we have to adjust pixels.
+	if x > 0 {
+		x = 0
+	}
+
+	if y > 0 {
+		y = 0
+	}
+
+	// x, y are either 0 or negative.
+	var idx = int(0 - (y*Scalar(h.RowBytes) + x*Scalar(h.Info.BytesPerPixel())))
+
+	// the intersect may have shrunk info's logical size.
+	h.Pixels = h.Pixels[idx:]
+	h.Info = h.Info.CloneWH(srcRect.Width(), srcRect.Height())
+	h.X, h.Y = srcRect.X(), srcRect.Y()
+
+	return nil
 }

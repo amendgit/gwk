@@ -180,9 +180,9 @@ func (bmp *Bitmap) InstallPixels(requestedInfo ImageInfo, pixels []byte, rowByte
 
 	// since we're already allocated, we LockPixels right away.
 	bmp.LockPixels()
-	// if !bmp.Validate() {
-	// 	log.Printf(`xyz`)
-	// }
+	if !bmp.IsValid() {
+		// 	log.Printf(`xyz`)
+	}
 	return true
 }
 
@@ -283,7 +283,7 @@ func (bmp *Bitmap) AllocPixels(requestedInfo ImageInfo, rowBytes int) error {
 // top/left corner of the bitmap. For a bitmap that encompass the entire
 // pixels of the pixel ref, these will be (0,0).
 func (bmp *Bitmap) SetPixels(pixels *Pixels, origin Point) {
-	// TOIMPL
+	toimpl()
 }
 
 // Call this to ensure that the bitmap points to the current pixel address

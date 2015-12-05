@@ -13,18 +13,18 @@ type Rect struct {
 	height Scalar
 }
 
-func MakeRect(x, y, w, h Scalar) Rect {
-	return Rect{x, y, w, h}
+func MakeRect(x, y, width, height Scalar) Rect {
+	return Rect{x, y, width, height}
 }
 
 // Make rectangle from width and size, the left and top set to 0.
-func MakeRectWH(w, h Scalar) Rect {
-	return Rect{0, 0, w, h}
+func MakeRectWH(width, height Scalar) Rect {
+	return Rect{0, 0, width, height}
 }
 
 // Make rectangle from (left, top, right, bottom).
-func MakeRectLTRB(l, t, r, b Scalar) Rect {
-	return Rect{l, t, r - l, b - t}
+func MakeRectLTRB(left, top, right, bottom Scalar) Rect {
+	return Rect{left, top, right - left, bottom - top}
 }
 
 // Return te left edge of the rect.
@@ -78,25 +78,31 @@ func (r Rect) CenterY() Scalar {
 }
 
 // Return true if the rectangle's width or height are <= 0
-func (r *Rect) IsEmpty() bool {
+func (r Rect) IsEmpty() bool {
 	return r.left <= 0 || r.height <= 0
 }
 
 // Return true if the two rectangles have same position and size.
-func (r *Rect) Equal(o Rect) bool {
-	return r.left == o.left && r.top == o.top && r.width == o.width && r.height == o.height
+func (a Rect) Equal(b Rect) bool {
+	return a.left == b.left && a.top == b.top && a.width == b.width &&
+		a.height == b.height
 }
 
 // Set the rectangle's edges with (x, y, w, h)
-func (r *Rect) SetXYWH(x, y, w, h Scalar) {
-	r.left, r.top, r.width, r.height = x, y, w, h
+func (r *Rect) SetXYWH(x, y, width, height Scalar) {
+	r.left, r.top, r.width, r.height = x, y, width, height
 }
 
 // Set the rectangle's edges with (left, top, right, bottom)
-func (r *Rect) SetLTRB(l, t, r_, b Scalar) {
-	r.left, r.top, r.width, r.height = l, t, r_-l, b-t
+func (r *Rect) SetLTRB(left, top, right, bottom Scalar) {
+	r.left, r.top, r.width, r.height = left, top, right-left, bottom-top
 }
 
-func (r Rect) GoRect() image.Rectangle {
+func (r *Rect) IntersectXYWH(x, y, w, h Scalar) bool {
+	toimpl()
+	return false
+}
+
+func (r Rect) ToGoRect() image.Rectangle {
 	return image.Rect(int(r.left), int(r.top), int(r.width), int(r.height))
 }

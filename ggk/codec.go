@@ -57,7 +57,7 @@ func BitmapToGoImage(bmp *Bitmap) (image.Image, error) {
 		img = &image.RGBA{
 			Pix:    bmp.PixelsData(),
 			Stride: bmp.RowBytes(),
-			Rect:   bmp.Bounds().GoRect(),
+			Rect:   bmp.Bounds().ToGoRect(),
 		}
 	}
 

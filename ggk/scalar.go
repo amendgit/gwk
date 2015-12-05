@@ -8,15 +8,15 @@ import (
 type Scalar float32
 
 const (
-	Scalar_1          Scalar = 1.0
-	Scalar_Half       Scalar = 0.5
-	Scalar_Sqrt2      Scalar = 1.41421356
-	Scalar_PI         Scalar = 3.14159265
-	Scalar_TanPIOver8 Scalar = 0.414213562
-	Scalar_Root2Over2 Scalar = 0.707106781
-	Scalar_Max        Scalar = 3.402823466e+38
-	Scalar_Min        Scalar = -Scalar_Max
-	Scalar_NearlyZero Scalar = Scalar_1 / (1 << 12)
+	KScalar1          Scalar = 1.0
+	KScalarHalf       Scalar = 0.5
+	KScalarSqrt2      Scalar = 1.41421356
+	KScalarPI         Scalar = 3.14159265
+	KScalarTanPIOver8 Scalar = 0.414213562
+	KScalarRoot2Over2 Scalar = 0.707106781
+	KScalarMax        Scalar = 3.402823466e+38
+	KScalarMin        Scalar = -KScalarMax
+	KScalarNearlyZero Scalar = KScalar1 / (1 << 12)
 )
 
 func ScalarInfinity() Scalar {
@@ -179,23 +179,23 @@ func ScalarMulDiv(a, b, c Scalar) Scalar {
 }
 
 func ScalarInvert(x Scalar) Scalar {
-	return Scalar_1 / x
+	return KScalar1 / x
 }
 
 func ScalarAverage(a, b Scalar) Scalar {
-	return (a + b) * Scalar_Half
+	return (a + b) * KScalarHalf
 }
 
 func ScalarHalf(x Scalar) Scalar {
-	return x * Scalar_Half
+	return x * KScalarHalf
 }
 
 func DegreesToRadians(degrees float32) float32 {
-	return degrees * float32(Scalar_PI) / 180
+	return degrees * float32(KScalarPI) / 180
 }
 
 func RadiansToDegrees(radians float32) float32 {
-	return radians * 180 / float32(Scalar_PI)
+	return radians * 180 / float32(KScalarPI)
 }
 
 func ScalarMax(a, b Scalar) Scalar {
@@ -232,9 +232,9 @@ func ScalarSignAsInt(x Scalar) int {
 // Scalar result version of above
 func ScalarSignAsScalar(x Scalar) Scalar {
 	if x > 0 {
-		return Scalar_1
+		return KScalar1
 	} else if x < 0 {
-		return -Scalar_1
+		return -KScalar1
 	}
 	return Scalar(0)
 }

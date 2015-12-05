@@ -10,6 +10,7 @@ type ColorTable struct {
 }
 
 func NewColorTable(colors []PremulColor) *ColorTable {
+	toimpl()
 	return nil
 }
 
