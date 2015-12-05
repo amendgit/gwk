@@ -32,7 +32,7 @@ func main() {
 	rand.Seed(time.Now().Unix())
 	gwk.Init()
 
-	host_view := views.NewHostView(image.Rect(0, 0, 235, 260))
+	host_view := views.NewHostView(image.Rect(0, 0, 220, 180))
 	host_view.RootView.AddChild(views.MockUp(make_main_ui_map()))
 	host_view.Show()
 

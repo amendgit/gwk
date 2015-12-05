@@ -67,6 +67,11 @@ func NewFont() *Font {
 	return f
 }
 
+func (f *Font) SetFontSize(size float64) {
+	f.size = size
+	f.recalc()
+}
+
 func (f *Font) GlyphAt(glyph uint16, pt freetype.RastPoint) (*image.Alpha, image.Point, error) {
 	ix, fx := int(pt.X>>8), pt.X&0xff
 	iy, fy := int(pt.Y>>8), pt.Y&0xff

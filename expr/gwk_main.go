@@ -28,10 +28,12 @@ func makeMainUIMap() UIMap {
 			"layout": "vertical",
 			"children": []UIMap{
 				{
-					"type": "panel",
+					"type":  "panel",
+					"title": "Overview",
 				},
 				{
-					"type": "panel",
+					"type":  "panel",
+					"title": "Detail",
 				},
 			},
 		},
@@ -57,10 +59,12 @@ func makeMainUIMap() UIMap {
 			"layout": "vertical",
 			"children": []UIMap{
 				{
-					"type": "panel",
+					"type":  "panel",
+					"title": "Develop",
 				},
 				{
-					"type": "panel",
+					"type":  "panel",
+					"title": "Slideshow",
 				},
 				// {
 				// 	"type": "button",

@@ -1,0 +1,2 @@
+void *SomeFunc(GoInterface arg) {
+}

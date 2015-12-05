@@ -7,23 +7,25 @@ import (
 )
 
 // ============================================================================
-// BaseView
-
+//\ BaseView: a basic view implemention.
 type BaseView struct {
-	id string
-
+	id     string
 	canvas *Canvas
 
-	x, y int // relative to parent
+	// coordinate system, relative to parent.
+	x, y int
 	w, h int
 
+	// view tree.
 	children []View
 	parent   View
 
+	// mock up.
 	uimap    UIMap
-	layouter Layouter
-
 	delegate ViewDelegate
+
+	// layout system
+	layouter Layouter
 }
 
 func NewBaseView() *BaseView {
@@ -253,8 +255,8 @@ func (v *BaseView) Delegate() ViewDelegate {
 	return v.delegate
 }
 
-// ============================================================================
-// BaseViewDelegate
+//============================================================================
+//\BaseViewDelegate
 
 type BaseViewDelegate interface {
 	OnDraw(e *MouseEvent) bool
@@ -262,10 +264,9 @@ type BaseViewDelegate interface {
 	OnMouseLeave(e *DrawEvent) bool
 }
 
-// ============================================================================
-// base_view_delegate_t: for mock up support.
-
-// Implement BaseViewDelegate
+//============================================================================
+//\base_view_delegate_t: for mock up support. implement BaseViewDelegate
+// interface.
 type base_view_delegate_t struct {
 	on_mouse_enter func(*MouseEvent)
 	on_mouse_leave func(*MouseEvent)
@@ -276,31 +277,31 @@ func new_base_view_delegate() *base_view_delegate_t {
 	return new(base_view_delegate_t)
 }
 
-func (d *base_view_delegate_t) InitWithUIMap(delegate UIMap) *base_view_delegate_t {
+func (slf *base_view_delegate_t) InitWithUIMap(delegate UIMap) *base_view_delegate_t {
 	var p interface{}
 
 	p = delegate["on_mouse_enter"]
 	if p != nil {
 		if on_mouse_enter, ok := p.(func(*MouseEvent)); ok {
-			d.on_mouse_enter = on_mouse_enter
+			slf.on_mouse_enter = on_mouse_enter
 		}
 	}
 
 	p = delegate["on_mouse_leave"]
 	if p != nil {
 		if on_mouse_leave, ok := p.(func(*MouseEvent)); ok {
-			d.on_mouse_leave = on_mouse_leave
+			slf.on_mouse_leave = on_mouse_leave
 		}
 	}
 
 	p = delegate["on_draw"]
 	if p != nil {
 		if on_draw, ok := p.(func(*DrawEvent)); ok {
-			d.on_draw = on_draw
+			slf.on_draw = on_draw
 		}
 	}
 
-	return d
+	return slf
 }
 
 func (d *base_view_delegate_t) OnMouseEnter(event *MouseEvent) {

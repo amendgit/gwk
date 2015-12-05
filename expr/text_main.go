@@ -36,7 +36,11 @@ func make_main_ui_map() views.UIMap {
 					"on_draw": func(event *views.DrawEvent) {
 						ctxt := views.GlobalDrawContext()
 						// ctxt.SelectCanvas(event.Canvas)
-						ctxt.DrawText("GWK", image.Rect(30, 30, 200, 200))
+						ctxt.SetFontSize(25)
+						ctxt.SetFontColor(0, 0, 255)
+						ctxt.DrawText("Hello, GWK!", image.Rect(30, 50, 200, 200))
+						ctxt.SetStrokeColor(255, 0, 0)
+						ctxt.StrokeRect(image.Rect(20, 30, 180, 70))
 					},
 				},
 			},
