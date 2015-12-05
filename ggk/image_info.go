@@ -162,15 +162,15 @@ func (pt ColorProfileType) IsValid() bool {
 // Describe an image's dimensions and pixel type.
 // Used for both src images and render-targets (surfaces).
 type ImageInfo struct {
-	width  int
-	height int
+	width  Scalar
+	height Scalar
 
 	colorType   ColorType
 	alphaType   AlphaType
 	profileType ColorProfileType
 }
 
-func NewImageInfo(width, height int, colorType ColorType, alphaType AlphaType,
+func NewImageInfo(width, height Scalar, colorType ColorType, alphaType AlphaType,
 	profileType ColorProfileType) *ImageInfo {
 	var imageInfo = &ImageInfo{
 		width:       width,
@@ -183,32 +183,36 @@ func NewImageInfo(width, height int, colorType ColorType, alphaType AlphaType,
 	return imageInfo
 }
 
-func NewImageInfoN32(width, height int, alphaType AlphaType, profileType ColorProfileType) *ImageInfo {
+func NewImageInfoN32(width, height Scalar, alphaType AlphaType, profileType ColorProfileType) *ImageInfo {
 	return NewImageInfo(width, height, KColorTypeN32, alphaType, profileType)
 }
 
-func NewImageInfoN32Premul(width, height int, profileType ColorProfileType) *ImageInfo {
+func NewImageInfoN32Premul(width, height Scalar, profileType ColorProfileType) *ImageInfo {
 	return NewImageInfo(width, height, KColorTypeN32, KAlphaTypePremul, profileType)
 }
 
-func NewImageInfoA8(width, height int) *ImageInfo {
+func NewImageInfoA8(width, height Scalar) *ImageInfo {
 	return NewImageInfo(width, height, KColorTypeAlpha8, KAlphaTypePremul, KColorProfileTypeLinear)
 }
 
-func NewImageInfoUnknown(width, height int) *ImageInfo {
+func NewImageInfoUnknown(width, height Scalar) *ImageInfo {
 	return NewImageInfo(width, height, KColorTypeUnknown, KAlphaTypeUnknown, KColorProfileTypeLinear)
 }
 
-func (ii *ImageInfo) Width() int {
+func (ii *ImageInfo) Width() Scalar {
 	return ii.width
 }
 
-func (ii *ImageInfo) Height() int {
+func (ii *ImageInfo) Height() Scalar {
 	return ii.height
 }
 
 func (ii *ImageInfo) ColorType() ColorType {
 	return ii.colorType
+}
+
+func (ii *ImageInfo) SetColorType(colorType ColorType) {
+	ii.colorType = colorType
 }
 
 func (ii *ImageInfo) AlphaType() AlphaType {
@@ -221,6 +225,22 @@ func (ii *ImageInfo) SetAlphaType(alphaType AlphaType) {
 
 func (ii *ImageInfo) ProfileType() ColorProfileType {
 	return ii.profileType
+}
+
+func (ii *ImageInfo) IsValid() bool {
+	if ii.width < 0 || ii.height < 0 {
+		return false
+	}
+
+	if !ii.colorType.IsVaild() {
+		return false
+	}
+
+	if !ii.alphaType.IsValid() {
+		return false
+	}
+
+	return true
 }
 
 func (ii *ImageInfo) IsEmpty() bool {
@@ -283,7 +303,7 @@ func (ii *ImageInfo) SafeSize64(rowBytes int) uint64 {
 	}
 
 	return uint64(ii.height-1)*uint64(rowBytes) +
-		uint64(ii.width*ii.BytesPerPixel())
+		uint64(int(ii.width)*ii.BytesPerPixel())
 }
 
 func (ii *ImageInfo) SafeSize(rowBytes int) uint {
