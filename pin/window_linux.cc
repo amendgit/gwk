@@ -606,8 +606,8 @@ void WindowContextTop::ProcessPropertyNotify(GdkEventProperty*) {}
 void WindowContextTop::ProcessConfigure(GdkEventConfigure *) {}
 GtkWindow *WindowContextTop::GetGtkWindow() { return NULL; }
 
-///////////////////////////////////////////////////////////////////////////////
-//\C functions export to Go.
+// -----------------------------------------------------------------------------
+// C functions export to Go.
 static WindowFrameType GwkMaskToWindowFrameType(int mask) {
     return WindowFrameType(mask);
 }

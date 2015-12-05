@@ -57,3 +57,7 @@ func ViewOnKey(p unsafe.Pointer, typ, keyCode int, keyChars unsafe.Pointer,
 func ViewOnResize(p unsafe.Pointer, width, height int) {
 	// TOIMPL
 }
+
+func ViewOnDragEnter(p unsafe.Pointer, x, y, xAbs, yAbs, recommendedDropAction int) {
+
+}
