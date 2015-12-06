@@ -24,3 +24,8 @@ func (d *Draw) DrawPaint(paint *Paint) {
 	// normal case: use a blitter
 	// ScanFillRect(devRect, p.rasterClip, blitter)
 }
+
+func (d *Draw) DrawRect(rect Rect, paint *Paint) {
+	toimpl()
+	return
+}

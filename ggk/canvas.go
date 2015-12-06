@@ -56,6 +56,25 @@ func (c *Canvas) ReadPixelsInRectToBitmap(bmp *Bitmap, srcRect Rect) error {
 	return nil
 }
 
+// ReadPixels copy the pixels from the base-layer into the specified buffer
+// (pixels + rowBytes). converting them into the requested format (ImageInfo).
+// The base-layer are read starting at the specified (srcX, srcY) location in
+// the coordinate system of the base-layer.
+//
+// The specified ImageInfo and (srcX, srcY) offset specifies a source rectangle.
+//
+//     srcR.SetXYWH(srcX, srcY, dstInfo.Width(), dstInfo.Height())
+//
+// srcR is intersected with the bounds of the base-layer. If this intersection
+// is not empty, then we have two sets of pixels (of equal size). Replace the
+// dst pixels with the corresponding src pixels, performing any
+// colortype/alphatype transformations needed (in the case where the src and dst
+// have different colortypes or alphatypes).
+//
+// This call can fail, returning false, for serveral reasons:
+// - If srcR does not intersect the base-layer bounds.
+// - If the requested colortype/alphatype cannot be converted from the base-layer's types.
+// - If this canvas is not backed by pixels (e.g. picture or PDF)
 func (c *Canvas) ReadPixels(dstInfo *ImageInfo, dstData []byte, rowBytes int,
 	x, y Scalar) error {
 
@@ -74,6 +93,27 @@ func (c *Canvas) ReadPixels(dstInfo *ImageInfo, dstData []byte, rowBytes int,
 	// The device can assert that the requested area is always contained in its
 	// bounds.
 	return dev.ReadPixels(hlp.Info, hlp.Pixels, hlp.RowBytes, hlp.X, hlp.Y)
+}
+
+// WritePixels affects the pixels in the base-layer, and operates in pixel
+// coordinates. ignoring the matrix and clip.
+//
+// The specified ImageInfo and (x, y) offset specifies a rectangle: target.
+//
+//     target.SetXYWH(x, y, info.width(), info.height());
+//
+// Target is intersected with the bounds of the base-layer. If this intersection
+// is not empty. then we have two sets of pixels (of equal size), the "src"
+// specified by info+pixels+rowBytes and the "dst" by the canvas' backend.
+// Replace the dst pixels with the corresponding src pixels, performing any
+// colortype/alphatype transformations needed (in the case where the src and
+// dst have different colirtypes or alphatypes).
+//
+// This call can fail, returing false, for several reasons:
+// - If the src colortype/alpahtype cannot be converted to the canvas' types
+// - If this canvas is not backed by pixels (e.g. picture or PDF)
+func WritePixels(info *ImageInfo, pixels []byte, rowBytes int, x, y int) error {
+	return nil
 }
 
 func (c *Canvas) Device() *BaseDevice {
