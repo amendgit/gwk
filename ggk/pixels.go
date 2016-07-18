@@ -21,7 +21,7 @@ func validatePixelsColorTable(info ImageInfo, ct *ColorTable) {
 	}
 }
 
-type PixelsVirt interface {
+type PixelsSource interface {
 	// OnNewLockPixels returns true and fills out the LockRec for the pixels on
 	// success, returns false and ignores the LockRec parameter on failure.
 	//
@@ -70,7 +70,7 @@ type PixelsVirt interface {
 type Pixels struct {
 	// Virt is virtual interface, set Virt in NewXYZ() call Pixels.Virt.Func()
 	// to get the virtual aliblity.
-	Virt PixelsVirt
+	Source PixelsSource
 
 	prelocked bool
 	mutex     sync.Mutex
@@ -86,7 +86,7 @@ func NewPixels() *Pixels {
 
 // Pixels return the pixel memory bytes returned from LockPixels, or nil if the
 // lockCount is 0.
-func (p *Pixels) Pixels() []byte {
+func (p *Pixels) Bytes() []byte {
 	return p.lockRec.pixels
 }
 
@@ -138,7 +138,7 @@ func (p *Pixels) LockPixelsInsideMutex() bool {
 	p.lockCount++
 
 	if p.lockCount == 1 {
-		if !p.Virt.OnNewLockPixels(&p.lockRec) {
+		if !p.Source.OnNewLockPixels(&p.lockRec) {
 			p.lockRec.SetZero()
 			p.lockCount -= 1 // We return lockCount unchanged if we faile.
 			return false
@@ -157,7 +157,7 @@ func (p *Pixels) UnlockPixels() {
 		if p.lockCount == 0 {
 			// Don't call OnUnlockPixels unless OnLockPixels succeeded.
 			if p.lockRec.pixels != nil {
-				p.Virt.OnUnlockPixels()
+				p.Source.OnUnlockPixels()
 				p.lockRec.SetZero()
 			}
 		}
@@ -165,7 +165,7 @@ func (p *Pixels) UnlockPixels() {
 }
 
 func (p *Pixels) LockPixelsAreWritable() bool {
-	return p.Virt.OnLockPixelsAreWritable()
+	return p.Source.OnLockPixelsAreWritable()
 }
 
 // OnLockPixelsAreWritable default impl return true.
@@ -174,7 +174,7 @@ func (p *Pixels) OnLockPixelsAreWritable() bool {
 }
 
 func (p *Pixels) ReadPixels(dst *Bitmap, subset *Rect) bool {
-	return p.Virt.OnReadPixels(dst, subset)
+	return p.Source.OnReadPixels(dst, subset)
 }
 
 func (p *Pixels) OnReadPixels(dst *Bitmap, subset *Rect) bool {
@@ -218,53 +218,6 @@ func (r PixelsLockRec) IsZero() bool {
 	return r.pixels == nil && r.colorTable == nil && r.rowBytes == 0
 }
 
-type MemPixelsFactory struct {
-}
-
-func MemPixelsDefaultFactory() *MemPixelsFactory {
-	// TOIMPL
-	return nil
-}
-
-func (f *MemPixelsFactory) Create(imageInfo ImageInfo, rowBytes int, colorTable *ColorTable) *Pixels {
-	// TOIMPL
-	return nil
-}
-
-type MemPixels struct {
-	*Pixels
-	storage []byte
-}
-
-// NewMemPixels return a new instance with the provided stroage, rowBytes,
-// and optional colortable. The caller is responsible for managing the
-// lifetime of the pixel storage buffer, as this pixels will not try
-// to delete it.
-//
-// The pixels will ref the colortable (if not nil)
-//
-// Returns nil on failture.
-func NewMemPixels(storage []byte) *MemPixels {
-	var p MemPixels
-	p.Pixels = NewPixels()
-	p.storage = storage
-	p.SetPrelocked(storage)
-	return &p
-}
-
-func NewMemPixelsAlloc(info ImageInfo, rowBytes int) *MemPixels {
-	var p MemPixels
-	p.Pixels = NewPixels()
-	p.storage = make([]byte, info.SafeSize(rowBytes))
-	p.SetPrelocked(p.storage)
-	return &p
-}
-
-func isImageInfoValid(info ImageInfo) bool {
-	if info.Width() < 0 || info.Height() < 0 || !info.ColorType().IsVaild() ||
-		!info.AlphaType().IsValid() {
-		return false
-	}
-
-	return true
+type PixelsFactory interface {
+	Create(info *ImageInfo, rowBytes int, ct ColorTable)
 }

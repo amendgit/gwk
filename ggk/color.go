@@ -66,10 +66,10 @@ func (color Color) Blue() uint8 {
 // ARGB return the alpha red green blue bytes in order from a Color value
 func (color Color) ARGB() (uint8, uint8, uint8, uint8) {
 	var a, r, g, b uint8
-	a = uint8((color >> KARGB32ShiftA) & 0xff)
-	r = uint8((color >> KARGB32ShiftR) & 0xff)
-	g = uint8((color >> KARGB32ShiftG) & 0xff)
-	b = uint8((color >> KARGB32ShiftB) & 0xff)
+	a = uint8((color >> 24) & 0xff)
+	r = uint8((color >> 16) & 0xff)
+	g = uint8((color >> 8) & 0xff)
+	b = uint8((color >> 0) & 0xff)
 	return a, r, g, b
 }
 

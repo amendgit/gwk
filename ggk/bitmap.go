@@ -9,7 +9,7 @@ type Bitmap struct {
 	rowBytes int
 	flags    uint8
 
-	info       ImageInfo
+	info       *ImageInfo
 	colorTable *ColorTable
 
 	pixels         *Pixels
@@ -18,15 +18,11 @@ type Bitmap struct {
 }
 
 // Swap the fields of the two bitmaps. This routine is guaranteed to never fail or throw.
-func (bmp *Bitmap) Swap(other *Bitmap) {
-	bmp.colorTable, other.colorTable = other.colorTable, bmp.colorTable
-	bmp.pixels, other.pixels = other.pixels, bmp.pixels
-	bmp.info, other.info = other.info, bmp.info
-	bmp.flags, other.flags = other.flags, bmp.flags
-	bmp.rowBytes, other.rowBytes = other.rowBytes, bmp.rowBytes
+func (bmp *Bitmap) Swap(otr *Bitmap) {
+	*bmp, *otr = *otr, *bmp
 }
 
-func (bmp *Bitmap) Info() ImageInfo {
+func (bmp *Bitmap) Info() *ImageInfo {
 	return bmp.info
 }
 
@@ -88,18 +84,14 @@ func (bmp *Bitmap) IsValid() bool {
 	if !bmp.info.IsValid() {
 		return false
 	}
-
 	if !bmp.info.ValidRowBytes(bmp.rowBytes) {
 		return false
 	}
-
 	if bmp.info.ColorType() == KColorTypeRGB565 &&
 		bmp.info.AlphaType() != KAlphaTypeOpaque {
 		return false
 	}
-
 	// TOIMPL
-
 	if bmp.pixels != nil {
 		if bmp.pixelLockCount <= 0 &&
 			//    !bmp.pixels.IsLock() &&
@@ -115,7 +107,6 @@ func (bmp *Bitmap) IsValid() bool {
 			return false
 		}
 	}
-
 	return true
 }
 
@@ -141,43 +132,38 @@ func (bmp *Bitmap) SetAlphaType(alphaType AlphaType) bool {
 	if err != nil {
 		return false
 	}
-
 	if bmp.info.alphaType != alphaType {
 		bmp.info.SetAlphaType(alphaType)
 	}
-
 	return true
 }
 
-func (bmp *Bitmap) Pixels() []byte {
-	return bmp.pixels.Pixels()
+func (bmp *Bitmap) Pixels() *Pixels {
+	return bmp.pixels
 }
 
-func (bmp *Bitmap) PixelsData() []byte {
+func (bmp *Bitmap) PixelsBytes() []byte {
 	bmp.pixels.LockPixels()
-	var data = bmp.pixels.Pixels()
-	return data
+	var bytes = bmp.pixels.Bytes()
+	return bytes
 }
 
-func (bmp *Bitmap) InstallPixels(requestedInfo ImageInfo, pixels []byte, rowBytes int, colorTable *ColorTable) bool {
+func (bmp *Bitmap) InstallPixels(requestedInfo ImageInfo, pixelsBytes []byte, rowBytes int, ct *ColorTable) bool {
 	if !bmp.SetInfo(requestedInfo, rowBytes) {
 		// release pixels
 		bmp.Reset()
 		return false
 	}
-	if pixels == nil {
+	if pixelsBytes == nil {
 		// release pixels
 		return true // we behaved as if they called setInfo()
 	}
-
-	var mempixs = NewMemPixels(pixels)
-	if mempixs == nil {
+	var pixels = NewMemoryPixelsDirect(pixelsBytes)
+	if pixels == nil {
 		bmp.Reset()
 		return false
 	}
-
-	bmp.pixels = mempixs.Pixels
-
+	bmp.pixels = pixels.Pixels
 	// since we're already allocated, we LockPixels right away.
 	bmp.LockPixels()
 	if !bmp.IsValid() {
@@ -199,10 +185,7 @@ func (bmp *Bitmap) Bounds() Rect {
 		width  = bmp.info.Width()
 		height = bmp.info.Height()
 	)
-
-	var bounds = MakeRect(x, y, width, height)
-
-	return bounds
+	return MakeRect(x, y, width, height)
 }
 
 func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
@@ -211,20 +194,16 @@ func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
 		bmp.Reset()
 		return false
 	}
-
 	// alphaType is the real value.
-
 	var minRowBytes int64 = imageInfo.MinRowBytes64()
 	if int64(int32(minRowBytes)) != minRowBytes {
 		bmp.Reset()
 		return false
 	}
-
 	if imageInfo.Width() < 0 || imageInfo.Height() < 0 {
 		bmp.Reset()
 		return false
 	}
-
 	if imageInfo.ColorType() == KColorTypeUnknown {
 		rowBytes = 0
 	} else if rowBytes == 0 {
@@ -233,12 +212,9 @@ func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
 		bmp.Reset()
 		return false
 	}
-
 	bmp.freePixels()
-
-	bmp.info.SetAlphaType(alphaType)
+	bmp.info = imageInfo.MakeAlphaType(alphaType)
 	bmp.rowBytes = rowBytes
-
 	return true
 }
 
@@ -249,31 +225,25 @@ func (bmp *Bitmap) AllocPixels(requestedInfo ImageInfo, rowBytes int) error {
 		bmp.Reset()
 		return ErrAllocPixels
 	}
-
 	if !bmp.SetInfo(requestedInfo, rowBytes) {
 		bmp.Reset()
 		return ErrAllocPixels
 	}
-
 	// SetInfo may have corrected info (e.g. 565 is always opaque).
 	var correctedInfo = bmp.Info()
-
 	// SetInfo may have computed a valid rowBytes if 0 were passed in
 	rowBytes = bmp.RowBytes()
-
 	// Allocate memories.
-	var mempixs = NewMemPixelsAlloc(correctedInfo, rowBytes)
-	if mempixs == nil {
+	var pixels = NewMemoryPixelsAlloc(correctedInfo, rowBytes)
+	if pixels == nil {
 		bmp.Reset()
 		return ErrAllocPixels
 	}
-
-	bmp.pixels = mempixs.Pixels
+	bmp.pixels = pixels.Pixels
 	if bmp.LockPixels() != nil {
 		bmp.Reset()
 		return ErrAllocPixels
 	}
-
 	return ErrAllocPixels
 }
 
@@ -316,7 +286,6 @@ func (bmp *Bitmap) freePixels() {
 		bmp.pixels = nil
 		bmp.pixelOrigin = PointZero
 	}
-
 	bmp.pixelLockCount = 0
 	bmp.pixels = nil
 	bmp.colorTable = nil

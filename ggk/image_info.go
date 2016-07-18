@@ -111,18 +111,13 @@ func (ct ColorType) ValidateAlphaType(alphaType AlphaType) (canonical AlphaType,
 		if alphaType == KAlphaTypeUnpremul {
 			alphaType = KAlphaTypePremul
 		}
-
 		fallthrough
-
-	case KColorTypeIndex8, KColorTypeARGB4444, KColorTypeRGBA8888,
-		KColorTypeBGRA8888:
+	case KColorTypeIndex8, KColorTypeARGB4444, KColorTypeRGBA8888, KColorTypeBGRA8888:
 		if alphaType == KAlphaTypeUnknown {
 			return KAlphaTypeUnknown, ErrAlphaTypeCanNotCanonical
 		}
-
 	case KColorTypeGray8, KColorTypeRGB565:
 		alphaType = KAlphaTypeOpaque
-
 	default:
 		return KAlphaTypeUnknown, ErrAlphaTypeCanNotCanonical
 	}
@@ -170,8 +165,7 @@ type ImageInfo struct {
 	profileType ColorProfileType
 }
 
-func NewImageInfo(width, height Scalar, colorType ColorType, alphaType AlphaType,
-	profileType ColorProfileType) *ImageInfo {
+func NewImageInfo(width, height Scalar, colorType ColorType, alphaType AlphaType, profileType ColorProfileType) *ImageInfo {
 	var imageInfo = &ImageInfo{
 		width:       width,
 		height:      height,
@@ -183,12 +177,12 @@ func NewImageInfo(width, height Scalar, colorType ColorType, alphaType AlphaType
 	return imageInfo
 }
 
-func NewImageInfoN32(width, height Scalar, alphaType AlphaType, profileType ColorProfileType) *ImageInfo {
-	return NewImageInfo(width, height, KColorTypeN32, alphaType, profileType)
+func NewImageInfoN32(width, height Scalar, at AlphaType, pt ColorProfileType) *ImageInfo {
+	return NewImageInfo(width, height, KColorTypeN32, at, pt)
 }
 
-func NewImageInfoN32Premul(width, height Scalar, profileType ColorProfileType) *ImageInfo {
-	return NewImageInfo(width, height, KColorTypeN32, KAlphaTypePremul, profileType)
+func NewImageInfoN32Premul(width, height Scalar, pt ColorProfileType) *ImageInfo {
+	return NewImageInfo(width, height, KColorTypeN32, KAlphaTypePremul, pt)
 }
 
 func NewImageInfoA8(width, height Scalar) *ImageInfo {
@@ -199,12 +193,26 @@ func NewImageInfoUnknown(width, height Scalar) *ImageInfo {
 	return NewImageInfo(width, height, KColorTypeUnknown, KAlphaTypeUnknown, KColorProfileTypeLinear)
 }
 
-func (ii *ImageInfo) CloneWH(width, height Scalar) *ImageInfo {
-	var newInfo ImageInfo
-	newInfo = *ii
+func (ii *ImageInfo) Make(width, height Scalar, ct ColorType, at AlphaType, pt ColorProfileType) *ImageInfo {
+	var newInfo = new(ImageInfo)
 	newInfo.width = width
 	newInfo.height = height
-	return &newInfo
+	newInfo.colorType = ct
+	newInfo.alphaType = at
+	newInfo.profileType = pt
+	return newInfo
+}
+
+func (ii *ImageInfo) MakeWH(width, height Scalar) *ImageInfo {
+	return ii.Make(width, height, ii.colorType, ii.alphaType, ii.profileType)
+}
+
+func (ii *ImageInfo) MakeColorType(ct ColorType) *ImageInfo {
+	return ii.Make(ii.width, ii.height, ct, ii.alphaType, ii.profileType)
+}
+
+func (ii *ImageInfo) MakeAlphaType(at AlphaType) *ImageInfo {
+	return ii.Make(ii.width, ii.height, ii.colorType, at, ii.profileType)
 }
 
 func (ii *ImageInfo) Width() Scalar {
@@ -239,15 +247,12 @@ func (ii *ImageInfo) IsValid() bool {
 	if ii.width < 0 || ii.height < 0 {
 		return false
 	}
-
 	if !ii.colorType.IsVaild() {
 		return false
 	}
-
 	if !ii.alphaType.IsValid() {
 		return false
 	}
-
 	return true
 }
 
@@ -278,13 +283,11 @@ func (ii *ImageInfo) ComputeOffset(x, y int, rowBytes uint) (uint, error) {
 
 func (ii *ImageInfo) Equal(other *ImageInfo) bool {
 	var equal = false
-
 	equal = (ii.colorType == other.colorType)
 	equal = equal && (ii.alphaType == other.alphaType)
 	equal = equal && (ii.profileType == other.profileType)
 	equal = equal && (ii.width == other.width)
 	equal = equal && (ii.height == other.height)
-
 	return equal
 }
 
@@ -309,7 +312,6 @@ func (ii *ImageInfo) SafeSize64(rowBytes int) uint64 {
 	if ii.height == 0 {
 		return 0
 	}
-
 	return uint64(ii.height-1)*uint64(rowBytes) +
 		uint64(int(ii.width)*ii.BytesPerPixel())
 }
@@ -352,37 +354,29 @@ func (h *tReadPixelsHlp) Trim(srcWidth, srcHeight Scalar) error {
 	if ct == KColorTypeUnknown || ct == KColorTypeIndex8 {
 		return errors.New("tReadPixelsHlp Trim: bad color type")
 	}
-
 	if h.Pixels == nil || h.RowBytes < h.Info.MinRowBytes() {
 		return errors.New("tReadPixelsHlp Trim: bad pixels or rowBytes")
 	}
-
 	if h.Info.Width() == 0 || h.Info.Width() == 0 {
 		return errors.New("tReadPixelsHlp Trim: bad width or height")
 	}
-
 	var x, y = h.X, h.Y
 	var srcRect = MakeRect(x, y, h.Info.Width(), h.Info.Height())
 	if !srcRect.IntersectXYWH(0, 0, srcWidth, srcHeight) {
 		return errors.New("tReadPixelsHlp Trim: bad srcRect")
 	}
-
 	// if x or y are negative, then we have to adjust pixels.
 	if x > 0 {
 		x = 0
 	}
-
 	if y > 0 {
 		y = 0
 	}
-
 	// x, y are either 0 or negative.
 	var idx = int(0 - (y*Scalar(h.RowBytes) + x*Scalar(h.Info.BytesPerPixel())))
-
 	// the intersect may have shrunk info's logical size.
 	h.Pixels = h.Pixels[idx:]
-	h.Info = h.Info.CloneWH(srcRect.Width(), srcRect.Height())
+	h.Info = h.Info.MakeWH(srcRect.Width(), srcRect.Height())
 	h.X, h.Y = srcRect.X(), srcRect.Y()
-
 	return nil
 }

@@ -23,5 +23,5 @@ _cgo_export.*
 
 _testmain.go
 
-*.exe
 ._*
+/.idea/

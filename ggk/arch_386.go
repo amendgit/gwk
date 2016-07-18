@@ -1,6 +1,6 @@
 package ggk
 
-// intel cpu is little endian.
+// Intel cpu is little endian.
 const (
 	KARGB32ShiftA = 0
 	KARGB32ShiftR = 8
