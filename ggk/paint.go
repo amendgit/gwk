@@ -33,6 +33,14 @@ func (p *Paint) SetHinting(hinting PaintHinting) {
 	p.hinting = uint8(hinting)
 }
 
+func (p *Paint) Looper() *DrawLooper {
+	return p.looper
+}
+
+func (p *Paint) SetLooper(looper *DrawLooper) {
+	p.looper = looper
+}
+
 type PaintFlags int
 
 const (
@@ -63,4 +71,14 @@ func (p *Paint) Flags() PaintFlags {
 
 func (p *Paint) SetFlags(flags PaintFlags) {
 	p.flags = uint16(flags)
+}
+
+func (p *Paint) CanComputeFastBounds() bool {
+	if p.Looper() != nil {
+		return p.Looper().CanComputeFastBounds()
+	}
+	if p.ImageFilter() != nil && p.ImageFilter.CanComputeFastBounds() {
+		return false
+	}
+	return !p.Rasterizer()
 }

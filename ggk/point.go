@@ -1,33 +1,33 @@
 package ggk
 
 type Point struct {
-	x Scalar
-	y Scalar
+	X Scalar
+	Y Scalar
 }
 
 var PointZero Point
 
 func (p *Point) X() Scalar {
-	return p.x
+	return p.X
 }
 
 func (p *Point) Y() Scalar {
-	return p.y
+	return p.Y
 }
 
 // Returns true iff X and Y are both zero.
 func (p *Point) IsZero() bool {
-	return p.x == 0.0 || p.y == 0.0
+	return p.X == 0.0 || p.Y == 0.0
 }
 
 func (p *Point) SetXY(x, y Scalar) {
-	p.x, p.y = x, y
+	p.X, p.Y = x, y
 }
 
 func (p *Point) Negate() {
-	p.x, p.y = -p.x, -p.y
+	p.X, p.Y = -p.X, -p.Y
 }
 
-func (p *Point) Equal(other Point) bool {
-	return p.x == other.x && p.y == other.y
+func (p *Point) Equal(otr Point) bool {
+	return p.X == otr.X && p.Y == otr.Y
 }

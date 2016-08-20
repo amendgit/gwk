@@ -326,7 +326,7 @@ func (ii *ImageInfo) SafeSize(rowBytes int) uint {
 
 // ReadPixelsHlp is helper to package and trim the parameters passed to
 // ReadPixels()
-type tReadPixelsHlp struct {
+type tReadPixelsRec struct {
 	Pixels   []byte
 	RowBytes int
 	Info     *ImageInfo
@@ -334,8 +334,8 @@ type tReadPixelsHlp struct {
 	Y        Scalar
 }
 
-func newReadPixelsHlp(info *ImageInfo, pixels []byte, rowBytes int, x, y Scalar) *tReadPixelsHlp {
-	var hlp = new(tReadPixelsHlp)
+func newReadPixelsRec(info *ImageInfo, pixels []byte, rowBytes int, x, y Scalar) *tReadPixelsRec {
+	var hlp = new(tReadPixelsRec)
 	hlp.Info = info
 	hlp.Pixels = pixels
 	hlp.RowBytes = rowBytes
@@ -349,7 +349,7 @@ func newReadPixelsHlp(info *ImageInfo, pixels []byte, rowBytes int, x, y Scalar)
 //
 // On error, leaves self unchanged, but indicates that it does not overlap src,
 // or is not valid (e.g. bad Info) for ReadPixels().
-func (h *tReadPixelsHlp) Trim(srcWidth, srcHeight Scalar) error {
+func (h *tReadPixelsRec) Trim(srcWidth, srcHeight Scalar) error {
 	var ct = h.Info.ColorType()
 	if ct == KColorTypeUnknown || ct == KColorTypeIndex8 {
 		return errors.New("tReadPixelsHlp Trim: bad color type")

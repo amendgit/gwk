@@ -76,23 +76,19 @@ func (c *Canvas) ReadPixelsInRectToBitmap(bmp *Bitmap, srcRect Rect) error {
 // - If the requested colortype/alphatype cannot be converted from the base-layer's types.
 // - If this canvas is not backed by pixels (e.g. picture or PDF)
 func (c *Canvas) ReadPixels(dstInfo *ImageInfo, dstData []byte, rowBytes int,
-	x, y Scalar) error {
-
+		x, y Scalar) error {
 	var dev = c.Device()
 	if dev == nil {
 		return errorf("device is nil")
 	}
-
 	var size = c.BaseLayerSize()
-
-	var hlp = newReadPixelsHlp(dstInfo, dstData, rowBytes, x, y)
-	if err := hlp.Trim(size.Width(), size.Height()); err != nil {
+	var rec = newReadPixelsRec(dstInfo, dstData, rowBytes, x, y)
+	if err := rec.Trim(size.Width(), size.Height()); err != nil {
 		return errorf("bad param %v", err)
 	}
-
 	// The device can assert that the requested area is always contained in its
 	// bounds.
-	return dev.ReadPixels(hlp.Info, hlp.Pixels, hlp.RowBytes, hlp.X, hlp.Y)
+	return dev.ReadPixels(rec.Info, rec.Pixels, rec.RowBytes, rec.X, rec.Y)
 }
 
 // WritePixels affects the pixels in the base-layer, and operates in pixel
@@ -130,6 +126,55 @@ func (c *Canvas) BaseLayerSize() Size {
 	return sz
 }
 
+type CanvasPointMode int
+
+const (
+	// DrawPoints draws each point separately
+	KPointModePoints CanvasPointMode = iota
+	// DrawPoints draws each pair of points as a line segment
+	KPointModeLines
+	// DrawPoints draws the array of points as a polygon
+	KPointModePolygon
+)
+
+func (c *Canvas) DrawPoint(x, y Scalar, paint *Paint) {
+	var pt Point
+	pt.X, pt.Y = x, y
+	c.DrawPoints(KPointModePoints, 1, []Point{pt}, paint)
+}
+
+func (c *Canvas) DrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
+	c.OnDrawPoints(mode, count, pts, paint)
+}
+
+func (c *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Point) {
+	if count <= 0 {
+		return
+	}
+	var r, storage Rect
+	var bounds *Rect = nil
+	if paint.CanComputeFastBounds() {
+		// special-case 2 points (common for drawing a single line)
+		if count == 2 {
+			r.Set(pts[0], pts[1])
+		} else {
+			r.Set(pts, count)
+		}
+		if c.QuickReject(paint.ComputeFastStrokeBounds(r, &storage)) {
+			return
+		}
+		bounds = &r
+	}
+	c.PredrawNotify()
+	var looper = newAutoDrawLooper(c, c.Props, paint, false, bounds)
+	for looper.Next(KDrawFilterTypePoint) {
+		var iter = newDrawIter(c)
+		for iter.Next() {
+			iter.Device.DrawPoints(iter, mode, count, pts, looper.Paint())
+		}
+	}
+}
+
 type CanvasSaveFlags int
 
 const (
@@ -158,7 +203,6 @@ type tDeviceCM struct {
 
 func newDeivceCM(dev *BaseDevice, paint *Paint, canvas *Canvas,
 	conservativeRasterClip bool, deviceIsBitmapDevice bool) {
-
 	var deviceCM = new(tDeviceCM)
 	deviceCM.Next = nil
 	deviceCM.Clip = NewRasterClip(conservativeRasterClip)
@@ -179,7 +223,6 @@ func (d *tDeviceCM) Reset(bounds Rect) {
 
 func (d *tDeviceCM) UpdateMC(totalMatrix *Matrix, totlaClip *RasterClip,
 	clipStack *ClipStack, updateClip *RasterClip) {
-
 	toimpl()
 }
 
@@ -190,5 +233,28 @@ func (d *tDeviceCM) UpdateMC(totalMatrix *Matrix, totlaClip *RasterClip,
 // copied for this level, we ignore ...Storage, and just point at the
 // corresponding value in the previous level in the stack.
 type tCanvasMCRec struct {
-	Layer *Layer
+	Filter *DrawFilter // the current filter (or nil)
+	Layer  *tDeviceCM
+
+	// If there are any layers in the stack, this points to the top-most
+	// one that is at or below this level in the stack (so we know what
+	// bitmap/device to draw into from this level. This value is NOT
+	// reference counted, since the real owner is either our fLayer field,
+	// or a previous one in a lower level.)
+	TopLayer          *tDeviceCM
+	RasterClip        *RasterClip
+	Matrix            *Matrix
+	DeferredSaveCount int
+}
+
+func newCanvasMCRec(conservativeRasterClip bool) *tCanvasMCRec {
+	var rec = new(tCanvasMCRec)
+	rec.RasterClip = NewRasterClip(conservativeRasterClip)
+	rec.Filter = nil
+	rec.Layer = nil
+	rec.TopLayer = nil
+	rec.Matrix.Reset()
+	rec.DeferredSaveCount = 0
+	// don't bother initializing Next
+	// inc_rec()
 }
